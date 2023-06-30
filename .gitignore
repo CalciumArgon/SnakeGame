@@ -1,4 +1,5 @@
 *.o
 .vscode
 .idea
-.dat
+*.dat
+snakegame
