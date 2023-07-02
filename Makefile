@@ -1,14 +1,31 @@
-all:snakegame
+CC := gcc
+CXX := g++
 
-snakegame: main.o game.o snake.o
-	g++ -o snakegame main.o game.o snake.o -lcurses
-main.o: main.cpp game.cpp
-	g++ -c main.cpp
-game.o: game.cpp snake.cpp
-	g++ -c game.cpp
-snake.o: snake.cpp
-	g++ -c snake.cpp
+.PHONY : task
+# 所有需要链接的 Object 文件
+objects := main.o field.o item.o snake.o clock.o game.o
+
+# 链接
+task: $(objects)
+	$(CXX) -o $@ $(objects)
+
+main.o: field.h
+field.o: snake.h
+item.o: field.h snake.h
+snake.o: item.h
+game.o: snake.h clock.h
+
+
+.PHONY : clean clean_makefile run
 clean:
-	rm *.o 
-	rm snakegame
-	rm record.dat
+	@rm -f task $(objects)
+	@echo "======= Delete all the Object-File ======="
+	@echo "======= Delete the Executable-File ======="
+
+clean_makefile:
+	@rm -f $(objects)
+	@echo "======= Delete all the Object-File ======="
+
+# 运行生成的 task 可执行文件
+run:
+	@./task
