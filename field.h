@@ -24,6 +24,8 @@ public:
 
     bool inBound(Loc);
 
+    void loadMap();     // 某种 文件读取并存储将要被加载的物体 的方式
+
     void createItem(int type, Loc);
     Loc createRandomLoc();
 
