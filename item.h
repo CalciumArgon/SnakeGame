@@ -83,33 +83,63 @@ class Firstaid: public Item
     int add_health = 1;
 };
 
+/*
+    警报
+    在倒计时结束后出现 *nextItem
+*/
 class Warning: public Item
 {
+    Warning(int, Item*);    // 初始化倒计时长 和 终点物体
+
     virtual void action(Snake);
+    int counting;
+    Item* nextItem;
     string name = "warning";
 };
 
+/*
+    障碍
+    不同障碍物有不同伤害量
+*/
 class Obstacle: public Item
 {
+    Obstacle(int);  // 以伤害量初始化
+
     virtual void action(Snake);
+    int injury;
     string name = "obstacle";
 };
 
+/*
+    墙壁
+    和地图边界相同 撞击死亡
+*/
 class Wall: public Item
 {
     virtual void action(Snake);
     string name = "wall";
 };
 
+/*
+    陨石
+    砸中头部死亡, 砸中身体则从砸中处截断以后部分
+*/
 class Aerolite: public Item
 {
     virtual void action(Snake);
     string name = "aerolite";
 };
 
+/*
+    沼泽
+    只要蛇任何一部分在沼泽上 都将被减速
+*/
 class Marsh: public Item
 {
+    Marsh(int);     // 以减速程度初始化
+
     virtual void action(Snake);
+    int decelerate;
     string name = "marsh";
 };
 
