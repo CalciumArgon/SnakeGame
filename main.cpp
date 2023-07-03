@@ -1,7 +1,9 @@
-#include "game.h"
+#include "field.h"
 
-int main(int argc, char** argv)
-{
-    Game game;
-    game.startGame();
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello World\n";
+    return 0;
 }

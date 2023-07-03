@@ -1,63 +1,43 @@
 #ifndef SNAKE_H
 #define SNAKE_H
 
+#include "item.h"
 #include <vector>
+using namespace std;
 
-enum class Direction
-{
-    Up = 0,
-    Down = 1,
-    Left = 2,
-    Right = 3,
-};
+typedef pair<int, int> Loc;
 
-class SnakeBody
-{
-public:
-    SnakeBody();
-    SnakeBody(int x, int y);
-    int getX() const;
-    int getY() const;
-    bool operator == (const SnakeBody& snakeBody);
-private:
-    int mX;
-    int mY;
-};
-
-// Snake class should have no depency on the GUI library
 class Snake
 {
 public:
-    //Snake();
-    Snake(int gameBoardWidth, int gameBoardHeight, int initialSnakeLength);
-    // Set random seed
-    void setRandomSeed();
-    // Initialize snake
-    void initializeSnake();
-    // Check if the snake is on the coordinate
-    // bool isSnakeOn(int x, int y);
-    // Checking API for generating random food
-    bool isPartOfSnake(int x, int y);
-    void senseFood(SnakeBody food);
-    // Check if hit wall
-    bool hitWall();
-    bool touchFood();
-    bool hitSelf();
-    bool checkCollision();
-    bool changeDirection(Direction newDirection);
-    std::vector<SnakeBody>& getSnake();
-    int getLength();
-    SnakeBody createNewHead();
-    bool moveFoward();
+    Snake(vector<Loc>, int length);
 
-private:
-    const int mGameBoardWidth;
-    const int mGameBoardHeight;
-    // Snake information
-    const int mInitialSnakeLength;
-    Direction mDirection;
-    SnakeBody mFood;
-    std::vector<SnakeBody> mSnake;
+    void changeDirection(string);
+    void move();    // 前进, 检查碰到的物体并 Item.action(this) , 更新身体坐标以及其他参数
+    Item* hitItem();
+
+    bool hitSelf();
+    bool hitOtherSnake(vector<Snake>);  // 在 Game 中可以把 field.snakes[1:] 传进来
+
+    void death();   // 死亡程序, 在 revival > 0 的情况下重新在地图中心初始化, 否则返回死亡
+
+
+    int length;
+    vector<Loc> body;   // body[0] 是头部
+    int health;
+    int eaten = 0;  // 吃过的食物 与长度无直接关系
+
+    /*
+        加速时: speed 调成 5
+        减速时: speed 调成 1
+    */
+    int speed = 3;
+    int cycle_recorder = 1; //  cycle_recorder 每增加 (6 - speed) 该蛇进行一轮操作
+    int direction;  // "up" "down" "left" "right"
+
+    // 特殊能力倒计时, 随全局时钟变化
+    int magnetic = 0;   
+    int revival = 0;
 };
 
-#endif
+#endif //SNAKE_H
