@@ -14,7 +14,7 @@ bool isWithin(int, int, int);
 class Item;
 
 // 二维数组, 即地图的坐标索引, 内部是指向 Item实例的指针
-typedef vector<vector<Item* >> grid;
+typedef vector<vector<Item* >> Grid;
 
 class Field
 {
@@ -30,7 +30,7 @@ public:
     Loc createRandomLoc();
 
     int height, width;
-    grid field;
+    Grid itemMap;
     vector<Snake*> snakes;
 };
 
