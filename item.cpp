@@ -24,7 +24,7 @@ Snake* Item::hitBodySnake(vector<Snake*> snakes) {
     return nullptr;
 }
 
-string Item::getName() { return name; }
+itemType Item::getName() { return name; }
 
 // 父类的 action() 不应该被调用 -------------------------------
 void Item::action(Snake*) {
@@ -42,10 +42,11 @@ void Food::changeAddLength(int newLen) {
 }
 
 void Food::action(Snake* snake) {
+    if (snake == nullptr) { return; }
     snake->addLength(add_length);
 }
 
-string Food::getName() { return name; }
+itemType Food::getName() { return name; }
 
 
 Magnet::Magnet(Loc location, int effective_time):
@@ -55,10 +56,11 @@ Magnet::Magnet(Loc location, int effective_time):
     {}
 
 void Magnet::action(Snake* snake) {
+    if (snake == nullptr) { return; }
     snake->magnetic = effective_time;
 }
 
-string Magnet::getName() { return name; }
+itemType Magnet::getName() { return name; }
 
 
 Shield::Shield(Loc location, int effective_time):
@@ -66,10 +68,11 @@ Shield::Shield(Loc location, int effective_time):
     effective_time(effective_time) {}
 
 void Shield::action(Snake* snake) {
+    if (snake == nullptr) { return; }
     snake->revival = effective_time;
 }
 
-string Shield::getName() { return name; }
+itemType Shield::getName() { return name; }
 
 
 Firstaid::Firstaid(Loc location, int add_health):
@@ -81,11 +84,12 @@ void Firstaid::changeAddHealth(int newHealth) {
 }
 
 void Firstaid::action(Snake* snake) {
+    if (snake == nullptr) { return; }
     // 最多加到满血
     snake->health = min(snake->MAX_health, snake->health + add_health);
 }
 
-string Firstaid::getName() { return name; }
+itemType Firstaid::getName() { return name; }
 
 
 Warning::Warning(Loc location, int counting, Item* nextItem):
@@ -101,7 +105,7 @@ void Warning::action(Snake* snake) {
     counting -= 1;
 }
 
-string Warning::getName() { return name; }
+itemType Warning::getName() { return name; }
 
 
 Obstacle::Obstacle(Loc location, int injury):
@@ -109,20 +113,22 @@ Obstacle::Obstacle(Loc location, int injury):
     injury(injury) {}
 
 void Obstacle::action(Snake* snake) {
+    if (snake == nullptr) { return; }
     snake->decreaseHealth(injury);
 }
 
-string Obstacle::getName() { return name; }
+itemType Obstacle::getName() { return name; }
 
 
 Wall::Wall(Loc location):
     Item(location) {}
 
 void Wall::action(Snake* snake) {
+    if (snake == nullptr) { return; }
     snake->death();
 }
 
-string Wall::getName() { return name; }
+itemType Wall::getName() { return name; }
 
 
 Aerolite::Aerolite(Loc location):
@@ -150,7 +156,7 @@ void Aerolite::action(Snake* snake) {
     }
 }
 
-string Aerolite::getName() { return name; }
+itemType Aerolite::getName() { return name; }
 
 
 Marsh::Marsh(Loc location, int decelerate):
@@ -158,7 +164,8 @@ Marsh::Marsh(Loc location, int decelerate):
     decelerate(decelerate) {}
 
 void Marsh::action(Snake* snake) {
+    if (snake == nullptr) { return; }
     snake->speed -= decelerate;
 }
 
-string Marsh::getName() { return name; }
+itemType Marsh::getName() { return name; }
