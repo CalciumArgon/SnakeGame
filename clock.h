@@ -2,6 +2,7 @@
 #define CLOCK_H
 
 #include <string>
+#include <iostream>
 using namespace std;
 
 class Clock
@@ -14,7 +15,7 @@ public:
 
     void run();
     void show();
-    int time();
+    int getTime();
 
     int time;
     int step = 1;   // 每次运行在 time 上叠加的数值
