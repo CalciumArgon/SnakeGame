@@ -16,5 +16,7 @@ void Game::snakeAction(Snake* snake) {
     /*****
         注意区分 snakeAction() 和 runGame() 的功能区别
     *****/
+
     return;
 }
+
