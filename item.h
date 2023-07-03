@@ -8,6 +8,7 @@
 using namespace std;
 
 map<string, Item> item;
+enum itemType {BASIC=0, FOOD, MAGNET, SHIELD, FIRSTAID, WARNING, OBSTACLE, WALL, AEROLITE, MARSH};
 
 /*
     物品类:
@@ -22,8 +23,8 @@ public:
     Snake* hitBodySnake(vector<Snake*>);
 
     virtual void action(Snake*) = 0;
-    virtual string getName();
-    string name = "basic";
+    virtual itemType getName();
+    itemType name = BASIC;
     Loc location;
 };
 
@@ -36,10 +37,10 @@ class Food: public Item
     Food(Loc, int);  // 以指定增加长度来初始化
 
     virtual void action(Snake*);
-    virtual string getName();
+    virtual itemType getName();
     void changeAddLength(int);
 
-    string name = "food";
+    itemType name = FOOD;
     int add_length = 1;
 };
 
@@ -53,8 +54,8 @@ class Magnet: public Item
     Magnet(Loc, int);    // 以指定有效时长来初始化
 
     virtual void action(Snake*);
-    virtual string getName();
-    string name = "magnet";
+    virtual itemType getName();
+    itemType name = MAGNET;
     int effective_time;
     int remain_time;    // 好像没什么用, 在 Snake 里有倒计时
 };
@@ -70,8 +71,8 @@ class Shield: public Item
     Shield(Loc, int);    // 以指定有效时长来初始化
 
     virtual void action(Snake*);
-    virtual string getName();
-    string name = "shield";
+    virtual itemType getName();
+    itemType name = SHIELD;
     int effective_time;
 };
 
@@ -84,10 +85,10 @@ class Firstaid: public Item
     Firstaid(Loc, int);     // 以能增加的血量值初始化
 
     virtual void action(Snake*);
-    virtual string getName();
+    virtual itemType getName();
     void changeAddHealth(int);
 
-    string name = "firstaid";
+    itemType name = FIRSTAID;
     int add_health = 1;
 };
 
@@ -100,10 +101,10 @@ class Warning: public Item
     Warning(Loc, int, Item*);    // 初始化倒计时长 和 终点物体
 
     virtual void action(Snake*);
-    virtual string getName();
+    virtual itemType getName();
     int counting;
     Item* nextItem;
-    string name = "warning";
+    itemType name = WARNING;
 };
 
 /*
@@ -115,9 +116,9 @@ class Obstacle: public Item
     Obstacle(Loc, int);  // 以伤害量初始化
 
     virtual void action(Snake*);
-    virtual string getName();
+    virtual itemType getName();
     int injury;
-    string name = "obstacle";
+    itemType name = OBSTACLE;
 };
 
 /*
@@ -129,8 +130,8 @@ class Wall: public Item
     Wall(Loc);
 
     virtual void action(Snake*);
-    virtual string getName();
-    string name = "wall";
+    virtual itemType getName();
+    itemType name = WALL;
 };
 
 /*
@@ -142,8 +143,8 @@ class Aerolite: public Item
     Aerolite(Loc);
 
     virtual void action(Snake*);
-    virtual string getName();
-    string name = "aerolite";
+    virtual itemType getName();
+    itemType name = AEROLITE;
 };
 
 /*
@@ -155,9 +156,9 @@ class Marsh: public Item
     Marsh(Loc, int);     // 以减速程度初始化
 
     virtual void action(Snake*);
-    virtual string getName();
+    virtual itemType getName();
     int decelerate;
-    string name = "marsh";
+    itemType name = MARSH;
 };
 
 
