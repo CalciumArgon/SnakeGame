@@ -12,9 +12,9 @@ enum Direction {up=0, down, left, right};
 class Snake
 {
 public:
-    Snake(vector<Loc>, int length, int MAX_health, Direction direction, Grid itemMap);
+    Snake(vector<Loc>, int length, int MAX_health, Direction direction, Grid* item_map);
     // 给定头部坐标, 按长度默认初始化一条朝向指定方向的蛇
-    Snake(Loc head, int length, int MAX_health, Direction direction, Grid itemMap);
+    Snake(Loc head, int length, int MAX_health, Direction direction, Grid* item_map);
 
     void initialize();
 
@@ -31,7 +31,7 @@ public:
     void death();   // 死亡程序, 在 revival > 0 的情况下重新在地图中心初始化, 否则返回死亡
 
     int MAX_health;
-    Grid itemMap;
+    Grid* item_map;
 
     int length;
     vector<Loc> body;   // body[0] 是头部
