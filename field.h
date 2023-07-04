@@ -2,6 +2,7 @@
 #define FIELD_H
 
 #include "snake.h"
+#include "item.h"
 
 #include <vector>
 #include <utility>
@@ -26,7 +27,8 @@ public:
 
     void loadMap();     // 某种 文件读取并存储将要被加载的物体 的方式
 
-    void createItem(int type, Loc);
+    void setItem(Item*);
+    Item* createItem(ItemType, Loc, int info);
     Loc createRandomLoc();
 
     int height, width;
