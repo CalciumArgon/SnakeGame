@@ -31,8 +31,11 @@ public:
     Item* createItem(ItemType, Loc, int info);
     Loc createRandomLoc();
 
+    // 设置 给定时间后 变成 给定Item 的 警告块
+    void createWarning(Loc, int, Item*);
+
     int height, width;
-    Grid itemMap;
+    Grid item_map;
     vector<Snake*> snakes;
 };
 
