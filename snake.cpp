@@ -1,18 +1,18 @@
 
 #include "snake.h"
 
-Snake::Snake(vector<Loc> body, int length, int MAX_health, Direction direction, Grid itemMap):
+Snake::Snake(vector<Loc> body, int length, int MAX_health, Direction direction, Grid* item_map):
     body(body),
     length(length),
     MAX_health(MAX_health),
     direction(direction),
-    itemMap(itemMap) {}
+    item_map(item_map) {}
 
-Snake::Snake(Loc head, int length, int MAX_health, Direction direction, Grid itemMap):
+Snake::Snake(Loc head, int length, int MAX_health, Direction direction, Grid* item_map):
     length(length),
     MAX_health(MAX_health),
     direction(direction),
-    itemMap(itemMap)
+    item_map(item_map)
 {
     body.clear();
     body.push_back(head);
@@ -43,14 +43,13 @@ void Snake::initialize() {
     speed = 3;
     cycle_recorder = 1;
     eaten = 0;
+    killed = 0;
     direction = up;
     magnetic = 0;
     revival = 0;
 }
 
 void Snake::changeDirection(Direction newDirection) {
-    // 必须是 up down left right 中的一个
-    // 之后所有函数都不写错误处理了, 自己写的时候小心一点
     direction = newDirection;
 }
 
@@ -62,11 +61,14 @@ Loc Snake::nextLoc() {
     else if (direction == Direction::right) { return make_pair(x, y+1); }
 }
 
-void Snake::move() {
+
+// 如果不到时钟周期没有移动, 返回 false
+// 否则正常移动, 返回 true;
+bool Snake::move() {
     /* ===== 全局时钟走过 (6 - speed) 个周期蛇才会进行动作 ===== */
     if (cycle_recorder != (6 - speed)) {
         cycle_recorder += 1;
-        return;
+        return false;
     } else {
         cycle_recorder = 1;
     }
@@ -79,6 +81,7 @@ void Snake::move() {
     if (hit_item != nullptr && hit_item->getName() != AEROLITE && hit_item->getName() != MARSH) {
         hit_item->action(this);
     }
+    return true;
 }
 
 /*
@@ -96,11 +99,11 @@ void Snake::addLength(int adding) {
     int delta_x = l_x - sl_x, delta_y = l_y - sl_y;
     for (int i=1; i<=adding; ++i) {
         int newX = l_x + i*delta_x, newY = l_y + i*delta_y;
-        if (!isWithin(newX, 0, itemMap.size()-1) || !isWithin(newY, 0, itemMap[0].size()-1)) {
+        if (!isWithin(newX, 0, item_map->size()-1) || !isWithin(newY, 0, (*item_map)[0].size()-1)) {
             // 新坐标不在地图边界里
             break;
         }
-        if (itemMap[newX][newY] != nullptr) {
+        if ((*item_map)[newX][newY] != nullptr) {
             // 新坐标上有物体
             break;
         }
@@ -109,7 +112,7 @@ void Snake::addLength(int adding) {
 }
 
 Item* Snake::hitItem() {
-    return itemMap[body[0].first][body[0].second];
+    return (*item_map)[body[0].first][body[0].second];
 }
 
 bool Snake::hitSelf() {
@@ -144,14 +147,16 @@ void Snake::decreaseHealth(int injury) {
 void Snake::death() {
     if (revival > 0) {
         int previous_eaten = eaten; // 之前吃过的食物数量不清零
+        int previous_killed = killed; // 之前杀的蛇数量不清零
         initialize();
         health = 0.8 * MAX_health;
         eaten = previous_eaten;
-        body = Snake( make_pair(itemMap.size() / 2, itemMap[0].size() / 2),
+        killed = previous_killed;
+        body = Snake( make_pair((*item_map).size() / 2, (*item_map)[0].size() / 2),
                       length,
                       MAX_health,
                       Direction::up,
-                      itemMap ).body;   // 用中间初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
+                      item_map ).body;   // 用中间初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
     } else {
         // TODO: 返回接口 传递死亡的信息
         cout << "====== Death ======\n";
