@@ -10,10 +10,10 @@ Field::Field(int height, int width): height(height), width(width) {}
 Field::~Field() {
     for (int i=0; i<this->height; ++i) {
         for (int j=0; j<this->width; ++j) {
-            delete this->itemMap[i][j];
+            delete this->item_map[i][j];
         }
     }
-    itemMap.clear();
+    item_map.clear();
     return;
 }
 
@@ -22,9 +22,9 @@ bool Field::inBound(Loc location) {
     return (isWithin(location.first, 0, height - 1) && isWithin(location.second, 0, width));
 }
 
-// itemMap 中记录物体, 注意 Item 实例中已经记录了自己的坐标
+// item_map 中记录物体, 注意 Item 实例中已经记录了自己的坐标
 void Field::setItem(Item* item) {
-    itemMap[item->location.first][item->location.second] = item;
+    item_map[item->location.first][item->location.second] = item;
 }
 
 Item* Field::createItem(ItemType type, Loc location, int info) {
@@ -49,6 +49,10 @@ Item* Field::createItem(ItemType type, Loc location, int info) {
     return item;
 }
 
+void Field::createWarning(Loc location, int counting, Item* nextItem) {
+    Item* warning = new Warning(location, counting, nextItem);
+    item_map[location.first][location.second] = warning;
+}
 
 Loc Field::createRandomLoc() {
     srand(time(NULL));
