@@ -8,7 +8,7 @@
 using namespace std;
 
 map<string, Item> item;
-enum itemType {BASIC=0, FOOD, MAGNET, SHIELD, FIRSTAID, WARNING, OBSTACLE, WALL, AEROLITE, MARSH};
+enum ItemType {BASIC=0, FOOD, MAGNET, SHIELD, FIRSTAID, WARNING, OBSTACLE, WALL, AEROLITE, MARSH};
 
 /*
     物品类:
@@ -23,8 +23,8 @@ public:
     Snake* hitBodySnake(vector<Snake*>);
 
     virtual void action(Snake*) = 0;
-    virtual itemType getName();
-    itemType name = BASIC;
+    virtual ItemType getName();
+    ItemType name = BASIC;
     Loc location;
 };
 
@@ -34,13 +34,14 @@ public:
 */
 class Food: public Item
 {
+public:
     Food(Loc, int);  // 以指定增加长度来初始化
 
     virtual void action(Snake*);
-    virtual itemType getName();
+    virtual ItemType getName();
     void changeAddLength(int);
 
-    itemType name = FOOD;
+    ItemType name = FOOD;
     int add_length = 1;
 };
 
@@ -51,11 +52,12 @@ class Food: public Item
 */
 class Magnet: public Item
 {
+public:
     Magnet(Loc, int);    // 以指定有效时长来初始化
 
     virtual void action(Snake*);
-    virtual itemType getName();
-    itemType name = MAGNET;
+    virtual ItemType getName();
+    ItemType name = MAGNET;
     int effective_time;
     int remain_time;    // 好像没什么用, 在 Snake 里有倒计时
 };
@@ -68,11 +70,12 @@ class Magnet: public Item
 */
 class Shield: public Item
 {
+public:
     Shield(Loc, int);    // 以指定有效时长来初始化
 
     virtual void action(Snake*);
-    virtual itemType getName();
-    itemType name = SHIELD;
+    virtual ItemType getName();
+    ItemType name = SHIELD;
     int effective_time;
 };
 
@@ -82,13 +85,14 @@ class Shield: public Item
 */
 class Firstaid: public Item
 {
+public:
     Firstaid(Loc, int);     // 以能增加的血量值初始化
 
     virtual void action(Snake*);
-    virtual itemType getName();
+    virtual ItemType getName();
     void changeAddHealth(int);
 
-    itemType name = FIRSTAID;
+    ItemType name = FIRSTAID;
     int add_health = 1;
 };
 
@@ -98,13 +102,14 @@ class Firstaid: public Item
 */
 class Warning: public Item
 {
+public:
     Warning(Loc, int, Item*);    // 初始化倒计时长 和 终点物体
 
     virtual void action(Snake*);
-    virtual itemType getName();
+    virtual ItemType getName();
     int counting;
     Item* nextItem;
-    itemType name = WARNING;
+    ItemType name = WARNING;
 };
 
 /*
@@ -113,12 +118,13 @@ class Warning: public Item
 */
 class Obstacle: public Item
 {
+public:
     Obstacle(Loc, int);  // 以伤害量初始化
 
     virtual void action(Snake*);
-    virtual itemType getName();
+    virtual ItemType getName();
     int injury;
-    itemType name = OBSTACLE;
+    ItemType name = OBSTACLE;
 };
 
 /*
@@ -127,11 +133,12 @@ class Obstacle: public Item
 */
 class Wall: public Item
 {
+public:
     Wall(Loc);
 
     virtual void action(Snake*);
-    virtual itemType getName();
-    itemType name = WALL;
+    virtual ItemType getName();
+    ItemType name = WALL;
 };
 
 /*
@@ -140,11 +147,12 @@ class Wall: public Item
 */
 class Aerolite: public Item
 {
+public:
     Aerolite(Loc);
 
     virtual void action(Snake*);
-    virtual itemType getName();
-    itemType name = AEROLITE;
+    virtual ItemType getName();
+    ItemType name = AEROLITE;
 };
 
 /*
@@ -153,12 +161,13 @@ class Aerolite: public Item
 */
 class Marsh: public Item
 {
+public:
     Marsh(Loc, int);     // 以减速程度初始化
 
     virtual void action(Snake*);
-    virtual itemType getName();
+    virtual ItemType getName();
     int decelerate;
-    itemType name = MARSH;
+    ItemType name = MARSH;
 };
 
 

@@ -24,7 +24,7 @@ Snake* Item::hitBodySnake(vector<Snake*> snakes) {
     return nullptr;
 }
 
-itemType Item::getName() { return name; }
+ItemType Item::getName() { return name; }
 
 // 父类的 action() 不应该被调用 -------------------------------
 void Item::action(Snake*) {
@@ -46,7 +46,7 @@ void Food::action(Snake* snake) {
     snake->addLength(add_length);
 }
 
-itemType Food::getName() { return name; }
+ItemType Food::getName() { return name; }
 
 
 Magnet::Magnet(Loc location, int effective_time):
@@ -60,7 +60,7 @@ void Magnet::action(Snake* snake) {
     snake->magnetic = effective_time;
 }
 
-itemType Magnet::getName() { return name; }
+ItemType Magnet::getName() { return name; }
 
 
 Shield::Shield(Loc location, int effective_time):
@@ -72,7 +72,7 @@ void Shield::action(Snake* snake) {
     snake->revival = effective_time;
 }
 
-itemType Shield::getName() { return name; }
+ItemType Shield::getName() { return name; }
 
 
 Firstaid::Firstaid(Loc location, int add_health):
@@ -89,7 +89,7 @@ void Firstaid::action(Snake* snake) {
     snake->health = min(snake->MAX_health, snake->health + add_health);
 }
 
-itemType Firstaid::getName() { return name; }
+ItemType Firstaid::getName() { return name; }
 
 
 Warning::Warning(Loc location, int counting, Item* nextItem):
@@ -105,7 +105,7 @@ void Warning::action(Snake* snake) {
     counting -= 1;
 }
 
-itemType Warning::getName() { return name; }
+ItemType Warning::getName() { return name; }
 
 
 Obstacle::Obstacle(Loc location, int injury):
@@ -117,7 +117,7 @@ void Obstacle::action(Snake* snake) {
     snake->decreaseHealth(injury);
 }
 
-itemType Obstacle::getName() { return name; }
+ItemType Obstacle::getName() { return name; }
 
 
 Wall::Wall(Loc location):
@@ -128,7 +128,7 @@ void Wall::action(Snake* snake) {
     snake->death();
 }
 
-itemType Wall::getName() { return name; }
+ItemType Wall::getName() { return name; }
 
 
 Aerolite::Aerolite(Loc location):
@@ -156,7 +156,7 @@ void Aerolite::action(Snake* snake) {
     }
 }
 
-itemType Aerolite::getName() { return name; }
+ItemType Aerolite::getName() { return name; }
 
 
 Marsh::Marsh(Loc location, int decelerate):
@@ -168,4 +168,4 @@ void Marsh::action(Snake* snake) {
     snake->speed -= decelerate;
 }
 
-itemType Marsh::getName() { return name; }
+ItemType Marsh::getName() { return name; }

@@ -8,11 +8,12 @@ bool isWithin(int target, int low, int high) {
 
 Field::Field(int height, int width): height(height), width(width) {}
 Field::~Field() {
-    // for (int i=0; i<this->height; ++i) {
-    //     for (int j=0; j<this->width; ++j) {
-    //         delete this->field[i][j];
-    //     }
-    // }
+    for (int i=0; i<this->height; ++i) {
+        for (int j=0; j<this->width; ++j) {
+            delete this->itemMap[i][j];
+        }
+    }
+    itemMap.clear();
     return;
 }
 
@@ -21,23 +22,33 @@ bool Field::inBound(Loc location) {
     return (isWithin(location.first, 0, height - 1) && isWithin(location.second, 0, width));
 }
 
-/*
-TODO: 可能要把 int type 改成对所有物品的枚举类型
-在 (x, y) 处产生一个物品
-    0: 食物
-    1: 增益
-    2: 削弱
-*/
-void Field::createItem(int type, Loc location) {
-    if (type == 0) {
-        return;
-    } else if (type == 1 ) {
-        return;
-    } else if (type == 2) {
-        return;
-    }
-    cout << "Wrong";
+// itemMap 中记录物体, 注意 Item 实例中已经记录了自己的坐标
+void Field::setItem(Item* item) {
+    itemMap[item->location.first][item->location.second] = item;
 }
+
+Item* Field::createItem(ItemType type, Loc location, int info) {
+    Item* item;
+    if (type == ItemType::FOOD) {
+        item = new Food(location, info);
+    } else if (type == ItemType::MAGNET) {
+        item = new Magnet(location, info);
+    } else if (type == ItemType::SHIELD) {
+        item = new Shield(location, info);
+    } else if (type == ItemType::FIRSTAID) {
+        item = new Firstaid(location, info);
+    } else if (type == ItemType::OBSTACLE) {
+        item = new Obstacle(location, info);
+    } else if (type == ItemType::WALL) {
+        item = new Wall(location);
+    } else if (type == ItemType::AEROLITE) {
+        item = new Aerolite(location);
+    } else if (type == ItemType::MARSH) {
+        item = new Marsh(location, info);
+    }
+    return item;
+}
+
 
 Loc Field::createRandomLoc() {
     srand(time(NULL));
