@@ -1,18 +1,18 @@
 
 #include "snake.h"
 
-Snake::Snake(vector<Loc> body, int length, int MAX_health, Direction direction, Grid itemMap):
+Snake::Snake(vector<Loc> body, int length, int MAX_health, Direction direction, Grid* item_map):
     body(body),
     length(length),
     MAX_health(MAX_health),
     direction(direction),
-    itemMap(itemMap) {}
+    item_map(item_map) {}
 
-Snake::Snake(Loc head, int length, int MAX_health, Direction direction, Grid itemMap):
+Snake::Snake(Loc head, int length, int MAX_health, Direction direction, Grid* item_map):
     length(length),
     MAX_health(MAX_health),
     direction(direction),
-    itemMap(itemMap)
+    item_map(item_map)
 {
     body.clear();
     body.push_back(head);
@@ -96,11 +96,11 @@ void Snake::addLength(int adding) {
     int delta_x = l_x - sl_x, delta_y = l_y - sl_y;
     for (int i=1; i<=adding; ++i) {
         int newX = l_x + i*delta_x, newY = l_y + i*delta_y;
-        if (!isWithin(newX, 0, itemMap.size()-1) || !isWithin(newY, 0, itemMap[0].size()-1)) {
+        if (!isWithin(newX, 0, item_map->size()-1) || !isWithin(newY, 0, (*item_map)[0].size()-1)) {
             // 新坐标不在地图边界里
             break;
         }
-        if (itemMap[newX][newY] != nullptr) {
+        if ((*item_map)[newX][newY] != nullptr) {
             // 新坐标上有物体
             break;
         }
@@ -109,7 +109,7 @@ void Snake::addLength(int adding) {
 }
 
 Item* Snake::hitItem() {
-    return itemMap[body[0].first][body[0].second];
+    return (*item_map)[body[0].first][body[0].second];
 }
 
 bool Snake::hitSelf() {
@@ -147,11 +147,11 @@ void Snake::death() {
         initialize();
         health = 0.8 * MAX_health;
         eaten = previous_eaten;
-        body = Snake( make_pair(itemMap.size() / 2, itemMap[0].size() / 2),
+        body = Snake( make_pair((*item_map).size() / 2, (*item_map)[0].size() / 2),
                       length,
                       MAX_health,
                       Direction::up,
-                      itemMap ).body;   // 用中间初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
+                      item_map ).body;   // 用中间初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
     } else {
         // TODO: 返回接口 传递死亡的信息
         cout << "====== Death ======\n";
