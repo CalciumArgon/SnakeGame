@@ -2,7 +2,6 @@
 #define SNAKE_H
 
 #include "item.h"
-#include "field.h"
 #include <vector>
 using namespace std;
 
@@ -20,7 +19,7 @@ public:
 
     void changeDirection(Direction);
     Loc nextLoc();
-    void move();    // 前进, 检查碰到的物体并 Item.action(this) , 更新身体坐标以及其他参数
+    bool move();    // 前进, 检查碰到的物体并 Item.action(this) , 更新身体坐标以及其他参数
     Item* hitItem();
 
     bool hitSelf();
@@ -36,7 +35,9 @@ public:
     int length;
     vector<Loc> body;   // body[0] 是头部
     int health;
+
     int eaten = 0;  // 吃过的食物 与长度无直接关系
+    int killed = 0; // 杀死的蛇
 
     /*
         加速时: speed 调成 5
