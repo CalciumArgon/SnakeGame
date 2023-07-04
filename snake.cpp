@@ -43,14 +43,13 @@ void Snake::initialize() {
     speed = 3;
     cycle_recorder = 1;
     eaten = 0;
+    killed = 0;
     direction = up;
     magnetic = 0;
     revival = 0;
 }
 
 void Snake::changeDirection(Direction newDirection) {
-    // 必须是 up down left right 中的一个
-    // 之后所有函数都不写错误处理了, 自己写的时候小心一点
     direction = newDirection;
 }
 
@@ -62,11 +61,14 @@ Loc Snake::nextLoc() {
     else if (direction == Direction::right) { return make_pair(x, y+1); }
 }
 
-void Snake::move() {
+
+// 如果不到时钟周期没有移动, 返回 false
+// 否则正常移动, 返回 true;
+bool Snake::move() {
     /* ===== 全局时钟走过 (6 - speed) 个周期蛇才会进行动作 ===== */
     if (cycle_recorder != (6 - speed)) {
         cycle_recorder += 1;
-        return;
+        return false;
     } else {
         cycle_recorder = 1;
     }
@@ -79,6 +81,7 @@ void Snake::move() {
     if (hit_item != nullptr && hit_item->getName() != AEROLITE && hit_item->getName() != MARSH) {
         hit_item->action(this);
     }
+    return true;
 }
 
 /*
@@ -144,9 +147,11 @@ void Snake::decreaseHealth(int injury) {
 void Snake::death() {
     if (revival > 0) {
         int previous_eaten = eaten; // 之前吃过的食物数量不清零
+        int previous_killed = killed; // 之前杀的蛇数量不清零
         initialize();
         health = 0.8 * MAX_health;
         eaten = previous_eaten;
+        killed = previous_killed;
         body = Snake( make_pair((*item_map).size() / 2, (*item_map)[0].size() / 2),
                       length,
                       MAX_health,
