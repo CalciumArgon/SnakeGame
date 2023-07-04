@@ -1,78 +1,108 @@
-
 #include "snake.h"
 
-Snake::Snake(vector<Loc> body, int length, int MAX_health, Direction direction, Grid* item_map):
+using namespace std;
+
+Snake::Snake(vector<Loc> body, int length, int max_health, Direction direction, Grid* item_map_ptr) :
     body(body),
     length(length),
-    MAX_health(MAX_health),
+    max_health(max_health),
     direction(direction),
-    item_map(item_map) {}
+    item_map_ptr(item_map_ptr),
+    health(max_health)
+{}
 
-Snake::Snake(Loc head, int length, int MAX_health, Direction direction, Grid* item_map):
+Snake::Snake(Loc head, int length, int max_health, Direction direction, Grid* item_map_ptr) :
     length(length),
-    MAX_health(MAX_health),
+    max_health(max_health),
     direction(direction),
-    item_map(item_map)
+    item_map_ptr(item_map_ptr),
+    health(max_health)
 {
     body.clear();
     body.push_back(head);
     int x = head.first, y = head.second;
-    if (direction == Direction::up) {    // 头方向朝上, 身体在头下方
-        for (int i=1; i<length; i++) {
-            body.push_back(make_pair(x-i, y));
-        }
-    } else if (direction == Direction::down) {
-        for (int i=1; i<length; i++) {
-            body.push_back(make_pair(x+i, y));
-        }
-    } else if (direction == Direction::left) {
+    switch(direction)
+    {
+    case UP:
         for (int i=1; i<length; i++) {
             body.push_back(make_pair(x, y+i));
         }
-    } else if (direction == Direction::right) {
+        break;
+
+     case DOWN:
         for (int i=1; i<length; i++) {
             body.push_back(make_pair(x, y-i));
         }
+        break;
+    case LEFT:
+        for (int i=1; i<length; i++) {
+            body.push_back(make_pair(x+i, y));
+        }
+        break;
+    case RIGHT:
+        for (int i=1; i<length; i++) {
+            body.push_back(make_pair(x-i, y));
+        }
+        break;
     }
-    
-    if (length != body.size()) { cout << "Initialization body fail, length goes wrong !!!\n"; }
 }
 
-void Snake::initialize() {
-    health = MAX_health;
-    speed = 3;
-    cycle_recorder = 1;
-    eaten = 0;
-    killed = 0;
-    direction = up;
-    magnetic = 0;
-    revival = 0;
+int Snake::getLength()
+{
+    return length;
 }
 
-void Snake::changeDirection(Direction newDirection) {
-    direction = newDirection;
+vector<Loc> &Snake::getBody()
+{
+    return body;
 }
 
-Loc Snake::nextLoc() {
+void Snake::changeDireciton(Direction new_direction)
+{
+    switch (direction)
+    {
+        case UP:
+            if (new_direction == LEFT || new_direction == RIGHT)
+                direction = new_direction;
+            break;
+        case DOWN:
+            if (new_direction == LEFT || new_direction == RIGHT)
+                direction = new_direction;
+            break;
+        case LEFT:
+            if (new_direction == UP || new_direction == DOWN)
+                direction = new_direction;
+            break;
+        case RIGHT:
+            if (new_direction == UP || new_direction == DOWN)
+                direction = new_direction;
+            break;
+    }
+}
+
+Loc Snake::nextLoc()
+{
     int x = body[0].first, y = body[0].second;
-    if (direction == Direction::up) { return make_pair(x-1, y); }
-    else if (direction == Direction::down) { return make_pair(x+1, y); }
-    else if (direction == Direction::left) { return make_pair(x, y-1); }
-    else if (direction == Direction::right) { return make_pair(x, y+1); }
+    switch(direction){
+    case UP:
+        return make_pair(x, y-1);
+    case DOWN:
+        return make_pair(x, y+1);
+    case LEFT:
+        return make_pair(x-1, y);
+    case RIGHT:
+        return make_pair(x+1, y);
+    }
 }
 
-
-// 如果不到时钟周期没有移动, 返回 false
-// 否则正常移动, 返回 true;
-bool Snake::move() {
-    /* ===== 全局时钟走过 (6 - speed) 个周期蛇才会进行动作 ===== */
-    if (cycle_recorder != (6 - speed)) {
+bool Snake::move()
+{
+    /*if (cycle_recorder != (6 - speed)) {
         cycle_recorder += 1;
         return false;
     } else {
         cycle_recorder = 1;
-    }
-    /* ====================================================== */
+    }*/
     Loc new_head = nextLoc();
     body.insert(body.begin(), new_head);
     body.pop_back();
@@ -84,11 +114,32 @@ bool Snake::move() {
     return true;
 }
 
-/*
-    在身体最后沿倒数两段身体的连线方向增加 adding 段
-    超出地图边界/碰到任何 Item 的身体及之后的部分都不再加载
-*/
-void Snake::addLength(int adding) {
+Item *Snake::hitItem()
+{
+    return (*item_map_ptr)[body[0].first][body[0].second];
+}
+
+bool Snake::hitSelf()
+{
+    Loc head = body[0];
+    for (int i=1; i<length; ++i) {
+        if (head == body[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Snake::hitEdge()
+{
+    Loc head = body[0];
+    if(!isWithin(head.first, 0, item_map_ptr->size()-1) || !isWithin(head.second, 0, (*item_map_ptr)[0].size()-1))
+        return true;
+    return false;
+}
+
+void Snake::addLength(int adding)
+{
     // second last X/Y 倒数第二段身体
     int sl_x = body[length-2].first, sl_y = body[length-2].second;
     // last X/Y 最后一段身体
@@ -99,11 +150,11 @@ void Snake::addLength(int adding) {
     int delta_x = l_x - sl_x, delta_y = l_y - sl_y;
     for (int i=1; i<=adding; ++i) {
         int newX = l_x + i*delta_x, newY = l_y + i*delta_y;
-        if (!isWithin(newX, 0, item_map->size()-1) || !isWithin(newY, 0, (*item_map)[0].size()-1)) {
+        if (!isWithin(newX, 0, item_map_ptr->size()-1) || !isWithin(newY, 0, (*item_map_ptr)[0].size()-1)) {
             // 新坐标不在地图边界里
             break;
         }
-        if ((*item_map)[newX][newY] != nullptr) {
+        if ((*item_map_ptr)[newX][newY] != nullptr) {
             // 新坐标上有物体
             break;
         }
@@ -111,54 +162,60 @@ void Snake::addLength(int adding) {
     }
 }
 
-Item* Snake::hitItem() {
-    return (*item_map)[body[0].first][body[0].second];
+void Snake::initialize()
+{
+    health = max_health;
+    speed = 3;
+    cycle_recorder = 1;
+    eaten = 0;
+    killed = 0;
+    direction = UP;
+    magnetic = 0;
+    revival = 0;
 }
 
-bool Snake::hitSelf() {
-    Loc head = body[0];
-    for (int i=1; i<length; ++i) {
-        if (head == body[i]) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool Snake::hitOtherSnake(vector<Snake*> snakes) {
-    Loc head = body[0];
-    for (Snake* other: snakes) {
-        for (Loc other_body: other->body) {
-            if (head == other_body) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-void Snake::decreaseHealth(int injury) {
-    this->health -= injury;
-    if (health <= 0) {
-        this->death();
-    }
-}
-
-void Snake::death() {
+bool Snake::death()
+{
     if (revival > 0) {
         int previous_eaten = eaten; // 之前吃过的食物数量不清零
         int previous_killed = killed; // 之前杀的蛇数量不清零
         initialize();
-        health = 0.8 * MAX_health;
+        health = 0.8 * max_health;
         eaten = previous_eaten;
         killed = previous_killed;
-        body = Snake( make_pair((*item_map).size() / 2, (*item_map)[0].size() / 2),
+        body = Snake( make_pair(item_map_ptr->size() / 2, (*item_map_ptr)[0].size() / 2),
                       length,
-                      MAX_health,
-                      Direction::up,
-                      item_map ).body;   // 用中间初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
+                      max_health,
+                      UP,
+                      item_map_ptr ).body;   // 用中间初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
+        return false;
     } else {
+        return true;
         // TODO: 返回接口 传递死亡的信息
-        cout << "====== Death ======\n";
     }
+}
+
+void Snake::incEaten()
+{
+    eaten++;
+}
+
+void Snake::incKilled()
+{
+    killed++;
+}
+
+int Snake::getEaten()
+{
+    return eaten;
+}
+
+int Snake::getKilled()
+{
+    return killed;
+}
+
+bool isWithin(int target, int low, int high)
+{
+    return (target >= low && target <= high);
 }
