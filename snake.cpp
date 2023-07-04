@@ -49,7 +49,7 @@ void Snake::initialize() {
 }
 
 void Snake::changeDirection(Direction newDirection) {
-    // 必须是 "up" "down" "left" "right" 中的一个
+    // 必须是 up down left right 中的一个
     // 之后所有函数都不写错误处理了, 自己写的时候小心一点
     direction = newDirection;
 }
@@ -63,12 +63,20 @@ Loc Snake::nextLoc() {
 }
 
 void Snake::move() {
+    /* ===== 全局时钟走过 (6 - speed) 个周期蛇才会进行动作 ===== */
+    if (cycle_recorder != (6 - speed)) {
+        cycle_recorder += 1;
+        return;
+    } else {
+        cycle_recorder = 1;
+    }
+    /* ====================================================== */
     Loc new_head = nextLoc();
     body.insert(body.begin(), new_head);
     body.pop_back();
 
     Item* hit_item = hitItem();
-    if (hit_item != nullptr && hit_item->getName() != "aerolite" && hit_item->getName() != "Marsh") {
+    if (hit_item != nullptr && hit_item->getName() != AEROLITE && hit_item->getName() != MARSH) {
         hit_item->action(this);
     }
 }
