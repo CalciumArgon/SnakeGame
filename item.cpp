@@ -56,3 +56,14 @@ void Food::changeAddLength(int new_len)
 {
     add_length = new_len;
 }
+
+Wall::Wall(Loc location): Item(location) {}
+
+void Wall::action(Snake *) {
+    //Do nothing
+}
+
+ItemType Wall::getName()
+{
+    return WALL;
+}

@@ -1,5 +1,6 @@
 #include "game.h"
 #include <QThread>
+#include <fstream>
 
 using namespace std;
 
@@ -67,17 +68,25 @@ bool Game::runGame()
     }*/
 
     // 所有蛇进行行动
-    bool maction = true;
+    bool suc_action = true;
     Snake* msnake = state->getSnakes()[0];
-    maction = snakeAction(msnake);
-    if(!maction) return false;
-    if(msnake->hitItem() != nullptr && msnake->hitItem()->getName() == FOOD)
+    suc_action = snakeAction(msnake);
+    if(!suc_action) return false;
+    if(msnake->hitItem() != nullptr)
     {
-        location = state->createRandomLoc();
-        while(msnake->isPartOfSnake(location))
+        switch(msnake->hitItem()->getName()){
+        case FOOD:
             location = state->createRandomLoc();
-        state->createItem(BASIC, msnake->getBody()[0], 0);
-        state->createItem(FOOD, location, 1);
+            while(msnake->isPartOfSnake(location))
+                location = state->createRandomLoc();
+            state->createItem(BASIC, msnake->getBody()[0], 0);
+            state->createItem(FOOD, location, 1);
+            break;
+        case WALL:
+            return false;
+        default:
+           throw "Error: unknown item type";
+        }
     }
     // 陨石和沼泽的特殊效果判断
     /*for (vector<Item*> row: *state->getMapPtr()) {
@@ -102,6 +111,25 @@ void Game::initializeGame(int level)
     ItemType type = FOOD;
     int info = 1;
     state->createItem(type, location, info);
+}
+
+bool Game::loadMap(string map_name)
+{
+    ifstream map_file;
+    map_file.open(map_name);
+    if (!map_file.is_open()) {
+        return false;
+    }
+//    state = new Field(height, width);
+    int item_num;
+    map_file >> item_num;
+    for (int i = 0; i < item_num; i++) {
+        int type, x, y, info;
+        map_file >> type >> x >> y >> info;
+        state->createItem((ItemType)type, Loc(x, y), info);
+    }
+    map_file.close();
+    return true;
 }
 
 int Game::reachTarget()

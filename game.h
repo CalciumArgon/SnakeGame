@@ -6,6 +6,7 @@
 #include "clock.h"
 
 enum GameMode {TIMELIMIT=0, TIMEFREE, KILLSNAKE};
+enum PlayMode {Normal=0};
 
 class Game
 {
@@ -17,6 +18,7 @@ public:
     bool runGame();     // 核心运行, 包含 [对时钟的控制] [接收决策信号] [对每条蛇的 snakeAction() 的调用]
 
     void initializeGame(int level);  // 用来给图形界面初始化信息
+    bool loadMap(std::string map_name);
 
     int reachTarget();
     Field* getState();
