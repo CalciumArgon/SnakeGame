@@ -47,5 +47,4 @@ private:
     ItemType name = WALL;
     Loc location;
 };
-
 #endif // ITEM_H

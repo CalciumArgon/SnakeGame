@@ -37,7 +37,7 @@ private:
     Grid* item_map_ptr;
     int width;
     int height;
-    int speed = 3;
+    int speed = 6;
     int health;
     int eaten = 0;
     int killed = 0;

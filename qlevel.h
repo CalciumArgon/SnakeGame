@@ -19,6 +19,13 @@ private:
 public slots:
     void on_btnReturn_clicked();
     void on_btnLev1_clicked();
+    void on_btnLev2_clicked();
+    void on_btnLev3_clicked();
+    void on_btnLev4_clicked();
+    void on_btnLev5_clicked();
+    void on_btnLev6_clicked();
+    void on_btnLev7_clicked();
+    void on_btnLev8_clicked();
 };
 
 #endif // QLEVEL_H

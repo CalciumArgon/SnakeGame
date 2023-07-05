@@ -67,3 +67,4 @@ ItemType Wall::getName()
 {
     return WALL;
 }
+

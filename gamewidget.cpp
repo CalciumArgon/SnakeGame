@@ -65,7 +65,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         emit(gameover());
         is_emit = true;
     }
-    QThread::msleep(10);
+    QThread::msleep(5);
     if(!game_over) {
         cnt_time++;
         update();

@@ -102,7 +102,7 @@ Loc Snake::nextLoc()
 
 bool Snake::move()
 {
-    if (cycle_recorder != (6 - speed)) {
+    if (cycle_recorder != (12 - speed)) {
         cycle_recorder += 1;
         return false;
     } else {
@@ -183,7 +183,7 @@ void Snake::addLength(int adding)
 void Snake::initialize()
 {
     health = max_health;
-    speed = 3;
+    speed = 6;
     cycle_recorder = 1;
     eaten = 0;
     killed = 0;
