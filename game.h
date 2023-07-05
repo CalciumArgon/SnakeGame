@@ -16,12 +16,12 @@ public:
     bool snakeAction(Snake*);    // 核心运行, 包含 [一轮时钟周期里] 对 [一条蛇] 的全部操作
     bool runGame();     // 核心运行, 包含 [对时钟的控制] [接收决策信号] [对每条蛇的 snakeAction() 的调用]
 
-    void initializeGame(int level);  // 用来给图形界面初始化信息
+    virtual void initializeGame(int level);  // 用来给图形界面初始化信息
 
     bool loadMap(std::string map_path);
     int reachTarget();
     Field* getState();
-private:
+protected:
     int level = 1;
 
     int target_food = 0;
@@ -35,3 +35,9 @@ private:
 
 #endif // GAME_H
 
+class AddWallGame: public Game
+{
+public:
+    AddWallGame(GameMode game_mode, int height, int width, std::vector<int> info);
+    void initializeGame(int level);
+};

@@ -107,6 +107,9 @@ bool Game::runGame()
 
 void Game::initializeGame(int level)
 {
+    Loc head = std::make_pair(20, 20);
+    Snake* snk = new Snake(head, 5, 1, LEFT, this->state->getMapPtr());
+    this->state->addSnake(snk);
     this->level = level;
     Loc location = state->createRandomLoc();
     while(state->getSnakes()[0]->isPartOfSnake(location))
@@ -119,8 +122,13 @@ void Game::initializeGame(int level)
 bool Game::loadMap(string map_name)
 {
     /*
-     * Map 格式：第一行输入地图所包含的物体数量（包括任何Item）|是否确定蛇的初始化位置（0：否，1：只确定蛇头位置，2：输入完整的蛇身坐标）| 游戏模式（先只实现0，普通模式）
-     * 然后每行输入一个物体的信息 类型 + 坐标
+     * Map 格式：第一行输入地图所包含的物体数量（包括任何Item）|是否确定蛇的初始化位置（0：否，1：只确定蛇头位置, 先输入方向，再输入长度，再输入蛇头位置 2：先输入方向，长度，再输入完整的蛇身坐标)
+     * 方向：0：上，1：下，2：左，3：右
+     * 长度：蛇的长度
+     * 蛇头位置：蛇头的坐标
+     * 蛇身坐标：蛇身的坐标
+     * 类型：1：食物，2：墙，3：陨石，4：沼泽
+     * 然后每行输入一个物体的信息 类型 + 坐标 + info
      * 输入完物体后，如果需要确定蛇的位置，则输入蛇的坐标 坐标每行一个
      * */
     ifstream map_file;
@@ -128,13 +136,45 @@ bool Game::loadMap(string map_name)
     if (!map_file.is_open()) {
         return false;
     }
-//    state = new Field(height, width);
-    int item_num;
-    map_file >> item_num;
+    int item_num, snake_init;
+    map_file >> item_num >> snake_init;
     for (int i = 0; i < item_num; i++) {
         int type, x, y, info;
         map_file >> type >> x >> y >> info;
         state->createItem((ItemType)type, Loc(x, y), info);
+    }
+    switch (snake_init) {
+        case 0: {
+            Loc head = state->createRandomLoc();
+            while(state->getSnakes()[0]->isPartOfSnake(head))
+                head = state->createRandomLoc();
+            Snake* snk = new Snake(head, 5, 1, LEFT, this->state->getMapPtr());
+            this->state->addSnake(snk);
+            break;
+        }
+        case 1: {
+            int direction, snake_len, x, y;
+            map_file >> direction >> snake_len >> x >> y;
+            Loc head = Loc(x, y);
+            Snake* snk = new Snake(head, snake_len, 1, (Direction)direction, this->state->getMapPtr());
+            this->state->addSnake(snk);
+            break;
+        }
+        case 2: {
+            int direction, snake_len, x, y;
+            map_file >> direction >> snake_len;
+            vector<Loc> body;
+            for (int i = 0; i < snake_len; i++) {
+                map_file >> x >> y;
+                body.push_back(Loc(x, y));
+            }
+            Snake* snk = new Snake(body, snake_len, 1, (Direction)direction, this->state->getMapPtr());
+            this->state->addSnake(snk);
+            break;
+        }
+        default:
+            throw "Error: unknown snake_init type";
+
     }
     map_file.close();
     return true;
@@ -169,4 +209,13 @@ int Game::reachTarget()
 Field *Game::getState()
 {
     return state;
+}
+
+
+AddWallGame::AddWallGame(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+
+void AddWallGame::initializeGame(int level) {
+    this->loadMap("map/addwallgame.txt");
+
+
 }

@@ -25,12 +25,8 @@ void QLevel::on_btnReturn_clicked()
     qmw->show();
 }
 
-void QLevel::on_btnLev1_clicked()
-{
+void QLevel::on_btnLev1_clicked(){
     Field* fld = new Field(40, 40);
-    Loc head = std::make_pair(20, 20);
-    Snake* snk = new Snake(head, 5, 1, LEFT, fld->getMapPtr());
-    fld->addSnake(snk);
     Game* game = new Game(fld, TIMEFREE, {10});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game);
@@ -39,10 +35,5 @@ void QLevel::on_btnLev1_clicked()
     gw->setFocusPolicy(Qt::ClickFocus);
     gw->resize(1250, 1350);
     gw->show();
-
-    //game->runGame();
-
 }
-
-
 

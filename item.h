@@ -6,7 +6,7 @@
 
 typedef std::pair<int, int> Loc;
 
-enum ItemType {BASIC=0, FOOD, MAGNET, SHIELD, FIRSTAID, OBSTACLE, WALL, AEROLITE, MARSH};
+enum ItemType {BASIC=0, FOOD, WALL, AEROLITE, MARSH, MAGNET, SHIELD, FIRSTAID, OBSTACLE,};
 
 class Snake;
 
