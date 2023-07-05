@@ -1,22 +1,136 @@
 #include "game.h"
+#include <QThread>
 
-void Game::snakeAction(Snake* snake) {
-    /*
-        1. 接收键盘按键 (方向和 Ctrl)
-        2. 更改方向或加速效果
-        3. 向所选方向运行
-        4. 判断碰撞蛇--是否需要调用 death()
-        5. 判断遇到物体--调用物体的 action()
-        6. 判断是否达成游戏目标
-        7. 读取地图, 生成计划好的物体 (无论是否 hitItem() 按全局时钟生成)
-        8. 一些特殊 Item 的自己的效果
-        9. 暂停时间, 全局时钟运行一轮   <-- 不用每条蛇 Action 中运行, 在 Game 域中整体运行一次
-        10. 返回一些其他需要反馈的信息 ....
-    */
-    /*****
-        注意区分 snakeAction() 和 runGame() 的功能区别
-    *****/
+using namespace std;
 
-    return;
+Game::Game(GameMode game_mode, int height, int width, std::vector<int> info) :
+    level(1),
+    clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
+    game_mode(game_mode)
+{
+    state = new Field(height, width);
+    if (game_mode == TIMELIMIT) {
+        target_food = info[0];
+        target_time = info[1];
+    } else if (game_mode == TIMEFREE) {
+        target_food = info[0];
+    } else if (game_mode == KILLSNAKE) {
+        target_kill = info[0];
+    }
 }
 
+Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
+    level(1),
+    clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
+    state(state),
+    game_mode(game_mode)
+{
+    if (game_mode == TIMELIMIT) {
+        target_food = info[0];
+        target_time = info[1];
+    } else if (game_mode == TIMEFREE) {
+        target_food = info[0];
+    } else if (game_mode == KILLSNAKE) {
+        target_kill = info[0];
+    }
+}
+
+bool Game::snakeAction(Snake *)
+{
+    Snake* msnake = state->getSnakes()[0];
+    msnake->move();   // 完成移动
+    if (msnake->hitSelf() || msnake->hitEdge()) {
+        return false;
+    }
+    return true;
+    /*
+    vector<Snake*> other_snakes = state->getSnakes();
+    other_snakes.erase(other_snakes.begin());
+    if (snake->hitOtherSnake(other_snakes)) {
+        snake->death();
+    }*/
+
+    // 判断胜负, 接口 TODO
+}
+
+bool Game::runGame()
+{
+    //clock.run();
+
+    // 每个时钟周期设置物体
+    // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮周期
+    // 一些应该从文件中读取的数据 ===================== //
+    Loc location;
+    // ============================================= //
+    /*if (type != BASIC) {    // 非 BASIC 的物体都会被设到地图上
+            state->createItem(type, location, info);
+    }*/
+
+    // 所有蛇进行行动
+    bool maction = true;
+    Snake* msnake = state->getSnakes()[0];
+    maction = snakeAction(msnake);
+    if(!maction) return false;
+    if(msnake->hitItem() != nullptr && msnake->hitItem()->getName() == FOOD)
+    {
+        location = state->createRandomLoc();
+        while(msnake->isPartOfSnake(location))
+            location = state->createRandomLoc();
+        state->createItem(BASIC, msnake->getBody()[0], 0);
+        state->createItem(FOOD, location, 1);
+    }
+    // 陨石和沼泽的特殊效果判断
+    /*for (vector<Item*> row: *state->getMapPtr()) {
+        for (auto item: row) {
+            if (item->getName() == AEROLITE || item->getName() == MARSH) {
+                // 对每个陨石看是否砸到了蛇; 对每个沼泽看是否有蛇在上面
+                // 砸到了任何一部分则另一个函数一定返回 nullptr, 因此不用 if-else 判断
+                item->action(item->hitHeadSnake(state->snakes));
+                item->action(item->hitBodySnake(state->snakes));
+            }
+        }
+    }*/
+    return true;
+}
+
+void Game::initializeGame(int level)
+{
+    this->level = level;
+    Loc location = state->createRandomLoc();
+    while(state->getSnakes()[0]->isPartOfSnake(location))
+        location = state->createRandomLoc();
+    ItemType type = FOOD;
+    int info = 1;
+    state->createItem(type, location, info);
+}
+
+int Game::reachTarget()
+{
+    Snake* player = state->getSnakes()[0];
+    if (game_mode == TIMELIMIT) {
+        if (player->getEaten() >= target_food) {
+            return 1;   // 赢
+        } else if (clock.getTime() >= target_time) {
+            return -1;  // 输
+        } else {
+            return 0;   // 继续
+        }
+    } else if (game_mode == TIMEFREE) {
+        if (player->getEaten() == target_food) {
+            return 1;   // 不限时, 有足够食物就赢
+        } else {
+            return 0;   // 只要没死, 就一直继续
+        }
+    } else if (game_mode == KILLSNAKE) {
+        if (player->getKilled() >= target_kill) {
+            return 1;   // 不限时, 杀足够蛇就赢
+        } else {
+            return 0;   // 只要没死, 就一直继续
+        }
+    }
+}
+
+Field *Game::getState()
+{
+    return state;
+}

@@ -1,37 +1,29 @@
 #ifndef FIELD_H
 #define FIELD_H
 
-#include "snake.h"
-
 #include <vector>
-#include <utility>
-#include <random>
-#include <ctime>
-#include <iostream>
-using namespace std;
+#include "item.h"
 
-bool isWithin(int, int, int);
-class Item;
-
-// 二维数组, 即地图的坐标索引, 内部是指向 Item实例的指针
-typedef vector<vector<Item* >> Grid;
+typedef std::vector<std::vector<Item*>> Grid;
 
 class Field
 {
 public:
     Field(int, int);
-    ~Field();
-
-    bool inBound(Loc);
-
-    void loadMap();     // 某种 文件读取并存储将要被加载的物体 的方式
-
-    void createItem(int type, Loc);
+    ItemType getItemName(size_t w, size_t h);
+    void createItem(ItemType type, Loc location, int info);
+    Item* getItem(size_t w, size_t h);
+    int getHeight();
+    int getWidth();
+    Grid* getMapPtr();
     Loc createRandomLoc();
-
+    std::vector<Snake*> getSnakes();
+    void addSnake(Snake* snake_ptr);
+private:
     int height, width;
-    Grid itemMap;
-    vector<Snake*> snakes;
+    Grid item_map;
+    std::vector<Snake*> snakes;
+
 };
 
-#endif //FIELD_H
+#endif // FIELD_H

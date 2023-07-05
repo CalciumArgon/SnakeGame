@@ -2,25 +2,21 @@
 #define CLOCK_H
 
 #include <string>
-#include <iostream>
-using namespace std;
 
 class Clock
 {
 public:
-    Clock(int start, string name, int speed);
-    Clock(string name, int speed);
-    Clock(string name);
-    ~Clock();
+    Clock(int start, std::string name, int speed);
+    Clock(std::string name, int speed);
+    Clock(std::string name);
 
     void run();
-    void show();
     int getTime();
-
+private:
     int time;
     int step = 1;   // 每次运行在 time 上叠加的数值
     int speed;  // 多少毫秒运行一次
-    string name;
+    std::string name;
 };
 
 #endif
