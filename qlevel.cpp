@@ -40,7 +40,17 @@ void QLevel::on_btnLev1_clicked(){
 }
 void QLevel::on_btnLev2_clicked()
 {
-
+    Field* fld = new Field(40, 40);
+    Game* game = new AddWallGame(fld, TIMEFREE, {10});
+    game->initializeGame(1);
+    GameWidget *gw = new GameWidget(game);
+    Dialog *dlg = new Dialog();
+    connect(gw, &GameWidget::gameover, dlg, &Dialog::show);
+    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
+    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    gw->setFocusPolicy(Qt::ClickFocus);
+    gw->resize(1250, 1350);
+    gw->show();
 }
 
 void QLevel::on_btnLev3_clicked()

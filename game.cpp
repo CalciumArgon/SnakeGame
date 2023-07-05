@@ -145,8 +145,9 @@ bool Game::loadMap(string map_name)
     }
     switch (snake_init) {
         case 0: {
+            // can't guarantee the snake's body won't be in the wall or the food
             Loc head = state->createRandomLoc();
-            while(state->getSnakes()[0]->isPartOfSnake(head))
+            while(state->getSnakes()[0]->isPartOfSnake(head) )
                 head = state->createRandomLoc();
             Snake* snk = new Snake(head, 5, 1, LEFT, this->state->getMapPtr());
             this->state->addSnake(snk);
@@ -214,8 +215,9 @@ Field *Game::getState()
 
 AddWallGame::AddWallGame(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
 
+AddWallGame::AddWallGame(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+
 void AddWallGame::initializeGame(int level) {
     this->loadMap("map/addwallgame.txt");
-
-
+    this->level = level;
 }

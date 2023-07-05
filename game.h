@@ -33,11 +33,15 @@ protected:
     GameMode game_mode;
 };
 
-#endif // GAME_H
+
 
 class AddWallGame: public Game
 {
 public:
     AddWallGame(GameMode game_mode, int height, int width, std::vector<int> info);
-    void initializeGame(int level);
+    AddWallGame(Field* state, GameMode game_mode, std::vector<int> info);
+    virtual void initializeGame(int level);
 };
+
+
+#endif // GAME_H
