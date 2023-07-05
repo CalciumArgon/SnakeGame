@@ -38,11 +38,11 @@ Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
 bool Game::snakeAction(Snake *)
 {
     Snake* msnake = state->getSnakes()[0];
-    if (msnake->move()) {    // 完成移动
-        if (msnake->hitSelf() || msnake->hitEdge()) {
-            return (!msnake->death());
-        }
+    msnake->move();   // 完成移动
+    if (msnake->hitSelf() || msnake->hitEdge()) {
+        return false;
     }
+    return true;
     /*
     vector<Snake*> other_snakes = state->getSnakes();
     other_snakes.erase(other_snakes.begin());
@@ -53,33 +53,31 @@ bool Game::snakeAction(Snake *)
     // 判断胜负, 接口 TODO
 }
 
-void Game::runGame()
+bool Game::runGame()
 {
-    while(1){
-    clock.run();
+    //clock.run();
 
     // 每个时钟周期设置物体
     // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮周期
     // 一些应该从文件中读取的数据 ===================== //
-    Loc location = state->createRandomLoc();
-    ItemType type = FOOD;
-    int info = 1;
+    Loc location;
     // ============================================= //
-    if (type != BASIC) {    // 非 BASIC 的物体都会被设到地图上
+    /*if (type != BASIC) {    // 非 BASIC 的物体都会被设到地图上
             state->createItem(type, location, info);
-    }
+    }*/
 
     // 所有蛇进行行动
     bool maction = true;
     Snake* msnake = state->getSnakes()[0];
-    for (Snake* snake: state->getSnakes()) {
-        maction = snakeAction(snake);
-    }
-    if(!maction) return;
-    if(msnake->hitItem()->getName() == FOOD)
+    maction = snakeAction(msnake);
+    if(!maction) return false;
+    if(msnake->hitItem() != nullptr && msnake->hitItem()->getName() == FOOD)
     {
+        location = state->createRandomLoc();
+        while(msnake->isPartOfSnake(location))
+            location = state->createRandomLoc();
         state->createItem(BASIC, msnake->getBody()[0], 0);
-        state->createItem(FOOD, location, info);
+        state->createItem(FOOD, location, 1);
     }
     // 陨石和沼泽的特殊效果判断
     /*for (vector<Item*> row: *state->getMapPtr()) {
@@ -92,13 +90,18 @@ void Game::runGame()
             }
         }
     }*/
-    QThread::msleep(50);
-    }
+    return true;
 }
 
 void Game::initializeGame(int level)
 {
     this->level = level;
+    Loc location = state->createRandomLoc();
+    while(state->getSnakes()[0]->isPartOfSnake(location))
+        location = state->createRandomLoc();
+    ItemType type = FOOD;
+    int info = 1;
+    state->createItem(type, location, info);
 }
 
 int Game::reachTarget()

@@ -21,6 +21,7 @@ public:
     Item* hitItem();
     bool hitSelf();
     bool hitEdge();
+    bool isPartOfSnake(Loc loc);
     void addLength(int adding);
     void initialize();
     bool death();
@@ -34,6 +35,8 @@ private:
     int max_health;
     Direction direction;
     Grid* item_map_ptr;
+    int width;
+    int height;
     int speed = 3;
     int health;
     int eaten = 0;

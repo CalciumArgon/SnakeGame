@@ -9,7 +9,10 @@ Snake::Snake(vector<Loc> body, int length, int max_health, Direction direction, 
     direction(direction),
     item_map_ptr(item_map_ptr),
     health(max_health)
-{}
+{
+    width = item_map_ptr->size();
+    height = (*item_map_ptr)[0].size();
+}
 
 Snake::Snake(Loc head, int length, int max_health, Direction direction, Grid* item_map_ptr) :
     length(length),
@@ -45,6 +48,8 @@ Snake::Snake(Loc head, int length, int max_health, Direction direction, Grid* it
         }
         break;
     }
+    width = item_map_ptr->size();
+    height = (*item_map_ptr)[0].size();
 }
 
 int Snake::getLength()
@@ -97,12 +102,12 @@ Loc Snake::nextLoc()
 
 bool Snake::move()
 {
-    /*if (cycle_recorder != (6 - speed)) {
+    if (cycle_recorder != (6 - speed)) {
         cycle_recorder += 1;
         return false;
     } else {
         cycle_recorder = 1;
-    }*/
+    }
     Loc new_head = nextLoc();
     body.insert(body.begin(), new_head);
     body.pop_back();
@@ -116,6 +121,9 @@ bool Snake::move()
 
 Item *Snake::hitItem()
 {
+    Loc head = body[0];
+    if(!isWithin(head.first, 0, item_map_ptr->size()-1) || !isWithin(head.second, 0, (*item_map_ptr)[0].size()-1))
+        return nullptr;
     return (*item_map_ptr)[body[0].first][body[0].second];
 }
 
@@ -133,8 +141,17 @@ bool Snake::hitSelf()
 bool Snake::hitEdge()
 {
     Loc head = body[0];
-    if(!isWithin(head.first, 0, item_map_ptr->size()-1) || !isWithin(head.second, 0, (*item_map_ptr)[0].size()-1))
-        return true;
+    return (!isWithin(head.first, 0, width-1) || !isWithin(head.second, 0, height-1));
+}
+
+bool Snake::isPartOfSnake(Loc loc)
+{
+    for(int i = 0; i < length; i++)
+    {
+        Loc mloc = body[i];
+        if(mloc == loc)
+            return true;
+    }
     return false;
 }
 
@@ -160,6 +177,7 @@ void Snake::addLength(int adding)
         }
         body.push_back(make_pair(newX, newY));
     }
+    length++;
 }
 
 void Snake::initialize()

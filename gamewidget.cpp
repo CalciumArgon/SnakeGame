@@ -23,19 +23,27 @@ QRect GameWidget::getRect(int x, int y)
 void GameWidget::paintEvent(QPaintEvent *ev)
 {
     Q_UNUSED(ev)
-    //ui->labelTime->setText("游戏时间：");
-    //ui->labelTime->show();
+    QString s;
+    ui->labelTime->setText(s.setNum(cnt_time));
+    ui->labelTime->show();
     QPainter painter(this);
     Field* mstate = game->getState();
     painter.setPen(Qt::black);
     painter.setBrush(Qt::gray);
-    painter.setRenderHint(QPainter::Antialiasing);
+    //painter.setRenderHint(QPainter::Antialiasing);
     /* draw map */
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++) {
+            if(mstate->getItemName(i, j) == BASIC){
                 painter.setBrush(Qt::gray);
                 QRect rect = getRect(i, j);
                 painter.drawRect(rect);
+            }
+            else if(mstate->getItemName(i, j) == FOOD){
+                painter.setBrush(Qt::green);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+            }
         }
     }
     /* draw target
@@ -52,13 +60,22 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         painter.drawRect(rect);
     }
     /* move */
-    /*this->play2();*/
-    QThread::msleep(50);
+    if(!game_over) game_over = !game->runGame();
+    if(game_over && !is_emit) {
+        emit(gameover());
+        is_emit = true;
+    }
+    QThread::msleep(10);
+    if(!game_over) {
+        cnt_time++;
+        update();
+    }
     return QWidget::paintEvent(ev);
 }
 
 void GameWidget::keyPressEvent(QKeyEvent *event)
 {
+    event->accept();
     switch (event->key())
     {
     case Qt::Key_Up:

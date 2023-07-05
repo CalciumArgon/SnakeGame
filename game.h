@@ -14,7 +14,7 @@ public:
     Game(Field* state, GameMode game_mode, std::vector<int> info);
 
     bool snakeAction(Snake*);    // 核心运行, 包含 [一轮时钟周期里] 对 [一条蛇] 的全部操作
-    void runGame();     // 核心运行, 包含 [对时钟的控制] [接收决策信号] [对每条蛇的 snakeAction() 的调用]
+    bool runGame();     // 核心运行, 包含 [对时钟的控制] [接收决策信号] [对每条蛇的 snakeAction() 的调用]
 
     void initializeGame(int level);  // 用来给图形界面初始化信息
 

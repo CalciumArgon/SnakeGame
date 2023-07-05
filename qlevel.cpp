@@ -32,13 +32,16 @@ void QLevel::on_btnLev1_clicked()
     Snake* snk = new Snake(head, 5, 1, LEFT, fld->getMapPtr());
     fld->addSnake(snk);
     Game* game = new Game(fld, TIMEFREE, {10});
+    game->initializeGame(1);
     GameWidget *gw = new GameWidget(game);
-    game->runGame();
     Dialog *dlg = new Dialog();
-    dlg->show();
-    gw->setFocusPolicy(Qt::StrongFocus);
+    connect(gw, &GameWidget::gameover, dlg, &Dialog::show);
+    gw->setFocusPolicy(Qt::ClickFocus);
     gw->resize(1250, 1350);
     gw->show();
+
+    //game->runGame();
+
 }
 
 

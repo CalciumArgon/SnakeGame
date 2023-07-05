@@ -21,11 +21,17 @@ public:
     QRect getRect(int, int);
     void paintEvent(QPaintEvent *ev);
     void keyPressEvent(QKeyEvent* event);
+
     ~GameWidget();
 private:
     Ui::GameWidget *ui;
     Game *game;
     int unitlen = 30;
+    int cnt_time = 0;
+    bool game_over = false;
+    bool is_emit = false;
+signals:
+    void gameover();
 };
 
 #endif // GAMEWIDGET_H

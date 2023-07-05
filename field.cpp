@@ -27,7 +27,7 @@ ItemType Field::getItemName(size_t w, size_t h)
 
 void Field::createItem(ItemType type, Loc location, int info)
 {
-    Item* item;
+    Item* item = nullptr;
     switch(type){
     case BASIC:
         item = nullptr;
