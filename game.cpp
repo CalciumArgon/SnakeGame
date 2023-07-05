@@ -1,9 +1,9 @@
 #include "game.h"
 #include <QThread>
-
+#include <fstream>
 using namespace std;
 
-Game::Game(GameMode game_mode, int height, int width, std::vector<int> info) :
+Game::Game(GameMode playMode, int height, int width, std::vector<int> info) :
     level(1),
     clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
     game_mode(game_mode)
@@ -71,13 +71,25 @@ bool Game::runGame()
     Snake* msnake = state->getSnakes()[0];
     maction = snakeAction(msnake);
     if(!maction) return false;
-    if(msnake->hitItem() != nullptr && msnake->hitItem()->getName() == FOOD)
+    if(msnake->hitItem() != nullptr )
     {
-        location = state->createRandomLoc();
-        while(msnake->isPartOfSnake(location))
-            location = state->createRandomLoc();
-        state->createItem(BASIC, msnake->getBody()[0], 0);
-        state->createItem(FOOD, location, 1);
+        switch (msnake->hitItem()->getName()) {
+            case FOOD:{
+                location = state->createRandomLoc();
+                while(msnake->isPartOfSnake(location))
+                    location = state->createRandomLoc();
+                state->createItem(BASIC, msnake->getBody()[0], 0);
+                state->createItem(FOOD, location, 1);
+                break;
+            }
+            case WALL: {
+                // dead
+                return false;
+            }
+            default:
+                throw "Error: unknown item type";
+        }
+
     }
     // 陨石和沼泽的特殊效果判断
     /*for (vector<Item*> row: *state->getMapPtr()) {
@@ -102,6 +114,30 @@ void Game::initializeGame(int level)
     ItemType type = FOOD;
     int info = 1;
     state->createItem(type, location, info);
+}
+
+bool Game::loadMap(string map_name)
+{
+    /*
+     * Map 格式：第一行输入地图所包含的物体数量（包括任何Item）|是否确定蛇的初始化位置（0：否，1：只确定蛇头位置，2：输入完整的蛇身坐标）| 游戏模式（先只实现0，普通模式）
+     * 然后每行输入一个物体的信息 类型 + 坐标
+     * 输入完物体后，如果需要确定蛇的位置，则输入蛇的坐标 坐标每行一个
+     * */
+    ifstream map_file;
+    map_file.open(map_name);
+    if (!map_file.is_open()) {
+        return false;
+    }
+//    state = new Field(height, width);
+    int item_num;
+    map_file >> item_num;
+    for (int i = 0; i < item_num; i++) {
+        int type, x, y, info;
+        map_file >> type >> x >> y >> info;
+        state->createItem((ItemType)type, Loc(x, y), info);
+    }
+    map_file.close();
+    return true;
 }
 
 int Game::reachTarget()

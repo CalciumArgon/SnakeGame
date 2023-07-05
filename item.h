@@ -37,4 +37,15 @@ private:
     int add_length = 1;
 };
 
+class Wall: public Item
+{
+public:
+    Wall(Loc location);
+    virtual void action(Snake*);
+    virtual ItemType getName();
+private:
+    ItemType name = WALL;
+    Loc location;
+};
+
 #endif // ITEM_H

@@ -6,7 +6,7 @@
 #include "clock.h"
 
 enum GameMode {TIMELIMIT=0, TIMEFREE, KILLSNAKE};
-
+enum PlayMode {Normal=0};
 class Game
 {
 public:
@@ -18,6 +18,7 @@ public:
 
     void initializeGame(int level);  // 用来给图形界面初始化信息
 
+    bool loadMap(std::string map_path);
     int reachTarget();
     Field* getState();
 private:
