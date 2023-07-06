@@ -1,9 +1,11 @@
-#include "field.h"
+#include "mainwindow.h"
+#include <QApplication>
 
-#include <iostream>
-using namespace std;
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
 
-int main() {
-    cout << "Hello World\n";
-    return 0;
+    return a.exec();
 }

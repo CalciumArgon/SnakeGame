@@ -1,22 +1,28 @@
-
-
 #include "item.h"
+#include "snake.h"
 
-Item::Item(Loc location): location(location) {}
+Item::Item(Loc location) : location(location) {}
 
-Snake* Item::hitHeadSnake(vector<Snake*> snakes) {
+Loc Item::getLoc()
+{
+    return location;
+}
+
+Snake *Item::hitHeadSnake(std::vector<Snake *> snakes)
+{
     for (Snake* snake: snakes) {
-        if (this->location == snake->body[0]) {
+        if (this->location == snake->getBody()[0]) {
             return snake;
         }
     }
     return nullptr;
 }
 
-Snake* Item::hitBodySnake(vector<Snake*> snakes) {
+Snake *Item::hitBodySnake(std::vector<Snake *> snakes)
+{
     for (Snake* snake: snakes) {
-        for (int i=1; i<snake->body.size(); ++i) {
-            if (snake->body[i] == this->location) {
+        for (int i=1; i<snake->getLength(); ++i) {
+            if (snake->getBody()[i] == this->location) {
                 return snake;
             }
         }
@@ -24,148 +30,41 @@ Snake* Item::hitBodySnake(vector<Snake*> snakes) {
     return nullptr;
 }
 
-ItemType Item::getName() { return name; }
 
-// 父类的 action() 不应该被调用 -------------------------------
-void Item::action(Snake*) {
-    cout << "Calling the wrong action() in <class 'Item'>\n";
+ItemType Item::getName()
+{
+    return name;
 }
-// ----------------------------------------------------------
-
 
 Food::Food(Loc location, int add_length):
     Item(location),
     add_length(add_length) {}
 
-void Food::changeAddLength(int newLen) {
-    this->add_length = newLen;
-}
-
-void Food::action(Snake* snake) {
+void Food::action(Snake *snake)
+{
     if (snake == nullptr) { return; }
     snake->addLength(add_length);
+    snake->incEaten();
 }
 
-ItemType Food::getName() { return name; }
-
-
-Magnet::Magnet(Loc location, int effective_time):
-    Item(location),
-    effective_time(effective_time),
-    remain_time(effective_time) // 好像没什么用, 在 Snake 里有倒计时
-    {}
-
-void Magnet::action(Snake* snake) {
-    if (snake == nullptr) { return; }
-    snake->magnetic = effective_time;
+ItemType Food::getName()
+{
+    return FOOD;
 }
 
-ItemType Magnet::getName() { return name; }
-
-
-Shield::Shield(Loc location, int effective_time):
-    Item(location),
-    effective_time(effective_time) {}
-
-void Shield::action(Snake* snake) {
-    if (snake == nullptr) { return; }
-    snake->revival = effective_time;
+void Food::changeAddLength(int new_len)
+{
+    add_length = new_len;
 }
 
-ItemType Shield::getName() { return name; }
+Wall::Wall(Loc location): Item(location) {}
 
-
-Firstaid::Firstaid(Loc location, int add_health):
-    Item(location),
-    add_health(add_health) {}
-
-void Firstaid::changeAddHealth(int newHealth) {
-    this->add_health = newHealth;
+void Wall::action(Snake *) {
+    //Do nothing
 }
 
-void Firstaid::action(Snake* snake) {
-    if (snake == nullptr) { return; }
-    // 最多加到满血
-    snake->health = min(snake->MAX_health, snake->health + add_health);
+ItemType Wall::getName()
+{
+    return WALL;
 }
 
-ItemType Firstaid::getName() { return name; }
-
-
-Warning::Warning(Loc location, int counting, Item* nextItem):
-    Item(location),
-    counting(counting),
-    nextItem(nextItem) {}
-
-void Warning::action(Snake* snake) {
-    // 在 Game 中通过 getName() 分辨出 Warning实例
-    // 然后单独判断 action() 后是否 counting == 0
-    // 是 --> 生成 nextItem 在原位置
-    // 否 --> pass    
-    counting -= 1;
-}
-
-ItemType Warning::getName() { return name; }
-
-
-Obstacle::Obstacle(Loc location, int injury):
-    Item(location),
-    injury(injury) {}
-
-void Obstacle::action(Snake* snake) {
-    if (snake == nullptr) { return; }
-    snake->decreaseHealth(injury);
-}
-
-ItemType Obstacle::getName() { return name; }
-
-
-Wall::Wall(Loc location):
-    Item(location) {}
-
-void Wall::action(Snake* snake) {
-    if (snake == nullptr) { return; }
-    snake->death();
-}
-
-ItemType Wall::getName() { return name; }
-
-
-Aerolite::Aerolite(Loc location):
-    Item(location) {}
-
-void Aerolite::action(Snake* snake) {
-    if (snake == nullptr) { return; }
-    /*
-        陨石的工作原理:
-        在 Game 运行函数中每个时钟周期找到 Field.grid 中的所有陨石
-        这些陨石运行 hitHeadSnake() 和 hitBodySnake()
-        将它们返回的 Snake* (如果有的话) 传进 Aerolite.action() 里
-    */
-    if (location == snake->body[0]) {
-        snake->death();
-    } else {
-        for (int i=snake->length-1; i>=0; --i) {
-            if (location == snake->body[i]) {       // 砸中此段, 则从此处之后都截断
-                snake->body.pop_back();
-                snake->length = snake->body.size();
-                break;
-            }
-            snake->body.pop_back();
-        }
-    }
-}
-
-ItemType Aerolite::getName() { return name; }
-
-
-Marsh::Marsh(Loc location, int decelerate):
-    Item(location),
-    decelerate(decelerate) {}
-
-void Marsh::action(Snake* snake) {
-    if (snake == nullptr) { return; }
-    snake->speed -= decelerate;
-}
-
-ItemType Marsh::getName() { return name; }

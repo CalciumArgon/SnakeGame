@@ -4,7 +4,7 @@ CXX := g++
 .PHONY : task
 # 所有需要链接的 Object 文件
 objects := main.o field.o item.o snake.o clock.o game.o
-
+all:task
 # 链接
 task: $(objects)
 	$(CXX) -o $@ $(objects)
