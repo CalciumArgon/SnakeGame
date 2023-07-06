@@ -5,6 +5,8 @@
 #ifndef SNAKE_SRC_FULL_AISNAKE_H
 #define SNAKE_SRC_FULL_AISNAKE_H
 #include "snake.h"
+#include "field.h"
+
 
 class AISnake:public Snake {
 public:
@@ -15,7 +17,7 @@ public:
 
 class GreedyFood:public AISnake{
 private:
-    pair<int, int> getNearestFood(const Field& state);
+    std::pair<int, int> getNearestFood();
 public:
     virtual Direction act(Field& state);
 };

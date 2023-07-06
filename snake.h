@@ -29,7 +29,7 @@ public:
     void incKilled();
     int getEaten();
     int getKilled();
-private:
+protected:
     std::vector<Loc> body;
     int length;
     int max_health;
