@@ -43,9 +43,6 @@ public:
     virtual void initializeGame(int level);
 };
 
-
-#endif // GAME_H
-
 class TestAISnake: public Game
 {
 public:
@@ -54,3 +51,7 @@ public:
     virtual void initializeGame(int level);
     virtual bool runGame();
 };
+
+#endif // GAME_H
+
+

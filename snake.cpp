@@ -52,9 +52,26 @@ Snake::Snake(Loc head, int length, int max_health, Direction direction, Grid* it
     height = (*item_map_ptr)[0].size();
 }
 
+bool Snake::operator == (const Snake* other) {
+    if (this->length != other->length) {
+        return false;
+    }
+    for (int i=0; i<length; ++i) {
+        if (this->body[i] != other->body[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 int Snake::getLength()
 {
     return length;
+}
+
+int Snake::getHealth()
+{
+    return health;
 }
 
 vector<Loc> &Snake::getBody()
@@ -138,6 +155,21 @@ bool Snake::hitSelf()
     return false;
 }
 
+bool Snake::hitOtherSnake(vector<Snake*> snakes) {
+    Loc head = body[0];
+    for (Snake* other: snakes) {
+        if (this == other) {
+            continue;  // 不和自己比较 
+        }
+        for (Loc other_body: other->body) {
+            if (head == other_body) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool Snake::hitEdge()
 {
     Loc head = body[0];
@@ -178,6 +210,10 @@ void Snake::addLength(int adding)
         body.push_back(make_pair(newX, newY));
     }
     length++;
+}
+
+void Snake::addHealth(int adding) {
+    this->health = min(this->health + adding, this->max_health);
 }
 
 void Snake::initialize()
@@ -231,6 +267,19 @@ int Snake::getEaten()
 int Snake::getKilled()
 {
     return killed;
+}
+
+void Snake::addSpeed(int adding)
+{
+    this->speed += adding;
+}
+
+void Snake::setMagnetic(int effective_time) {
+    this->magnetic = effective_time;
+}
+
+void Snake::setRevival(int effective_time) {
+    this->revival = effective_time;
 }
 
 bool isWithin(int target, int low, int high)
