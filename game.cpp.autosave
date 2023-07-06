@@ -219,7 +219,7 @@ AddWallGame::AddWallGame(Field *state, GameMode game_mode, std::vector<int> info
 
 void AddWallGame::initializeGame(int level) {    
 
-    if (!this->loadMap("map\\addwallgame.txt"))
+    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\addwallgame.txt"))
         assert(false);
     this->level = level;
 }
