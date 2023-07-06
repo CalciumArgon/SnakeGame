@@ -1,6 +1,7 @@
 #include "game.h"
 #include <QThread>
 #include <fstream>
+#include "AISnake.h"
 using namespace std;
 
 Game::Game(GameMode playMode, int height, int width, std::vector<int> info) :
@@ -223,3 +224,69 @@ void AddWallGame::initializeGame(int level) {
         assert(false);
     this->level = level;
 }
+
+TestAISnake::TestAISnake(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+TestAISnake::TestAISnake(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+void TestAISnake::initializeGame(int level) {
+    Loc head = std::make_pair(20, 20);
+    Snake* snk = new GreedyFood(head, 5, 1, LEFT, this->state->getMapPtr());
+    this->state->addSnake(snk);
+    this->level = level;
+    Loc location = state->createRandomLoc();
+    while(state->getSnakes()[0]->isPartOfSnake(location))
+        location = state->createRandomLoc();
+    ItemType type = FOOD;
+    int info = 1;
+    state->createItem(type, location, info);
+}
+
+bool TestAISnake::runGame() {
+        //clock.run();
+
+        // 每个时钟周期设置物体
+        // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮周期
+        // 一些应该从文件中读取的数据 ===================== //
+        Loc location;
+        // ============================================= //
+        /*if (type != BASIC) {    // 非 BASIC 的物体都会被设到地图上
+                state->createItem(type, location, info);
+        }*/
+
+        // 所有蛇进行行动
+        bool maction = true;
+        Snake* msnake = state->getSnakes()[0];
+        maction = snakeAction(msnake);
+        if(!maction) return false;
+        if(msnake->hitItem() != nullptr )
+        {
+            switch (msnake->hitItem()->getName()) {
+                case FOOD:{
+                    location = state->createRandomLoc();
+                    while(msnake->isPartOfSnake(location))
+                        location = state->createRandomLoc();
+                    state->createItem(BASIC, msnake->getBody()[0], 0);
+                    state->createItem(FOOD, location, 1);
+                    break;
+                }
+                case WALL: {
+                    // dead
+                    return false;
+                }
+                default:
+                    throw "Error: unknown item type";
+            }
+
+        }
+        // 陨石和沼泽的特殊效果判断
+        /*for (vector<Item*> row: *state->getMapPtr()) {
+            for (auto item: row) {
+                if (item->getName() == AEROLITE || item->getName() == MARSH) {
+                    // 对每个陨石看是否砸到了蛇; 对每个沼泽看是否有蛇在上面
+                    // 砸到了任何一部分则另一个函数一定返回 nullptr, 因此不用 if-else 判断
+                    item->action(item->hitHeadSnake(state->snakes));
+                    item->action(item->hitBodySnake(state->snakes));
+                }
+            }
+        }*/
+        return true;
+    }
