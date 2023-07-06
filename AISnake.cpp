@@ -3,9 +3,7 @@
 //
 
 #include "AISnake.h"
-#include <queue>
 #include <set>
-
 using namespace std;
 pair<int, int> GreedyFood::getNearestFood() {
     queue<pair<int, int>> toSearch;
@@ -40,22 +38,37 @@ pair<int, int> GreedyFood::getNearestFood() {
     return make_pair(-1,-1);
 }
 
-Direction GreedyFood::act(Field &state) {
-    pair<int,int> target = getNearestFood();
-    if (target.first == -1){
+
+Direction AISnake::go_to(pair<int, int> target) {
+    if (target.first <= -1 || target.second <=-1){
         return this->direction;
     }
     if (target.first < this->body[0].first){
-        return UP;
+        return Direction::UP;
+    } else if (target.first > this->body[0].first){
+        return Direction::DOWN;
+    } else if (target.second < this->body[0].second){
+        return Direction::LEFT;
+    } else if (target.second > this->body[0].second){
+        return Direction::RIGHT;
+    } else{
+        return this->direction;
     }
-    if (target.first > this->body[0].first){
-        return DOWN;
+}
+
+
+Direction GreedyFood::act(Field &state) {
+    pair<int,int> target = getNearestFood();
+    return go_to(target);
+}
+
+Direction WalkingAI::act(Field &state) {
+    if (trajectory.empty()){
+        return this->direction;
+    } else{
+        pair<int, int> target = trajectory.front();
+        trajectory.pop();
+        trajectory.push(target);
+        return go_to(target);
     }
-    if (target.second < this->body[0].second){
-        return LEFT;
-    }
-    if (target.second > this->body[0].second){
-        return RIGHT;
-    }
-    return this->direction;
 }
