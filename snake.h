@@ -35,13 +35,18 @@ public:
     void incKilled();
     int getEaten();
     int getKilled();
-    void addSpeed(int);
+    int getSpeed();
+    void addSpeed(int adding);
+    int getMp();
+    void incMp();
+    void decMp();
     // 设置吸铁石能力
     void setMagnetic(int);
     // 设置护盾复活能力
     void setRevival(int);
     void recover();
     //消除所有buff和debuff
+    bool speed_buff = false;
 protected:
     std::vector<Loc> body;
     int length;
@@ -57,6 +62,7 @@ protected:
     int cycle_recorder = 1;
     int magnetic = 0;
     int revival = 0;
+    int mp = 240;
 };
 
 #endif // SNAKE_H

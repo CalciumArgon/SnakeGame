@@ -120,7 +120,7 @@ Loc Snake::nextLoc()
 bool Snake::move()
 {
     /* ===== 全局时钟走过 (12 - speed) 个周期蛇才会进行动作 ===== */
-    if (cycle_recorder != (12 - speed)) {
+    if (cycle_recorder < (12 - speed)) {
         cycle_recorder += 1;
         return false;
     } else {
@@ -287,9 +287,32 @@ int Snake::getKilled()
     return killed;
 }
 
+int Snake::getSpeed()
+{
+    return speed;
+}
+
 void Snake::addSpeed(int adding)
 {
     this->speed += adding;
+}
+
+int Snake::getMp()
+{
+    return mp;
+}
+
+void Snake::incMp()
+{
+    if(mp < 240)
+        mp++;
+}
+
+void Snake::decMp()
+{
+    mp -= 4;
+    if(mp < 0)
+        mp = 0;
 }
 
 void Snake::setMagnetic(int effective_time) {

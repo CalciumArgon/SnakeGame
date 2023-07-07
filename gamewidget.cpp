@@ -38,6 +38,8 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     QString s;
     ui->labelTime->setText(s.setNum(cnt_time));
     ui->labelTime->show();
+    ui->labelMp->setText("mp值：" + s.setNum(game->getState()->getSnakes()[0]->getMp()));
+    ui->labelMp->show();
 
     //set the painter of the main event
     QPainter painter(this);
@@ -65,9 +67,12 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++){
             if(mstate->getItemName(i, j) == FOOD){
-                ui->labelFood->setGeometry((i+1)*unitlen, (j+1)*unitlen+100, unitlen, unitlen);
+                /*ui->labelFood->setGeometry((i+1)*unitlen, (j+1)*unitlen+100, unitlen, unitlen);
                 ui->labelFood->show();
-                ui->labelFood->raise();
+                ui->labelFood->raise();*/
+                painter.setBrush(Qt::red);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
             }
             if(mstate->getItemName(i, j) == MARSH){
                 /*
@@ -75,6 +80,15 @@ void GameWidget::paintEvent(QPaintEvent *ev)
                 ui->labelMarsh->setGeometry((i+1)*unitlen, (j+1)*unitlen+100, unitlen, unitlen);
                 ui->labelMarsh->raise();*/
                 painter.setBrush(Qt::blue);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+            }
+            if(mstate->getItemName(i, j) == WALL){
+                /*
+                ui->labelMarsh->setStyleSheet("border-image: url(:/marsh.png)");
+                ui->labelMarsh->setGeometry((i+1)*unitlen, (j+1)*unitlen+100, unitlen, unitlen);
+                ui->labelMarsh->raise();*/
+                painter.setBrush(Qt::black);
                 QRect rect = getRect(i, j);
                 painter.drawRect(rect);
             }
@@ -132,7 +146,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
     QThread::msleep(5);
     if(!game_over) {
-        cnt_time = game->test;
+        cnt_time = game->getState()->getSnakes()[0]->getSpeed();
         update();
     }
     return QWidget::paintEvent(ev);
@@ -159,8 +173,19 @@ void GameWidget::keyPressEvent(QKeyEvent *event)
     case Qt::Key_D:
         game->getState()->getSnakes()[0]->changeDireciton(RIGHT);
         break;
+    case Qt::Key_Control:
+        game->getState()->getSnakes()[0]->speed_buff = true;
     }
 }
+
+void GameWidget::keyReleaseEvent(QKeyEvent *event)
+{
+    event->accept();
+    if(event->key() == Qt::Key_Control)
+        game->getState()->getSnakes()[0]->speed_buff = false;
+}
+
+
 
 GameWidget::~GameWidget()
 {

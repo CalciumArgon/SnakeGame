@@ -43,7 +43,11 @@ void QLevel::on_btnLev1_clicked(){
 void QLevel::on_btnLev2_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new AddWallGame(fld, TIMEFREE, {10});
+    Loc loc1 = make_pair(10, 10);
+    Loc loc2 = make_pair(10, 30);
+    fld->createItem(MARSH, loc1, 1);
+    fld->createItem(WALL, loc2, 1);
+    Game* game = new Game(fld, TIMEFREE, {10});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game);
     Dialog *dlg = new Dialog();
@@ -84,4 +88,6 @@ void QLevel::on_btnLev8_clicked()
 {
 
 }
+
+
 

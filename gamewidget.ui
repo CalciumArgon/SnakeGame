@@ -103,6 +103,19 @@
     <string/>
    </property>
   </widget>
+  <widget class="QLabel" name="labelMp">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>30</y>
+     <width>111</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>mp值：</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

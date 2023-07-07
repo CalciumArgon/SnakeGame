@@ -78,7 +78,15 @@ bool Game::runGame()
             snakeAction(snake);
         }
         snake->recover();
-
+        if(snake->speed_buff){
+            if(snake->getMp() > 0){
+                snake->addSpeed(3);
+                snake->decMp();
+            }
+        }
+        else {
+            snake->incMp();
+        }
         if(snake->hitItem() != nullptr ) {
             switch (snake->hitItem()->getName()) {
                 case FOOD:{
@@ -91,8 +99,8 @@ bool Game::runGame()
                     break;
                 }
                 case WALL: {
-                    // dead
-                    state->createItem(BASIC, snake->getBody()[0], 0);
+                    snake->hitItem()->action(snake);
+                    //state->createItem(BASIC, snake->getBody()[0], 0);
                     return false;
                 }
                 case FIRSTAID:

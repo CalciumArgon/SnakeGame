@@ -21,6 +21,7 @@ public:
     QRect getRect(int, int);
     void paintEvent(QPaintEvent *ev);
     void keyPressEvent(QKeyEvent* event);
+    void keyReleaseEvent(QKeyEvent* event);
 
     ~GameWidget();
 private:
