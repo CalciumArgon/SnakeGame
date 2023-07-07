@@ -2,7 +2,9 @@
 #define SNAKE_H
 #include "item.h"
 #include <vector>
+#include <assert.h>
 
+class Field;
 enum Direction {UP, DOWN, LEFT, RIGHT};
 typedef std::vector<std::vector<Item*>> Grid;
 
@@ -40,6 +42,8 @@ public:
     // 设置护盾复活能力
     void setRevival(int);
     void recover();
+    virtual bool isAI() {return false;}
+    virtual Direction act(Field* state){assert(false);return this->direction;};
     //消除所有buff和debuff
 protected:
     std::vector<Loc> body;
@@ -49,7 +53,7 @@ protected:
     Grid* item_map_ptr;
     int width;
     int height;
-    int speed = 0;
+    int speed = -30;
     int health;
     int eaten = 0;
     int killed = 0;

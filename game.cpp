@@ -2,8 +2,9 @@
 #include <QThread>
 #include <fstream>
 #include "AISnake.h"
+#include "queue"
 using namespace std;
-
+typedef pair<int, int> Loc;
 Game::Game(GameMode playMode, int height, int width, std::vector<int> info) :
     level(1),
     clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
@@ -38,6 +39,8 @@ Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
 
 bool Game::snakeAction(Snake *snake)
 {
+    if (snake->isAI())
+        snake->changeDireciton(snake->act(this->getState()));
     // Snake* msnake = state->getSnakes()[0];
     snake->move();   // 完成移动
     if (snake->hitSelf() || snake->hitEdge()) {
@@ -373,3 +376,17 @@ void Level3::initializeGame(int level) {
     this->level = level;
 }
 
+Level4::Level4(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level4::Level4(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level4::initializeGame(int level) {
+
+    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level4.txt"))
+        assert(false);
+    this->level = level;
+    queue<Loc> path;
+    path.push(make_pair(15, 15));
+    path.push(make_pair(15, 30));
+    path.push(make_pair(30, 30));
+    path.push(make_pair(30, 15));
+    Snake* snake = new WalkingSnake(path, {10, 20}, 5, 1, UP, this->state->getMapPtr());
+}
