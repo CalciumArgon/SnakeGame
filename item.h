@@ -146,12 +146,12 @@ public:
 class Marsh: public Item
 {
 public:
-    Marsh(Loc, int);     // 以减速程度初始化
+    Marsh(Loc);     // 以减速程度初始化
 
     virtual void action(Snake*);
     virtual ItemType getName();
 protected:
-    int decelerate;
+    int decelerate = 4;
 };
 
 

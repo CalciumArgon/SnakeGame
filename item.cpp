@@ -204,9 +204,9 @@ ItemType Aerolite::getName() {
     沼泽
     只要蛇任何一部分在沼泽上 都将被减速
 */
-Marsh::Marsh(Loc location, int decelerate):
-    Item(location),
-    decelerate(decelerate) {}
+Marsh::Marsh(Loc location):
+    Item(location)
+     {}
 
 void Marsh::action(Snake* snake) {
     if (snake == nullptr) { return; }

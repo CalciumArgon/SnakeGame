@@ -66,7 +66,12 @@ bool Snake::operator == (const Snake* other) {
 
 int Snake::getLength()
 {
-    return length;
+    return body.size();
+}
+
+int Snake::getHealth()
+{
+    return health;
 }
 
 int Snake::getHealth()
@@ -119,19 +124,20 @@ Loc Snake::nextLoc()
 
 bool Snake::move()
 {
+    /* ===== 全局时钟走过 (12 - speed) 个周期蛇才会进行动作 ===== */
     if (cycle_recorder != (12 - speed)) {
         cycle_recorder += 1;
         return false;
     } else {
         cycle_recorder = 1;
     }
+    /* ====================================================== */
     Loc new_head = nextLoc();
     body.insert(body.begin(), new_head);
     body.pop_back();
-
-    Item* hit_item = hitItem();
-    if (hit_item != nullptr && hit_item->getName() != AEROLITE && hit_item->getName() != MARSH) {
-        hit_item->action(this);
+    if (hitSelf() || hitEdge()) {
+        death();
+        return false;
     }
     return true;
 }
@@ -159,7 +165,7 @@ bool Snake::hitOtherSnake(vector<Snake*> snakes) {
     Loc head = body[0];
     for (Snake* other: snakes) {
         if (this == other) {
-            continue;  // 不和自己比较 
+            continue;  // 不和自己比较
         }
         for (Loc other_body: other->body) {
             if (head == other_body) {
@@ -168,6 +174,20 @@ bool Snake::hitOtherSnake(vector<Snake*> snakes) {
         }
     }
     return false;
+}
+
+Marsh* Snake::touchMarsh()
+{
+    for(int i = 0; i < length; i++)
+    {
+        Item* it = (*item_map_ptr)[body[i].first][body[i].second];
+        if(it != nullptr && it->getName() == MARSH)
+        {
+            Marsh* msh = new Marsh(it->getLoc());
+            return msh;
+        }
+    }
+    return nullptr;
 }
 
 bool Snake::hitEdge()
@@ -214,6 +234,9 @@ void Snake::addLength(int adding)
 
 void Snake::addHealth(int adding) {
     this->health = min(this->health + adding, this->max_health);
+    if (health <= 0) {
+        death();
+    }
 }
 
 void Snake::initialize()
@@ -244,8 +267,8 @@ bool Snake::death()
                       item_map_ptr ).body;   // 用中间初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
         return false;
     } else {
+        // 返回接口 传递死亡的信息
         return true;
-        // TODO: 返回接口 传递死亡的信息
     }
 }
 
@@ -280,6 +303,13 @@ void Snake::setMagnetic(int effective_time) {
 
 void Snake::setRevival(int effective_time) {
     this->revival = effective_time;
+}
+
+void Snake::recover()
+{
+    speed = 6;
+    magnetic = 0;
+    revival = 0;
 }
 
 bool isWithin(int target, int low, int high)

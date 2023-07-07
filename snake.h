@@ -14,7 +14,6 @@ public:
     Snake(std::vector<Loc> body, int length, int max_health, Direction direction, Grid* item_map_ptr);
     Snake(Loc head, int length, int max_health, Direction direction, Grid* item_map_ptr);
     bool operator == (const Snake* other);
-    
     int getLength();
     int getHealth();
     std::vector<Loc> &getBody();
@@ -25,7 +24,7 @@ public:
     bool hitSelf();
     bool hitEdge();
     bool hitOtherSnake(std::vector<Snake*>);  // 在 Game 中可以把 field.snakes[1:] 传进来
-
+    Marsh* touchMarsh();
     bool isPartOfSnake(Loc loc);
     void addLength(int adding);
     void addHealth(int adding);
@@ -40,6 +39,8 @@ public:
     void setMagnetic(int);
     // 设置护盾复活能力
     void setRevival(int);
+    void recover();
+    //消除所有buff和debuff
 protected:
     std::vector<Loc> body;
     int length;
