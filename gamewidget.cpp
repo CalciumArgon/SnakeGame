@@ -1,6 +1,7 @@
 #include "gamewidget.h"
 #include "ui_gamewidget.h"
 #include <QThread>
+#include <QColor>
 
 using namespace std;
 
@@ -23,43 +24,107 @@ QRect GameWidget::getRect(int x, int y)
 void GameWidget::paintEvent(QPaintEvent *ev)
 {
     Q_UNUSED(ev)
+
+    //hide the label
+    ui->labelBackground->hide();
+    ui->labelFood->hide();
+    ui->labelCntDn->hide();
+    ui->labelTime->hide();
+
+    //set the position of the label
+    ui->labelCntDn->setGeometry(380, 400, 600, 600);
+    ui->labelBackground->setGeometry(unitlen, unitlen+100, unitlen*game->getState()->getWidth(), unitlen*game->getState()->getHeight());
+    //show game time
     QString s;
     ui->labelTime->setText(s.setNum(cnt_time));
     ui->labelTime->show();
+
+    //set the painter of the main event
     QPainter painter(this);
+
+    //paint the blocks
     Field* mstate = game->getState();
     painter.setPen(Qt::black);
-    painter.setBrush(Qt::gray);
+    painter.setBrush(QColor(1, 1, 1, 0));
     //painter.setRenderHint(QPainter::Antialiasing);
-    /* draw map */
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++) {
             if(mstate->getItemName(i, j) == BASIC){
-                painter.setBrush(Qt::gray);
-                QRect rect = getRect(i, j);
-                painter.drawRect(rect);
-            }
-            else if(mstate->getItemName(i, j) == FOOD){
-                painter.setBrush(Qt::green);
+                //painter.setBrush(Qt::gray);
                 QRect rect = getRect(i, j);
                 painter.drawRect(rect);
             }
         }
     }
-    /* draw target
+
+    //paint the background
+    //ui->labelBackground->setStyleSheet("border-image: url(:/background.png)");
+    //ui->labelBackground->show();
+
+    //paint food
+    for (size_t i = 0; i < mstate->getWidth(); i++) {
+        for (size_t j = 0; j < mstate->getHeight(); j++){
+            if(mstate->getItemName(i, j) == FOOD){
+                ui->labelFood->setGeometry((i+1)*unitlen, (j+1)*unitlen+100, unitlen, unitlen);
+                ui->labelFood->show();
+                ui->labelFood->raise();
+            }
+            if(mstate->getItemName(i, j) == MARSH){
+                /*
+                ui->labelMarsh->setStyleSheet("border-image: url(:/marsh.png)");
+                ui->labelMarsh->setGeometry((i+1)*unitlen, (j+1)*unitlen+100, unitlen, unitlen);
+                ui->labelMarsh->raise();*/
+                painter.setBrush(Qt::blue);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+            }
+        }
+    }
+
+    //paint snake
+    Snake* msnake = game->getState()->getSnakes()[0];
     painter.setBrush(Qt::green);
     painter.setPen(Qt::green);
-    QRect rect1 = getRect(board.xt, board.yt);
-    painter.drawRect(rect1);*/
-    /* draw snake */
-    Snake* msnake = game->getState()->getSnakes()[0];
-    painter.setBrush(Qt::red);
-    painter.setPen(Qt::red);
     for (std::size_t i = 0; i < msnake->getLength(); i++) {
         QRect rect = getRect(msnake->getBody()[i].first, msnake->getBody()[i].second);
         painter.drawRect(rect);
     }
-    /* move */
+
+    //paint the countdown
+    if(countdown >= -1)
+    {
+        ui->labelCntDn->show();
+        ui->labelCntDn->raise();
+        switch(countdown)
+        {
+        case 3:
+            ui->labelCntDn->setStyleSheet("border-image: url(:/cd3.png)");
+            break;
+        case 2:
+            ui->labelCntDn->setStyleSheet("border-image: url(:/cd2.png)");
+            break;
+        case 1:
+            ui->labelCntDn->setStyleSheet("border-image: url(:/cd1.png)");
+            break;
+        case 0:
+            ui->labelCntDn->setStyleSheet("border-image: url(:/cdgo.png)");
+            break;
+        default:
+            break;
+        }
+        countdown--;
+        if(countdown != 2){
+        QThread::msleep(1000);
+        update();
+
+        return QWidget::paintEvent(ev);
+        }
+    }
+    else {
+        ui->labelCntDn->hide();
+    }
+
+    //move the determine whether the game is over
     if(!game_over) game_over = !game->runGame();
     if(game_over && !is_emit) {
         emit(gameover());
@@ -67,7 +132,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
     QThread::msleep(5);
     if(!game_over) {
-        cnt_time++;
+        cnt_time = game->test;
         update();
     }
     return QWidget::paintEvent(ev);
@@ -101,4 +166,3 @@ GameWidget::~GameWidget()
 {
     delete ui;
 }
-

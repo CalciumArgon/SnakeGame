@@ -35,6 +35,11 @@ void Field::createItem(ItemType type, Loc location, int info)
     case FOOD:
         item = new Food(location, info);
         break;
+    case WALL:
+        item = new Wall(location);
+        break;
+    case MARSH:
+        item = new Marsh(location);
     }
     item_map[location.first][location.second] = item;
 }

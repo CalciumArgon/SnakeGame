@@ -30,6 +30,7 @@ private:
     int cnt_time = 0;
     bool game_over = false;
     bool is_emit = false;
+    int countdown = 3;
 signals:
     void gameover();
 };

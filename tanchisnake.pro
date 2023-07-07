@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        AISnake.cpp \
         clock.cpp \
         dialog.cpp \
         field.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
         snake.cpp
 
 HEADERS += \
+        AISnake.h \
         clock.h \
         dialog.h \
         field.h \
@@ -57,3 +59,8 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    image/image.qrc
+
+DISTFILES +=
