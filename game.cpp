@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include "game.h"
 #include <QThread>
 #include <fstream>
@@ -77,6 +76,47 @@ bool Game::runGame()
             }
         } else {
             snakeAction(snake);
+        }
+        snake->recover();
+
+        if(snake->hitItem() != nullptr ) {
+            switch (snake->hitItem()->getName()) {
+                case FOOD:{
+                    snake->hitItem()->action(snake);
+                    location = state->createRandomLoc();
+                    while(snake->isPartOfSnake(location))
+                        location = state->createRandomLoc();
+                    state->createItem(BASIC, snake->getBody()[0], 0);
+                    state->createItem(FOOD, location, 1);
+                    break;
+                }
+                case WALL: {
+                    // dead
+                    state->createItem(BASIC, snake->getBody()[0], 0);
+                    return false;
+                }
+                case FIRSTAID:
+                case OBSTACLE: {
+                    state->createItem(BASIC, snake->getBody()[0], 0);
+                    if (snake->getHealth() <= 0 && snake->death()) {
+                        return false;
+                    }
+                    break;
+                }
+                case MARSH:
+                    break;
+                default:
+                    throw "Error: unknown item type";
+            }
+        }
+        if(snake->touchMarsh() != nullptr)
+        {
+            test = 0;
+            Marsh * msh = snake->touchMarsh();
+            msh->action(snake);
+        }
+        else {
+            test = 1;
         }
         snake->recover();
 
