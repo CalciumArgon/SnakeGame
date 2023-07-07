@@ -74,11 +74,6 @@ int Snake::getHealth()
     return health;
 }
 
-int Snake::getHealth()
-{
-    return health;
-}
-
 vector<Loc> &Snake::getBody()
 {
     return body;

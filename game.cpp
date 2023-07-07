@@ -289,7 +289,7 @@ AddWallGame::AddWallGame(GameMode game_mode, int height, int width, std::vector<
 
 AddWallGame::AddWallGame(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 
-void AddWallGame::initializeGame(int level) {    
+void AddWallGame::initializeGame(int level) {
 
     if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\addwallgame.txt"))
         assert(false);
@@ -361,4 +361,15 @@ bool TestAISnake::runGame() {
         }*/
         return true;
     }
+
+Level3::Level3(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+
+Level3::Level3(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+
+void Level3::initializeGame(int level) {
+
+    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level3.txt"))
+        assert(false);
+    this->level = level;
+}
 

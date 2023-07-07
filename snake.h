@@ -49,7 +49,7 @@ protected:
     Grid* item_map_ptr;
     int width;
     int height;
-    int speed = 6;
+    int speed = 0;
     int health;
     int eaten = 0;
     int killed = 0;

@@ -50,7 +50,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++) {
             if(mstate->getItemName(i, j) == BASIC){
-                //painter.setBrush(Qt::gray);
+                painter.setBrush(Qt::gray);
                 QRect rect = getRect(i, j);
                 painter.drawRect(rect);
             }
@@ -65,9 +65,9 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++){
             if(mstate->getItemName(i, j) == FOOD){
-                ui->labelFood->setGeometry((i+1)*unitlen, (j+1)*unitlen+100, unitlen, unitlen);
-                ui->labelFood->show();
-                ui->labelFood->raise();
+                painter.setBrush(Qt::red);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
             }
             if(mstate->getItemName(i, j) == MARSH){
                 /*
