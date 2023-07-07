@@ -21,6 +21,7 @@ public:
     bool loadMap(std::string map_path);
     int reachTarget();
     Field* getState();
+    int test = 1;
 protected:
     int level = 1;
 
@@ -43,9 +44,6 @@ public:
     virtual void initializeGame(int level);
 };
 
-
-#endif // GAME_H
-
 class TestAISnake: public Game
 {
 public:
@@ -54,3 +52,5 @@ public:
     virtual void initializeGame(int level);
     virtual bool runGame();
 };
+
+#endif // GAME_H

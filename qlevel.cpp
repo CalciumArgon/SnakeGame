@@ -7,6 +7,8 @@
 #include "game.h"
 #include "dialog.h"
 
+using namespace std;
+
 QLevel::QLevel(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::QLevel)

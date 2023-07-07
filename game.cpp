@@ -36,22 +36,21 @@ Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
     }
 }
 
-bool Game::snakeAction(Snake *)
+bool Game::snakeAction(Snake *snake)
 {
-    Snake* msnake = state->getSnakes()[0];
-    msnake->move();   // 完成移动
-    if (msnake->hitSelf() || msnake->hitEdge()) {
+    // Snake* msnake = state->getSnakes()[0];
+    snake->move();   // 完成移动
+    if (snake->hitSelf() || snake->hitEdge()) {
         return false;
     }
+    if (snake->hitOtherSnake(state->getSnakes())) {
+        bool dead = snake->death();
+        if (dead && snake == state->getSnakes()[0]) {
+            return false;
+        }
+    }
     return true;
-    /*
-    vector<Snake*> other_snakes = state->getSnakes();
-    other_snakes.erase(other_snakes.begin());
-    if (snake->hitOtherSnake(other_snakes)) {
-        snake->death();
-    }*/
-
-    // 判断胜负, 接口 TODO
+    // TODO: 判断胜负
 }
 
 bool Game::runGame()
@@ -59,7 +58,7 @@ bool Game::runGame()
     //clock.run();
 
     // 每个时钟周期设置物体
-    // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮周期
+    // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮snakeAction周期
     // 一些应该从文件中读取的数据 ===================== //
     Loc location;
     // ============================================= //
@@ -68,30 +67,59 @@ bool Game::runGame()
     }*/
 
     // 所有蛇进行行动
-    bool maction = true;
-    Snake* msnake = state->getSnakes()[0];
-    maction = snakeAction(msnake);
-    if(!maction) return false;
-    if(msnake->hitItem() != nullptr )
-    {
-        switch (msnake->hitItem()->getName()) {
-            case FOOD:{
-                location = state->createRandomLoc();
-                while(msnake->isPartOfSnake(location))
-                    location = state->createRandomLoc();
-                state->createItem(BASIC, msnake->getBody()[0], 0);
-                state->createItem(FOOD, location, 1);
-                break;
-            }
-            case WALL: {
-                // dead
+    for (int i=0; i<state->getSnakes().size(); ++i) {
+        // 蛇的行动 和 所撞物体产生的效果
+        Snake *snake = state->getSnakes()[i];
+        if (i == 0) {
+            if (!snakeAction(snake)) {  // 玩家没有成功移动, 直接结束游戏
                 return false;
             }
-            default:
-                throw "Error: unknown item type";
+        } else {
+            snakeAction(snake);
         }
+        snake->recover();
 
+        if(snake->hitItem() != nullptr ) {
+            switch (snake->hitItem()->getName()) {
+                case FOOD:{
+                    snake->hitItem()->action(snake);
+                    location = state->createRandomLoc();
+                    while(snake->isPartOfSnake(location))
+                        location = state->createRandomLoc();
+                    state->createItem(BASIC, snake->getBody()[0], 0);
+                    state->createItem(FOOD, location, 1);
+                    break;
+                }
+                case WALL: {
+                    // dead
+                    state->createItem(BASIC, snake->getBody()[0], 0);
+                    return false;
+                }
+                case FIRSTAID:
+                case OBSTACLE: {
+                    state->createItem(BASIC, snake->getBody()[0], 0);
+                    if (snake->getHealth() <= 0 && snake->death()) {
+                        return false;
+                    }
+                    break;
+                }
+                case MARSH:
+                    break;
+                default:
+                    throw "Error: unknown item type";
+            }
+        }
+        if(snake->touchMarsh() != nullptr)
+        {
+            test = 0;
+            Marsh * msh = snake->touchMarsh();
+            msh->action(snake);
+        }
+        else {
+            test = 1;
+        }
     }
+
     // 陨石和沼泽的特殊效果判断
     /*for (vector<Item*> row: *state->getMapPtr()) {
         for (auto item: row) {
@@ -218,9 +246,9 @@ AddWallGame::AddWallGame(GameMode game_mode, int height, int width, std::vector<
 
 AddWallGame::AddWallGame(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 
-void AddWallGame::initializeGame(int level) {    
+void AddWallGame::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\addwallgame.txt"))
+    if (!this->loadMap("D:\\CaAr\\cpp_project\\SnakeGame_Qt\\map\\addwallgame.txt"))
         assert(false);
     this->level = level;
 }
@@ -290,3 +318,4 @@ bool TestAISnake::runGame() {
         }*/
         return true;
     }
+
