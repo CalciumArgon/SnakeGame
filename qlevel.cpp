@@ -87,7 +87,17 @@ void QLevel::on_btnLev4_clicked()
 
 void QLevel::on_btnLev5_clicked()
 {
-
+    Field* fld = new Field(40, 40);
+    Game* game = new Level5(fld, TIMEFREE, {10});
+    game->initializeGame(1);
+    GameWidget *gw = new GameWidget(game);
+    Dialog *dlg = new Dialog();
+    connect(gw, &GameWidget::gameover, dlg, &Dialog::show);
+    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
+    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    gw->setFocusPolicy(Qt::ClickFocus);
+    gw->resize(1250, 1350);
+    gw->show();
 }
 
 void QLevel::on_btnLev6_clicked()

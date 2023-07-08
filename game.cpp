@@ -76,7 +76,7 @@ bool Game::runGame()
     for (int i=0; i<state->getSnakes().size(); ++i) {
         // 蛇的行动 和 所撞物体产生的效果
         Snake *snake = state->getSnakes()[i];
-        
+
         if (i == 0) {
             if (!snakeAction(snake)) {  // 玩家没有成功移动, 直接结束游戏
                 return false;
@@ -394,4 +394,15 @@ void Level4::initializeGame(int level) {
     path.push(make_pair(30, 15));
     Snake* snake = new WalkingSnake(path, {10, 20}, 5, 1, UP, this->state->getMapPtr());
     this->state->addSnake(snake);
+}
+
+Level5::Level5(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+
+Level5::Level5(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+
+void Level5::initializeGame(int level) {
+
+    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level5.txt"))
+        assert(false);
+    this->level = level;
 }
