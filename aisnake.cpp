@@ -8,17 +8,18 @@
 
 using namespace std;
 Direction AISnake::go_to(Loc target) {
+
     if (target.first < this->body[0].first){
-        return UP;
-    }
-    if (target.first > this->body[0].first){
-        return DOWN;
-    }
-    if (target.second < this->body[0].second){
         return LEFT;
     }
-    if (target.second > this->body[0].second){
+    if (target.first > this->body[0].first){
         return RIGHT;
+    }
+    if (target.second < this->body[0].second){
+        return DOWN;
+    }
+    if (target.second > this->body[0].second){
+        return UP;
     }
     return this->direction;
 }

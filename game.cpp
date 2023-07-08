@@ -76,6 +76,7 @@ bool Game::runGame()
     for (int i=0; i<state->getSnakes().size(); ++i) {
         // 蛇的行动 和 所撞物体产生的效果
         Snake *snake = state->getSnakes()[i];
+        
         if (i == 0) {
             if (!snakeAction(snake)) {  // 玩家没有成功移动, 直接结束游戏
                 return false;
