@@ -82,12 +82,21 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
 
     //paint snake
-    Snake* msnake = game->getState()->getSnakes()[0];
     painter.setBrush(Qt::green);
     painter.setPen(Qt::green);
+    Snake* msnake = game->getState()->getSnakes()[0];
     for (std::size_t i = 0; i < msnake->getLength(); i++) {
         QRect rect = getRect(msnake->getBody()[i].first, msnake->getBody()[i].second);
         painter.drawRect(rect);
+    }
+    painter.setBrush(Qt::yellow);
+    painter.setPen(Qt::yellow);
+    for(int i = 1; i < game->getState()->getSnakes().size(); i++){
+        Snake* osnake = game->getState()->getSnakes()[i];
+        for (std::size_t i = 0; i < osnake->getLength(); i++) {
+            QRect rect = getRect(osnake->getBody()[i].first, osnake->getBody()[i].second);
+            painter.drawRect(rect);
+        }
     }
 
     //paint the countdown

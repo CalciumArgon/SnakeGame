@@ -39,8 +39,11 @@ Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
 
 bool Game::snakeAction(Snake *snake)
 {
-    if (snake->isAI())
+    if (snake->isAI()){
         snake->changeDireciton(snake->act(this->getState()));
+//        throw "AI snake not implemented";
+    }
+
     // Snake* msnake = state->getSnakes()[0];
     snake->move();   // 完成移动
     if (snake->hitSelf() || snake->hitEdge()) {
@@ -389,4 +392,5 @@ void Level4::initializeGame(int level) {
     path.push(make_pair(30, 30));
     path.push(make_pair(30, 15));
     Snake* snake = new WalkingSnake(path, {10, 20}, 5, 1, UP, this->state->getMapPtr());
+    this->state->addSnake(snake);
 }
