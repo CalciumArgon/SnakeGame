@@ -59,7 +59,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     //get current time and show
     end = clock();
     if(countdown < 0){
-        if(!game_over)
+        if(game_over == 0)
             showTime(int((end - begin) / CLK_TCK));
 
     }
@@ -95,11 +95,9 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     //painter.setRenderHint(QPainter::Antialiasing);
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++) {
-            if(mstate->getItemName(i, j) == BASIC){
-                //painter.setBrush(Qt::gray);
-                QRect rect = getRect(i, j);
-                painter.drawRect(rect);
-            }
+            //painter.setBrush(Qt::gray);
+            QRect rect = getRect(i, j);
+            painter.drawRect(rect);
         }
     }
 
@@ -137,7 +135,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         }
     }
     //paint the countdown
-    if(countdown >= -1)
+    if (countdown >= -1)
     {
         ui->labelCntDn->show();
         ui->labelCntDn->raise();
@@ -159,32 +157,37 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         }
         case -1:
             begin = clock();
+            this->game->setBeginTime(begin);
             break;
         default:
             break;
         }
         countdown--;
         if(countdown != 2){
-        QThread::msleep(1000);
-        update();
+            QThread::msleep(1000);
+            update();
 
-        return QWidget::paintEvent(ev);
+            return QWidget::paintEvent(ev);
         }
-    }
-    else {
+    } else {
         ui->labelCntDn->hide();
     }
 
     //move the determine whether the game is over
-    if(!game_over) game_over = !game->runGame();
-    if(game_over && !is_emit) {
-        emit(gameover());
-        is_emit = true;
+    if (game_over == 0) { game_over = game->runGame(); }
+    if (game_over != 0 && !is_emit) {
+        if (game_over == 1) {
+            emit(gameover());
+            is_emit = true;
+        } else {
+            emit(gameover());
+            is_emit = true;
+        }
     }
-    QThread::msleep(5);
-    if(!game_over) {
-        cnt_time++;
 
+    QThread::msleep(5);
+    if (game_over == 0) {
+        cnt_time++;
         update();
     }
     return QWidget::paintEvent(ev);

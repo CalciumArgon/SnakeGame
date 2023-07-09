@@ -303,6 +303,12 @@ int Snake::getKilled()
     return killed;
 }
 
+int Snake::score()
+{
+    // 加权分数, 杀一条蛇等于吃五个食物
+    return eaten + 5 * killed;
+}
+
 int Snake::getHp()
 {
     return health;

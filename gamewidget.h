@@ -42,7 +42,7 @@ private:
     Game *game;
     int unitlen = 30;
     int cnt_time = 0;
-    bool game_over = false;
+    short int game_over = 0;
     bool is_emit = false;
     int countdown = 3;
     clock_t begin = 0;
