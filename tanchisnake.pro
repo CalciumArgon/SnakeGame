@@ -25,7 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        AISnake.cpp \
+        aisnake.cpp \
         clock.cpp \
         dialog.cpp \
         field.cpp \
@@ -38,7 +38,7 @@ SOURCES += \
         snake.cpp
 
 HEADERS += \
-        AISnake.h \
+        aisnake.h \
         clock.h \
         dialog.h \
         field.h \
@@ -46,6 +46,7 @@ HEADERS += \
         gamewidget.h \
         item.h \
         mainwindow.h \
+        path.h \
         qlevel.h \
         snake.h
 
@@ -61,6 +62,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
+    image/image.qrc \
     image/image.qrc
 
-DISTFILES +=
+DISTFILES += \
+    map/addwallgame.txt \
+    map/level3.txt \
+    map/level4.txt \
+    map/level5.txt \
+    map/level6.txt \
+    map/testaisnake.txt

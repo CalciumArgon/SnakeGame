@@ -7,6 +7,8 @@
 #include "game.h"
 #include <QPainter>
 #include <QKeyEvent>
+#include <QLabel>
+#include <ctime>
 
 namespace Ui {
 class GameWidget;
@@ -22,8 +24,19 @@ public:
     void paintEvent(QPaintEvent *ev);
     void keyPressEvent(QKeyEvent* event);
     void keyReleaseEvent(QKeyEvent* event);
+    void showTime(int);
+    void showHp();
+    void showMp();
+    void paintItem(int, int, ItemType);
+    void paintMySnake();
+    void deleteLabel();
+    void deleteFoodLabel();
+    std::vector<QLabel*> static_label;
+    std::vector<QLabel*> dynamic_label;
+    std::vector<QLabel*> food_label;
 
     ~GameWidget();
+    int border = 300;
 private:
     Ui::GameWidget *ui;
     Game *game;
@@ -32,6 +45,8 @@ private:
     bool game_over = false;
     bool is_emit = false;
     int countdown = 3;
+    clock_t begin = 0;
+    clock_t end = 0;
 signals:
     void gameover();
 };

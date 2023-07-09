@@ -64,12 +64,12 @@ bool Snake::operator == (const Snake* other) {
     return true;
 }
 
-int Snake::getLength()
+int Snake::getLength() const
 {
     return body.size();
 }
 
-int Snake::getHealth()
+int Snake::getHealth() const
 {
     return health;
 }
@@ -77,6 +77,26 @@ int Snake::getHealth()
 vector<Loc> &Snake::getBody()
 {
     return body;
+}
+
+Direction Snake::getDirection()
+{
+    return direction;
+}
+
+Direction Snake::getBodyDirection(int i)
+{
+    if(i == 0) return getDirection();
+    Loc loc2 = body[i];
+    Loc loc1 = body[i-1];
+    if(loc1.first - loc2.first == 0 && loc1.second - loc2.second == -1)
+        return UP;
+    if(loc1.first - loc2.first == 0 && loc1.second - loc2.second == 1)
+        return DOWN;
+    if(loc1.first - loc2.first == -1 && loc1.second - loc2.second == 0)
+        return LEFT;
+    if(loc1.first - loc2.first == 1 && loc1.second - loc2.second == 0)
+        return RIGHT;
 }
 
 void Snake::changeDireciton(Direction new_direction)
@@ -119,14 +139,6 @@ Loc Snake::nextLoc()
 
 bool Snake::move()
 {
-    /* ===== 全局时钟走过 (12 - speed) 个周期蛇才会进行动作 ===== */
-    if (cycle_recorder < (12 - speed)) {
-        cycle_recorder += 1;
-        return false;
-    } else {
-        cycle_recorder = 1;
-    }
-    /* ====================================================== */
     Loc new_head = nextLoc();
     body.insert(body.begin(), new_head);
     body.pop_back();
@@ -173,7 +185,7 @@ bool Snake::hitOtherSnake(vector<Snake*> snakes) {
 
 Marsh* Snake::touchMarsh()
 {
-    for(int i = 0; i < length; i++)
+    for(int i = 0; i < getLength(); i++)
     {
         Item* it = (*item_map_ptr)[body[i].first][body[i].second];
         if(it != nullptr && it->getName() == MARSH)
@@ -193,7 +205,7 @@ bool Snake::hitEdge()
 
 bool Snake::isPartOfSnake(Loc loc)
 {
-    for(int i = 0; i < length; i++)
+    for(int i = 0; i < getLength(); i++)
     {
         Loc mloc = body[i];
         if(mloc == loc)
@@ -205,9 +217,9 @@ bool Snake::isPartOfSnake(Loc loc)
 void Snake::addLength(int adding)
 {
     // second last X/Y 倒数第二段身体
-    int sl_x = body[length-2].first, sl_y = body[length-2].second;
+    int sl_x = body[getLength()-2].first, sl_y = body[getLength()-2].second;
     // last X/Y 最后一段身体
-    int l_x = body[length-1].first, l_y = body[length-1].second;
+    int l_x = body[getLength()-1].first, l_y = body[getLength()-1].second;
 
     // new - last = last - slast
     // new = last + delta
@@ -222,9 +234,12 @@ void Snake::addLength(int adding)
             // 新坐标上有物体
             break;
         }
+        if (isPartOfSnake(make_pair(newX, newY))) {
+            break;
+        }
         body.push_back(make_pair(newX, newY));
     }
-    length++;
+    length += adding;
 }
 
 void Snake::addHealth(int adding) {
@@ -263,6 +278,7 @@ bool Snake::death()
         return false;
     } else {
         // 返回接口 传递死亡的信息
+        health = 0;
         return true;
     }
 }
@@ -287,9 +303,9 @@ int Snake::getKilled()
     return killed;
 }
 
-int Snake::getSpeed()
+int Snake::getHp()
 {
-    return speed;
+    return health;
 }
 
 void Snake::addSpeed(int adding)
@@ -315,8 +331,25 @@ void Snake::decMp()
         mp = 0;
 }
 
+bool Snake::ableMove()
+{
+    // ===== 全局时钟走过 (12 - speed) 个周期蛇才会进行动作
+    if (cycle_recorder != (12 - speed)) {
+        cycle_recorder += 1;
+        return false;
+    } else {
+        cycle_recorder = 1;
+        return true;
+    }
+}
+
 void Snake::setMagnetic(int effective_time) {
     this->magnetic = effective_time;
+}
+
+bool Snake::ableMagnetic()
+{
+    return (this->magnetic > 0);
 }
 
 void Snake::setRevival(int effective_time) {
@@ -326,8 +359,6 @@ void Snake::setRevival(int effective_time) {
 void Snake::recover()
 {
     speed = 6;
-    magnetic = 0;
-    revival = 0;
 }
 
 bool isWithin(int target, int low, int high)
