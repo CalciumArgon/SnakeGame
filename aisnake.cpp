@@ -1,53 +1,12 @@
-#include "aisnake.h"
+//
+// Created by lenovo on 2023/7/3.
+//
+
+#include "AISnake.h"
 #include <queue>
 #include <set>
 
 using namespace std;
-Direction AISnake::go_to(Loc target) {
-
-    if (this->direction == UP || this->direction == DOWN){
-        if (target.first < this->body[0].first){
-            return LEFT;
-        }
-        if (target.first > this->body[0].first){
-            return RIGHT;
-        }
-        if (target.first == this->body[0].first){
-
-            if (target.second > this->body[0].second && this->direction == UP) {
-                return (this->body[0].first < 30) ? RIGHT : LEFT;
-            }
-            if (target.second < this->body[0].second && this->direction == DOWN) {
-                return (this->body[0].first > 10) ? LEFT : RIGHT;
-            }
-            return this->direction;
-        }
-
-    }
-    else {
-        if (target.second < this->body[0].second) {
-            return UP;
-        }
-        if (target.second > this->body[0].second) {
-            return DOWN;
-        }
-        if (target.second == this->body[0].second) {
-            if (target.first > this->body[0].first && this->direction == LEFT) {
-                return (this->body[0].second < 30) ? DOWN : UP;
-            }
-            if (target.first < this->body[0].first && this->direction == RIGHT) {
-                return (this->body[0].second > 10) ? UP : DOWN;
-            }
-            return this->direction;
-        }
-    }
-    return this->direction;
-}
-
-bool AISnake::reachtarget(Loc target) {
-    return this->body[0] == target;
-}
-
 pair<int, int> GreedyFood::getNearestFood() {
     queue<pair<int, int>> toSearch;
     set<pair<int, int>> searched;
@@ -56,7 +15,7 @@ pair<int, int> GreedyFood::getNearestFood() {
     while(!toSearch.empty()){
         pair<int,int> target = toSearch.front();
         toSearch.pop();
-        if (item_map_ptr->at(target.first)[target.second] && item_map_ptr->at(target.first)[target.second]->getName() == FOOD){
+        if (item_map_ptr->at(target.first)[target.second]){
             return target;
         } else{
             if (target.first > 0 && searched.find(make_pair(target.first-1, target.second)) == searched.end()){
@@ -81,34 +40,22 @@ pair<int, int> GreedyFood::getNearestFood() {
     return make_pair(-1,-1);
 }
 
-Direction GreedyFood::act(Field *state) {
+Direction GreedyFood::act(Field &state) {
     pair<int,int> target = getNearestFood();
-    if (target.first == -1) {
+    if (target.first == -1){
         return this->direction;
     }
-    return this->go_to(target);
-}
-
-void WalkingSnake::setPath(std::queue<Loc> path) {
-    this->path = path;
-}
-
-Direction WalkingSnake::act(Field *state) {
-    if (next_target == make_pair(-1, -1)) {
-        if (path.empty()) {
-            return this->direction;
-        }
-        next_target = path.front();
-        path.pop();
-        path.push(next_target);
+    if (target.first < this->body[0].first){
+        return UP;
     }
-    if (!this->reachtarget(next_target)) {
-        return this->go_to(next_target);
+    if (target.first > this->body[0].first){
+        return DOWN;
     }
-    else{
-        next_target = path.front();
-        path.pop();
-        path.push(next_target);
-        return this->go_to(next_target);
+    if (target.second < this->body[0].second){
+        return LEFT;
     }
+    if (target.second > this->body[0].second){
+        return RIGHT;
+    }
+    return this->direction;
 }
