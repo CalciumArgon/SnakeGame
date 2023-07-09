@@ -62,7 +62,6 @@ bool Game::runGame()
 {
     // 删除血量为 0 的蛇
     getState()->clearSnake();
-
     Loc location;
     // 所有蛇进行行动 和 所撞物体产生的效果
     for (unsigned int i=0; i<state->getSnakes().size(); ++i) {

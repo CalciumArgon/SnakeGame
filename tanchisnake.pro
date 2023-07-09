@@ -42,6 +42,7 @@ HEADERS += \
         clock.h \
         dialog.h \
         field.h \
+        g_s.h \
         game.h \
         gamewidget.h \
         item.h \
@@ -63,9 +64,40 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     image/image.qrc \
+    image/image.qrc \
     image/image.qrc
 
 DISTFILES += \
+    image/60ed4209cccbf115b7a47d7b075c0ca5.jpeg \
+    image/background.jpeg \
+    image/background.png \
+    image/cd1.png \
+    image/cd2.png \
+    image/cd3.png \
+    image/cdgo.png \
+    image/food.jpg \
+    image/food1.jpg \
+    image/food1.png \
+    image/food2.jpeg \
+    image/food2.png \
+    image/food3.jpeg \
+    image/food3.png \
+    image/health.png \
+    image/hptext.png \
+    image/magnet.png \
+    image/marsh.jpg \
+    image/marsh.png \
+    image/no_health.png \
+    image/snakebody_down.png \
+    image/snakebody_left.png \
+    image/snakebody_right.png \
+    image/snakebody_up.png \
+    image/snakehead_down.png \
+    image/snakehead_left.png \
+    image/snakehead_right.png \
+    image/snakehead_up.png \
+    image/wall.jpeg \
+    image/wall.png \
     map/addwallgame.txt \
     map/level3.txt \
     map/level4.txt \
