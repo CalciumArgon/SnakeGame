@@ -12,31 +12,24 @@ Game::Game(GameMode game_mode, int height, int width, std::vector<int> info) :
     game_mode(game_mode)
 {
     state = new Field(height, width);
-    if (game_mode == TIMELIMIT) {
-        target_food = info[0];
-        target_time = info[1];
-    } else if (game_mode == TIMEFREE) {
-        target_food = info[0];
-    } else if (game_mode == KILLSNAKE) {
-        target_kill = info[0];
-    }
+    target_score = info[0];
+    target_time = info[1];
 }
 
 Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
     level(1),
+    target_score(info[0]),
+    target_time(info[1]),
     clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
     state(state),
-    game_mode(game_mode)
+    game_mode(game_mode) {}
+
+
+void Game::setBeginTime(clock_t begin)
 {
-    if (game_mode == TIMELIMIT) {
-        target_food = info[0];
-        target_time = info[1];
-    } else if (game_mode == TIMEFREE) {
-        target_food = info[0];
-    } else if (game_mode == KILLSNAKE) {
-        target_kill = info[0];
-    }
+    this->begin = begin;
 }
+
 
 bool Game::snakeAction(Snake *snake)
 {
@@ -55,13 +48,13 @@ bool Game::snakeAction(Snake *snake)
         if (dead) return false;
     }
     return true;
-    // TODO: 判断胜负
 }
 
-bool Game::runGame()
+short Game::runGame()
 {
     // 删除血量为 0 的蛇
     getState()->clearSnake();
+
     Loc location;
     // 所有蛇进行行动 和 所撞物体产生的效果
     for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
@@ -81,7 +74,7 @@ bool Game::runGame()
         }
         if (!move_success) {
             if (snake->isAI()) { continue; }
-            else { return false; }
+            else { return -1; }
         }
         // -------------------------------------------------------
 
@@ -114,6 +107,9 @@ bool Game::runGame()
             case SHIELD:
             case FIRSTAID:
             case OBSTACLE:
+                state->deleteItem(item_location);
+                hit_item->action(snake);
+                break;
             case WALL:
             {
                 hit_item->action(snake);
@@ -129,7 +125,7 @@ bool Game::runGame()
             if (snake->isAI()) {
                 continue;
             } else {
-                return false;
+                return -1;
             }
         }
         // ------------------------------
@@ -155,7 +151,6 @@ bool Game::runGame()
                     }
                 }
             }
-
         }
 
 
@@ -169,7 +164,10 @@ bool Game::runGame()
             test = 1;
         }
     }
-    return true;
+
+    // 胜负判断
+    short game_status = reachTarget();
+    return game_status;
 }
 
 void Game::initializeGame(int level)
@@ -248,29 +246,16 @@ bool Game::loadMap(string map_name)
     return true;
 }
 
-int Game::reachTarget()
+short Game::reachTarget()
 {
     Snake* player = state->getSnakes()[0];
-    if (game_mode == TIMELIMIT) {
-        if (player->getEaten() >= target_food) {
-            return 1;   // 赢
-        } else if (clock.getTime() >= target_time) {
-            return -1;  // 输
-        } else {
-            return 0;   // 继续
-        }
-    } else if (game_mode == TIMEFREE) {
-        if (player->getEaten() == target_food) {
-            return 1;   // 不限时, 有足够食物就赢
-        } else {
-            return 0;   // 只要没死, 就一直继续
-        }
-    } else if (game_mode == KILLSNAKE) {
-        if (player->getKilled() >= target_kill) {
-            return 1;   // 不限时, 杀足够蛇就赢
-        } else {
-            return 0;   // 只要没死, 就一直继续
-        }
+    clock_t end = std::clock();
+    if (player->score() >= this->target_score) {
+        return 1;
+    } else if ((end - this->begin) > CLK_TCK * target_time) {
+        return -1;
+    } else {
+        return 0;
     }
 }
 
@@ -306,7 +291,7 @@ void TestAISnake::initializeGame(int level) {
     state->createItem(type, location, info);
 }
 
-bool TestAISnake::runGame() {
+short TestAISnake::runGame() {
     Loc location;
     for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
         Snake *snake = state->getSnakes()[i];
