@@ -13,8 +13,8 @@ bool isWithin(int target, int low, int high);
 class Snake
 {
 public:
-    Snake(std::vector<Loc> body, int length, int max_health, Direction direction, Grid* item_map_ptr);
-    Snake(Loc head, int length, int max_health, Direction direction, Grid* item_map_ptr);
+    Snake(std::vector<Loc> body, int length, int health, Direction direction, Grid* item_map_ptr);
+    Snake(Loc head, int length, int health, Direction direction, Grid* item_map_ptr);
     void initialize();
     bool operator == (const Snake* other);
 
@@ -66,7 +66,7 @@ public:
 protected:
     std::vector<Loc> body;
     int length;
-    int max_health;
+    int max_health = 4;
     Direction direction;
     Grid* item_map_ptr;
     int width;

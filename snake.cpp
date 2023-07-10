@@ -2,24 +2,22 @@
 
 using namespace std;
 
-Snake::Snake(vector<Loc> body, int length, int max_health, Direction direction, Grid* item_map_ptr) :
+Snake::Snake(vector<Loc> body, int length, int health, Direction direction, Grid* item_map_ptr) :
     body(body),
     length(length),
-    max_health(max_health),
+    health(health),
     direction(direction),
-    item_map_ptr(item_map_ptr),
-    health(max_health)
+    item_map_ptr(item_map_ptr)
 {
     width = item_map_ptr->size();
     height = (*item_map_ptr)[0].size();
 }
 
-Snake::Snake(Loc head, int length, int max_health, Direction direction, Grid* item_map_ptr) :
+Snake::Snake(Loc head, int length, int health, Direction direction, Grid* item_map_ptr) :
     length(length),
-    max_health(max_health),
+    health(health),
     direction(direction),
-    item_map_ptr(item_map_ptr),
-    health(max_health)
+    item_map_ptr(item_map_ptr)
 {
     body.clear();
     body.push_back(head);
