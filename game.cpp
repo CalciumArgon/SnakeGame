@@ -190,6 +190,7 @@ bool Game::loadMap(string map_name)
 {
     /*
      * Map 格式：第一行输入地图所包含的物体数量（包括任何Item）|是否确定蛇的初始化位置（0：否，1：只确定蛇头位置, 先输入方向，再输入长度，再输入蛇头位置 2：先输入方向，长度，再输入完整的蛇身坐标)
+     * 11: 在 1 的基础上，输入蛇的max_health
      * 方向：0：上，1：下，2：左，3：右
      * 长度：蛇的长度
      * 蛇头位置：蛇头的坐标
@@ -237,6 +238,14 @@ bool Game::loadMap(string map_name)
                 body.push_back(Loc(x, y));
             }
             Snake* snk = new Snake(body, snake_len, 1, (Direction)direction, this->state->getMapPtr());
+            this->state->addSnake(snk);
+            break;
+        }
+        case 11:{
+            int direction, snake_len, x, y, max_health;
+            map_file >> direction >> snake_len >> x >> y >> max_health;
+            Loc head = Loc(x, y);
+            Snake* snk = new Snake(head, snake_len, max_health, (Direction)direction, this->state->getMapPtr());
             this->state->addSnake(snk);
             break;
         }
@@ -419,6 +428,22 @@ Level5::Level5(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 void Level5::initializeGame(int level) {
 
     if (!this->loadMap(WORKING_DIR + "\\map\\level5.txt"))
+        assert(false);
+    this->level = level;
+}
+
+Level6::Level6(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level6::Level6(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level6::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level6.txt"))
+        assert(false);
+    this->level = level;
+}
+
+Level7::Level7(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level7::Level7(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level7::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level7.txt"))
         assert(false);
     this->level = level;
 }

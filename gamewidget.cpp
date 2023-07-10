@@ -122,6 +122,16 @@ void GameWidget::paintEvent(QPaintEvent *ev)
             if(mstate->getItemName(i, j) == MAGNET){
                 paintItem(i, j, MAGNET);
             }
+            if(mstate->getItemName(i, j) == FIRSTAID){
+                painter.setBrush(Qt::black);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+            }
+            if(mstate->getItemName(i, j) == OBSTACLE){
+                painter.setBrush(Qt::blue);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+            }
         }
     }
 

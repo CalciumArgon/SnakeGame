@@ -44,6 +44,12 @@ void Field::createItem(ItemType type, Loc location, int info)
     case MAGNET:
         item = new Magnet(location, info);
         break;
+    case OBSTACLE:
+        item = new Obstacle(location, info);
+        break;
+    case FIRSTAID:
+        item = new Firstaid(location, info);
+        break;
     }
     item_map[location.first][location.second] = item;
 }
