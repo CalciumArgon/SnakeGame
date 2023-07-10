@@ -152,6 +152,8 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         switch(countdown)
         {
         case 3:
+            begin = clock();
+            this->game->setBeginTime(begin);
             ui->labelCntDn->setStyleSheet("border-image: url(:/cd3.png)");
             break;
         case 2:
@@ -166,8 +168,6 @@ void GameWidget::paintEvent(QPaintEvent *ev)
             break;
         }
         case -1:
-            begin = clock();
-            this->game->setBeginTime(begin);
             break;
         default:
             break;
@@ -187,10 +187,10 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     if (game_over == 0) { game_over = game->runGame(); }
     if (game_over != 0 && !is_emit) {
         if (game_over == 1) {
-            emit(gameover());
+            emit(gameEnd(1));
             is_emit = true;
         } else {
-            emit(gameover());
+            emit(gameEnd(0));
             is_emit = true;
         }
     }

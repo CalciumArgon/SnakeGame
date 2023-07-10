@@ -48,7 +48,7 @@ private:
     clock_t begin = 0;
     clock_t end = 0;
 signals:
-    void gameover();
+    void gameEnd(int);
 };
 
 #endif // GAMEWIDGET_H
