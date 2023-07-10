@@ -50,6 +50,11 @@ void Field::createItem(ItemType type, Loc location, int info)
     case FIRSTAID:
         item = new Firstaid(location, info);
         break;
+    case SHIELD:
+        item = new Shield(location, info);
+        break;
+    case AEROLITE:
+        item = new Aerolite(location);
     }
     item_map[location.first][location.second] = item;
 }

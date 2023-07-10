@@ -33,6 +33,7 @@ public:
     bool hitEdge();
     bool hitOtherSnake(std::vector<Snake*>);  // 在 Game 中可以把 field.snakes[1:] 传进来
     Marsh* touchMarsh();
+    Aerolite* touchAerolite();
     bool isPartOfSnake(Loc loc);
 
     void addLength(int adding);

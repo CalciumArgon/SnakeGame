@@ -176,7 +176,7 @@ void Aerolite::action(Snake* snake) {
     if (snake == nullptr) { return; }
     /*
         陨石的工作原理:
-        在 Game 运行函数中每个时钟周期找到 Field.grid 中的所有陨石
+        在 Game 运行函数中每个时钟周期找到 item_map_ptr 中的所有陨石
         这些陨石运行 hitHeadSnake() 和 hitBodySnake()
         将它们返回的 Snake* (如果有的话) 传进 Aerolite.action() 里
     */
@@ -190,7 +190,6 @@ void Aerolite::action(Snake* snake) {
                 break;
             }
             snake->getBody().pop_back();
-            snake->addLength(-1);
         }
     }
 }

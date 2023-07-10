@@ -120,6 +120,16 @@ short Game::runGame()
             }
         }
 
+        // 检查陨石
+        if (this->isFall()) {
+            Aerolite* aerolite = snake->touchAerolite();
+            if (aerolite != nullptr) {
+                aerolite->action(snake);
+            }
+        }
+        this->countDown();  // 新的一轮陨石倒计时
+
+
         // 检查死亡 ----------------------
         if (snake->getHealth() <= 0) {
             if (snake->isAI()) {
@@ -153,14 +163,12 @@ short Game::runGame()
             }
         }
 
-
-        if(snake->touchMarsh() != nullptr)
-        {
+        // 检查沼泽减速
+        Marsh *msh = snake->touchMarsh();
+        if(msh != nullptr) {
             test = 0;
-            Marsh* msh = snake->touchMarsh();
             msh->action(snake);
-        }
-        else {
+        } else {
             test = 1;
         }
     }
@@ -184,6 +192,16 @@ void Game::initializeGame(int level)
     state->createItem(type, location, info);
 }
 
+void Game::countDown()
+{
+    aerolite_counting = (aerolite_counting + 6) % 5 - 2;
+}
+
+bool Game::isFall()
+{
+    return this->aerolite_counting < 0;
+}
+
 bool Game::loadMap(string map_name)
 {
     /*
@@ -193,7 +211,7 @@ bool Game::loadMap(string map_name)
      * 长度：蛇的长度
      * 蛇头位置：蛇头的坐标
      * 蛇身坐标：蛇身的坐标
-     * 类型：1：食物，2：墙，3：陨石，4：沼泽
+     * 类型：1：食物，2：墙，3：陨石，4：沼泽，5：吸铁石，6：护盾，7：血包，8：障碍物
      * 然后每行输入一个物体的信息 类型 + 坐标 + info
      * 输入完物体后，如果需要确定蛇的位置，则输入蛇的坐标 坐标每行一个
      * */
@@ -429,6 +447,30 @@ Level7::Level7(GameMode game_mode, int height, int width, std::vector<int> info)
 Level7::Level7(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level7::initializeGame(int level) {
     if (!this->loadMap(WORKING_DIR + "\\map\\level7.txt"))
+        assert(false);
+    this->level = level;
+}
+
+Level8::Level8(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level8::Level8(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level8::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level8.txt"))
+        assert(false);
+    this->level = level;
+}
+
+Level9::Level9(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level9::Level9(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level9::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level9.txt"))
+        assert(false);
+    this->level = level;
+}
+
+Level10::Level10(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level10::Level10(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level10::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level10.txt"))
         assert(false);
     this->level = level;
 }

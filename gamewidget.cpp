@@ -139,6 +139,16 @@ void GameWidget::paintEvent(QPaintEvent *ev)
                 QRect rect = getRect(i, j);
                 painter.drawRect(rect);
             }
+            if(mstate->getItemName(i, j) == SHIELD){
+                painter.setBrush(Qt::yellow);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+            }
+            if(mstate->getItemName(i, j) == AEROLITE){
+                painter.setBrush(Qt::red);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+            }
         }
     }
 

@@ -2,6 +2,14 @@
 
 using namespace std;
 
+inline int min(int x1, int x2) {
+    return (x1 <= x2) ? x1 : x2;
+}
+
+inline int max(int x1, int x2) {
+    return (x1 >= x2) ? x1 : x2;
+}
+
 Snake::Snake(vector<Loc> body, int length, int health, Direction direction, Grid* item_map_ptr) :
     body(body),
     length(length),
@@ -183,13 +191,23 @@ bool Snake::hitOtherSnake(vector<Snake*> snakes) {
 
 Marsh* Snake::touchMarsh()
 {
-    for(int i = 0; i < getLength(); i++)
-    {
+    for(int i=0; i<getLength(); ++i) {
         Item* it = (*item_map_ptr)[body[i].first][body[i].second];
-        if(it != nullptr && it->getName() == MARSH)
-        {
+        if(it != nullptr && it->getName() == MARSH) {
             Marsh* msh = new Marsh(it->getLoc());
             return msh;
+        }
+    }
+    return nullptr;
+}
+
+Aerolite *Snake::touchAerolite()
+{
+    for (int i=0; i<getLength(); ++i) {
+        Item* it = (*item_map_ptr)[body[i].first][body[i].second];
+        if (it != nullptr && it->getName() == AEROLITE) {
+            Aerolite* aerolite = new Aerolite(it->getLoc());
+            return aerolite;
         }
     }
     return nullptr;
@@ -265,11 +283,11 @@ bool Snake::death()
         int previous_eaten = eaten; // 之前吃过的食物数量不清零
         int previous_killed = killed; // 之前杀的蛇数量不清零
         initialize();
-        health = 0.8 * max_health;
+        health = 3;
         eaten = previous_eaten;
         killed = previous_killed;
         body = Snake( make_pair(item_map_ptr->size() / 2, (*item_map_ptr)[0].size() / 2),
-                      length,
+                      min(max(2, 0.5 * length), 5),
                       max_health,
                       UP,
                       item_map_ptr ).body;   // 用中间初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央

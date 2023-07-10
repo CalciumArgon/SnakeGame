@@ -109,8 +109,11 @@ DISTFILES += \
     image/wall.jpeg \
     image/wall.png \
     map/addwallgame.txt \
+    map/level10.txt \
     map/level3.txt \
     map/level4.txt \
     map/level5.txt \
     map/level6.txt \
+    map/level7.txt \
+    map/level9.txt \
     map/testaisnake.txt

@@ -21,11 +21,18 @@ public:
 
     virtual void initializeGame(int level);  // 用来给图形界面初始化信息
 
+    // 全局陨石掉落信息
+    void countDown();
+    bool isFall();
+
     bool loadMap(std::string map_path);
     short reachTarget();
     Field* getState();
     int test = 1;
 protected:
+
+    int aerolite_counting = 2;
+
     clock_t begin = 0;
     int level = 1;
 
@@ -93,6 +100,30 @@ class Level7: public Game
 public:
     Level7(GameMode game_mode, int height, int width, std::vector<int> info);
     Level7(Field* state, GameMode game_mode, std::vector<int> info);
+    virtual void initializeGame(int level);
+};
+
+class Level8: public Game
+{
+public:
+    Level8(GameMode game_mode, int height, int width, std::vector<int> info);
+    Level8(Field* state, GameMode game_mode, std::vector<int> info);
+    virtual void initializeGame(int level);
+};
+
+class Level9: public Game
+{
+public:
+    Level9(GameMode game_mode, int height, int width, std::vector<int> info);
+    Level9(Field* state, GameMode game_mode, std::vector<int> info);
+    virtual void initializeGame(int level);
+};
+
+class Level10: public Game
+{
+public:
+    Level10(GameMode game_mode, int height, int width, std::vector<int> info);
+    Level10(Field* state, GameMode game_mode, std::vector<int> info);
     virtual void initializeGame(int level);
 };
 #endif // GAME_H
