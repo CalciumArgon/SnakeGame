@@ -42,6 +42,7 @@ public:
     int getEaten();
     int getKilled();
 
+    int score();
 
     void setMagnetic(int);  // 设置吸铁石能力
     bool ableMagnetic();
