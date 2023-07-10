@@ -105,7 +105,7 @@ void QLevel::on_btnLev6_clicked()
     Field* fld = new Field(40, 40);
     Game* game = new Level6(fld, TIMEFREE, {10, 100});
     game->initializeGame(1);
-    GameWidget *gw = new GameWidget(game);
+    GameWidget *gw = new GameWidget(game, 6);
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
@@ -120,7 +120,7 @@ void QLevel::on_btnLev7_clicked()
     Field* fld = new Field(40, 40);
     Game* game = new Level7(fld, TIMEFREE, {10, 100});
     game->initializeGame(1);
-    GameWidget *gw = new GameWidget(game);
+    GameWidget *gw = new GameWidget(game, 7);
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
