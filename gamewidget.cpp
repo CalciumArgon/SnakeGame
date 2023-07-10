@@ -4,18 +4,26 @@
 #include <QColor>
 #include <QDir>
 #include <QTime>
+#include <QDebug>
+#include <string>
+#include <fstream>
+#include "path.h"
 
 using namespace std;
 
-GameWidget::GameWidget(Game* game, QWidget *parent) : ui(new Ui::GameWidget)
+GameWidget::GameWidget(Game* game, int level, QWidget *parent) : ui(new Ui::GameWidget)
 {
     Q_UNUSED(parent);
     ui->setupUi(this);
     this->game = game;
+    this->level = level;
+
     QPalette pal(this->palette());
     pal.setColor(QPalette::Background, QColor(204, 230, 199));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
+
+    //paintBlocks();
 
     //paint static items
     Field* mstate = game->getState();
@@ -26,6 +34,12 @@ GameWidget::GameWidget(Game* game, QWidget *parent) : ui(new Ui::GameWidget)
             }
             if(mstate->getItemName(i, j) == WALL){
                 paintItem(i, j, WALL);
+            }
+            if(mstate->getItemName(i, j) == OBSTACLE){
+                paintItem(i, j, OBSTACLE);
+            }
+            if(mstate->getItemName(i, j) == FIRSTAID){
+                paintItem(i, j, FIRSTAID);
             }
         }
     }
@@ -53,13 +67,14 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     ui->labelHp3->hide();
     ui->labelHp4->hide();
     ui->progressBarMp->hide();
-
-
+    /*ui->labelGuide->hide();
+    ui->btnNext->hide();
+    ui->btnSkip->hide();*/
 
     //get current time and show
     end = clock();
     if(countdown < 0){
-        if(game_over == 0)
+        if(!game_end)
             showTime(int((end - begin) / CLK_TCK));
 
     }
@@ -92,18 +107,12 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     Field* mstate = game->getState();
     painter.setPen(Qt::black);
     painter.setBrush(QColor(1, 1, 1, 0));
-    //painter.setRenderHint(QPainter::Antialiasing);
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++) {
-            //painter.setBrush(Qt::gray);
-            QRect rect = getRect(i, j);
-            painter.drawRect(rect);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
         }
     }
-
-    //paint the background
-    //ui->labelBackground->setStyleSheet("border-image: url(:/background.png)");
-    //ui->labelBackground->show();
 
     //delete label
     deleteLabel();
@@ -144,8 +153,16 @@ void GameWidget::paintEvent(QPaintEvent *ev)
             painter.drawRect(rect);
         }
     }
+
+    if(countdown == 4 && !on_guide){
+        enterGuide();
+        //countdown--;
+        update();
+        return QWidget::paintEvent(ev);
+    }
+
     //paint the countdown
-    if (countdown >= -1)
+    if(countdown >= -1 && countdown <= 3)
     {
         ui->labelCntDn->show();
         ui->labelCntDn->raise();
@@ -168,6 +185,8 @@ void GameWidget::paintEvent(QPaintEvent *ev)
             break;
         }
         case -1:
+            begin = clock();
+            this->game->setBeginTime(begin);
             break;
         default:
             break;
@@ -184,12 +203,13 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
 
     //move the determine whether the game is over
-    if (game_over == 0) { game_over = game->runGame(); }
-    if (game_over != 0 && !is_emit) {
-        if (game_over == 1) {
+    if(game_end  == 0 && !on_guide) game_end = game->runGame();
+    if(game_end != 0 && !is_emit) {
+        if(game_end == 1){
             emit(gameEnd(1));
             is_emit = true;
-        } else {
+        }
+        else {
             emit(gameEnd(0));
             is_emit = true;
         }
@@ -234,6 +254,74 @@ void GameWidget::keyReleaseEvent(QKeyEvent *event)
     event->accept();
     if(event->key() == Qt::Key_Control)
         game->getState()->getSnakes()[0]->speed_buff = false;
+}
+
+void GameWidget::enterGuide()
+{
+    readFile(level);
+    startGuide();
+}
+
+void GameWidget::readFile(int level)
+{
+    string dir = WORKING_DIR + "\\guide\\" + to_string(level) + ".txt";
+    ifstream guide_file;
+    guide_file.open(dir.c_str());
+    string s;
+    while(getline(guide_file, s))
+        guide_line.push_back(QString::fromStdString(s));
+    page_num = 1;
+}
+
+void GameWidget::startGuide()
+{
+    ui->labelGuide->setStyleSheet("background-color:rgb(191, 255, 155, 200)");
+    ui->labelGuide->setGeometry(590, 0, 950, 400);
+    QFont font("微软雅黑", 20);
+    ui->labelGuide->setFont(font);
+    ui->labelGuide->setText(guide_line[0]);
+    ui->btnNext->setGeometry(1220, 340, 100, 40);
+    ui->btnSkip->setGeometry(1350, 340, 100, 40);
+    ui->labelGuide->show();
+    ui->btnNext->show();
+    ui->btnSkip->show();
+    ui->labelGuide->raise();
+    ui->btnNext->raise();
+    ui->btnSkip->raise();
+    on_guide = true;
+}
+
+void GameWidget::turnPage()
+{
+    if(page_num == guide_line.size())
+        endGuide();
+    else {
+        page_num++;
+    }
+    ui->labelGuide->setText(guide_line[page_num-1]);
+}
+
+void GameWidget::endGuide()
+{
+    ui->labelGuide->close();
+    ui->btnNext->close();
+    ui->btnSkip->close();
+    on_guide = false;
+    countdown = 3;
+}
+
+void GameWidget::paintBlocks()
+{
+    QPainter painter(this);
+    Field* mstate = game->getState();
+    painter.setPen(Qt::black);
+    painter.setBrush(QColor(1, 1, 1, 0));
+    for (size_t i = 0; i < mstate->getWidth(); i++) {
+        for (size_t j = 0; j < mstate->getHeight(); j++) {
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+        }
+    }
 }
 
 void GameWidget::showTime(int time)
@@ -313,6 +401,14 @@ void GameWidget::paintItem(int i, int j, ItemType type)
     case MAGNET:
         ql->setStyleSheet("border-image: url(:/magnet.png)");
         dynamic_label.push_back(ql);
+        break;
+    case OBSTACLE:
+        ql->setStyleSheet("border-image: url(:/obstacle.png)");
+        static_label.push_back(ql);
+        break;
+    case FIRSTAID:
+        ql->setStyleSheet("border-image: url(:/firstaid.png)");
+        static_label.push_back(ql);
         break;
     }
 
@@ -410,5 +506,17 @@ void GameWidget::deleteFoodLabel()
 GameWidget::~GameWidget()
 {
     delete ui;
+}
+
+void GameWidget::on_btnNext_clicked()
+{
+    if(on_guide)
+        turnPage();
+}
+
+void GameWidget::on_btnSkip_clicked()
+{
+    if(on_guide)
+        endGuide();
 }
 

@@ -68,6 +68,16 @@ RESOURCES += \
     image/image.qrc
 
 DISTFILES += \
+    guide/1.txt \
+    guide/10.txt \
+    guide/2.txt \
+    guide/3.txt \
+    guide/4.txt \
+    guide/5.txt \
+    guide/6.txt \
+    guide/7.txt \
+    guide/8.txt \
+    guide/9.txt \
     image/60ed4209cccbf115b7a47d7b075c0ca5.jpeg \
     image/background.jpeg \
     image/background.png \

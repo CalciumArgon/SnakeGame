@@ -31,7 +31,7 @@ void QLevel::on_btnLev1_clicked(){
     Field* fld = new Field(40, 40);
     Game* game = new Game(fld, TIMEFREE, {5, 30});
     game->initializeGame(1);
-    GameWidget *gw = new GameWidget(game);
+    GameWidget *gw = new GameWidget(game, 1);
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
@@ -45,7 +45,7 @@ void QLevel::on_btnLev2_clicked()
     Field* fld = new Field(40, 40);
     Game* game = new AddWallGame(fld, TIMEFREE, {5, 30});
     game->initializeGame(1);
-    GameWidget *gw = new GameWidget(game);
+    GameWidget *gw = new GameWidget(game, 2);
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
@@ -60,7 +60,7 @@ void QLevel::on_btnLev3_clicked()
     Field* fld = new Field(40, 40);
     Game* game = new Level3(fld, TIMEFREE, {15, 30});
     game->initializeGame(1);
-    GameWidget *gw = new GameWidget(game);
+    GameWidget *gw = new GameWidget(game, 3);
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
@@ -75,7 +75,7 @@ void QLevel::on_btnLev4_clicked()
     Field* fld = new Field(40, 40);
     Game* game = new Level4(fld, TIMEFREE, {5, 30});
     game->initializeGame(1);
-    GameWidget *gw = new GameWidget(game);
+    GameWidget *gw = new GameWidget(game, 4);
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
@@ -90,7 +90,7 @@ void QLevel::on_btnLev5_clicked()
     Field* fld = new Field(40, 40);
     Game* game = new Level5(fld, TIMEFREE, {30, 30});
     game->initializeGame(1);
-    GameWidget *gw = new GameWidget(game);
+    GameWidget *gw = new GameWidget(game, 5);
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
@@ -131,6 +131,16 @@ void QLevel::on_btnLev7_clicked()
 }
 
 void QLevel::on_btnLev8_clicked()
+{
+
+}
+
+void QLevel::on_btnLev9_clicked()
+{
+
+}
+
+void QLevel::on_btnLev10_clicked()
 {
 
 }
