@@ -23,8 +23,8 @@ QLevel::~QLevel()
 
 void QLevel::on_btnReturn_clicked()
 {
-    MainWindow *qmw = new MainWindow();
-    qmw->show();
+    MainWindow *mw = new MainWindow();
+    mw->show();
 }
 
 void QLevel::on_btnLev1_clicked(){
@@ -32,12 +32,13 @@ void QLevel::on_btnLev1_clicked(){
     Game* game = new Game(fld, TIMEFREE, {5, 30});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game, 1);
+    gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
-    gw->setFocusPolicy(Qt::ClickFocus);
-    gw->resize(1250+gw->border, 1250);
+    //gw->setFocusPolicy(Qt::ClickFocus);
+    //gw->resize(1250+gw->border, 1250);
     gw->show();
 }
 void QLevel::on_btnLev2_clicked()
@@ -46,12 +47,11 @@ void QLevel::on_btnLev2_clicked()
     Game* game = new AddWallGame(fld, TIMEFREE, {5, 30});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game, 2);
+    gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
-    gw->setFocusPolicy(Qt::ClickFocus);
-    gw->resize(1250+gw->border, 1250);
     gw->show();
 }
 
@@ -61,12 +61,11 @@ void QLevel::on_btnLev3_clicked()
     Game* game = new Level3(fld, TIMEFREE, {15, 30});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game, 3);
+    gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
-    gw->setFocusPolicy(Qt::ClickFocus);
-    gw->resize(1250+gw->border, 1250);
     gw->show();
 }
 
@@ -76,12 +75,11 @@ void QLevel::on_btnLev4_clicked()
     Game* game = new Level4(fld, TIMEFREE, {5, 30});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game, 4);
+    gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
-    gw->setFocusPolicy(Qt::ClickFocus);
-    gw->resize(1250+gw->border, 1250);
     gw->show();
 }
 
@@ -91,12 +89,11 @@ void QLevel::on_btnLev5_clicked()
     Game* game = new Level5(fld, TIMEFREE, {30, 30});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game, 5);
+    gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
-    gw->setFocusPolicy(Qt::ClickFocus);
-    gw->resize(1250+gw->border, 1250);
     gw->show();
 }
 

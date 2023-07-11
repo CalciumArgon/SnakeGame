@@ -3,8 +3,18 @@
         <file>036d850baabf240093cabc2bc92414e9.jpg</file>
         <file>60ed4209cccbf115b7a47d7b075c0ca5.jpeg</file>
         <file>9b4ce26fffec99322e34d7bd29a44a31.jpeg</file>
+        <file>aisnakebody_down.png</file>
+        <file>aisnakebody_left.png</file>
+        <file>aisnakebody_right.png</file>
+        <file>aisnakebody_up.png</file>
+        <file>aisnakehead_down.png</file>
+        <file>aisnakehead_left.png</file>
+        <file>aisnakehead_right.png</file>
+        <file>aisnakehead_up.png</file>
         <file>background.jpeg</file>
         <file>background.png</file>
+        <file>background2.png</file>
+        <file>background3.png</file>
         <file>cd1.png</file>
         <file>cd2.png</file>
         <file>cd3.png</file>
@@ -23,8 +33,10 @@
         <file>magnet.png</file>
         <file>marsh.jpg</file>
         <file>marsh.png</file>
+        <file>marsh1.png</file>
         <file>no_health.png</file>
         <file>obstacle.png</file>
+        <file>shield.png</file>
         <file>snakebody_down.png</file>
         <file>snakebody_left.png</file>
         <file>snakebody_right.png</file>

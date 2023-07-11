@@ -63,7 +63,7 @@ public:
     //消除所有buff和debuff
     bool speed_buff = false;
     virtual Direction act(Field* state) { return this->direction; }
-
+    int speed = -30;
 protected:
     std::vector<Loc> body;
     int length;
@@ -72,7 +72,7 @@ protected:
     Grid* item_map_ptr;
     int width;
     int height;
-    int speed = -30;
+
     int health;
     int eaten = 0;
     int killed = 0;

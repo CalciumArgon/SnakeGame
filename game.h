@@ -29,6 +29,7 @@ public:
     short reachTarget();
     Field* getState();
     int test = 1;
+    int target_score = 0;
 protected:
 
     int aerolite_counting = 2;
@@ -36,7 +37,7 @@ protected:
     clock_t begin = 0;
     int level = 1;
 
-    int target_score = 0;
+
     int target_time = 0;
 
     Clock clock;

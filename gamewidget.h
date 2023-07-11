@@ -20,6 +20,7 @@ class GameWidget : public QWidget
 
 public:
     GameWidget(Game *game, int level, QWidget *parent = nullptr);
+    void initialize();
     QRect getRect(int, int);
     void paintEvent(QPaintEvent *ev);
     void keyPressEvent(QKeyEvent* event);
@@ -35,14 +36,28 @@ public:
     void showTime(int);
     void showHp();
     void showMp();
+    void showScore();
+
+
     void paintItem(int, int, ItemType);
-    void paintMySnake();
+    void paintSnake(int, int);
     void deleteLabel();
     void deleteFoodLabel();
+    void deleteMagnetLabel();
+    void deleteObstacleLabel();
+    void deleteFirstaidLabel();
+    void deleteShieldLabel();
     std::vector<QLabel*> static_label;
     std::vector<QLabel*> dynamic_label;
     std::vector<QLabel*> food_label;
+    std::vector<QLabel*> magnet_label;
+    std::vector<QLabel*> obstacle_label;
+    std::vector<QLabel*> firstaid_label;
+    std::vector<QLabel*> shield_label;
     std::vector<QString> guide_line;
+    std::vector<std::vector<QLabel*>> snake_label;
+    std::vector<int> snake_length;
+    std::vector<std::vector<Direction>> snake_direction;
 
     ~GameWidget();
     int border = 300;
@@ -50,7 +65,9 @@ public:
 
     bool on_guide = false;
     bool open = false;
+    bool game_start = false;
     int page_num = 1;
+    int loop_counter = 0;
 private:
     Ui::GameWidget *ui;
     Game *game;
