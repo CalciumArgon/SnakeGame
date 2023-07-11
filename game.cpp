@@ -162,7 +162,16 @@ short Game::runGame()
                 }
             }
         }
-
+        //检查沼泽减速
+        if(snake->touchMarsh() != nullptr)
+        {
+            test = 0;
+            Marsh* msh = snake->touchMarsh();
+            msh->action(snake);
+        }
+        else {
+            test = 1;
+        }
     }
 
     // 胜负判断
@@ -449,6 +458,37 @@ void Level8::initializeGame(int level) {
     if (!this->loadMap(WORKING_DIR + "\\map\\level8.txt"))
         assert(false);
     this->level = level;
+    queue<Loc> path;
+    path.push(make_pair(30, 13));
+    path.push(make_pair(30, 28));
+    path.push(make_pair(7, 28));
+    path.push(make_pair(7, 13));
+//    this->state->getSnakes()[0]->addSpeed(-100000);
+    Snake* snake1 = new WalkingSnake(path, {11, 13}, 5, 1, RIGHT, this->state->getMapPtr());
+    Snake* snake2 = new WalkingSnake(path, {22, 13},8, 1, RIGHT, this->state->getMapPtr());
+    Snake* snake3 = new WalkingSnake(path,{29, 13}, 4, 1, RIGHT, this->state->getMapPtr());
+    Loc temp_target = path.front();
+    path.pop();
+    path.push(temp_target);
+    Snake* snake4 = new WalkingSnake(path, {30, 20}, 6, 1, DOWN, this->state->getMapPtr());
+    Snake* snake5 = new WalkingSnake(path, {30, 27}, 5, 1, DOWN, this->state->getMapPtr());
+    temp_target = path.front();
+    path.pop();
+    path.push(temp_target);
+    Snake* snake6 = new WalkingSnake(path, {17, 28}, 8, 1, LEFT, this->state->getMapPtr());
+    Snake* snake7 = new WalkingSnake(path, {8, 28}, 7, 1, LEFT, this->state->getMapPtr());
+    temp_target = path.front();
+    path.pop();
+    path.push(temp_target);
+    Snake* snake8 = new WalkingSnake(path, {7, 15}, 12, 1, UP, this->state->getMapPtr());
+    this->state->addSnake(snake1);
+    this->state->addSnake(snake2);
+    this->state->addSnake(snake3);
+    this->state->addSnake(snake4);
+    this->state->addSnake(snake5);
+    this->state->addSnake(snake6);
+    this->state->addSnake(snake7);
+    this->state->addSnake(snake8);
 }
 
 Level9::Level9(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}

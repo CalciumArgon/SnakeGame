@@ -103,12 +103,11 @@ void QLevel::on_btnLev6_clicked()
     Game* game = new Level6(fld, TIMEFREE, {10, 100});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game, 6);
+    gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
-    gw->setFocusPolicy(Qt::ClickFocus);
-    gw->resize(1250+gw->border, 1250);
     gw->show();
 }
 
@@ -118,12 +117,11 @@ void QLevel::on_btnLev7_clicked()
     Game* game = new Level7(fld, TIMEFREE, {10, 100});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game, 7);
+    gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
-    gw->setFocusPolicy(Qt::ClickFocus);
-    gw->resize(1250+gw->border, 1250);
     gw->show();
 }
 
@@ -138,12 +136,11 @@ void QLevel::on_btnLev9_clicked()
     Game* game = new Level9(fld, TIMEFREE, {20, 100});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game, 9);
+    gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
-    gw->setFocusPolicy(Qt::ClickFocus);
-    gw->resize(1250+gw->border, 1250);
     gw->show();
 }
 
@@ -153,12 +150,11 @@ void QLevel::on_btnLev10_clicked()
     Game* game = new Level10(fld, TIMEFREE, {1, 100});
     game->initializeGame(1);
     GameWidget *gw = new GameWidget(game, 10);
+    gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
-    gw->setFocusPolicy(Qt::ClickFocus);
-    gw->resize(1250+gw->border, 1250);
     gw->show();
 }
 

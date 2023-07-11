@@ -155,6 +155,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     vector<Snake*> msnakes = game->getState()->getSnakes();
 
     //paint snake
+
     paintSnake(0, msnakes[0]->getLength() - snake_length[0]);
     for(int i = 1; i < msnakes.size(); i++){
         paintSnake(i, msnakes[i]->getLength() - snake_length[i]);
