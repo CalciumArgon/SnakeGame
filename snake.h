@@ -64,6 +64,7 @@ public:
     bool speed_buff = false;
     virtual Direction act(Field* state) { return this->direction; }
     int speed = -30;
+    bool finishmove = true;
 protected:
     std::vector<Loc> body;
     int length;

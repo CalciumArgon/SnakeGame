@@ -111,6 +111,7 @@ Direction Snake::getBodyDirection(int i)
 
 void Snake::changeDireciton(Direction new_direction)
 {
+    if(!finishmove) return;
     switch (direction)
     {
         case UP:
@@ -130,6 +131,7 @@ void Snake::changeDireciton(Direction new_direction)
                 direction = new_direction;
             break;
     }
+    finishmove = false;
 }
 
 Loc Snake::nextLoc()
@@ -152,10 +154,7 @@ bool Snake::move()
     Loc new_head = nextLoc();
     body.insert(body.begin(), new_head);
     body.pop_back();
-    if (hitSelf() || hitEdge()) {
-        death();
-        return false;
-    }
+    finishmove = true;
     return true;
 }
 
