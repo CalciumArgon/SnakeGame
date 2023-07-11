@@ -24,6 +24,7 @@ public:
     // 全局陨石掉落信息
     void countDown();
     bool isFall();
+    bool isWarning();
 
     bool loadMap(std::string map_path);
     short reachTarget();
