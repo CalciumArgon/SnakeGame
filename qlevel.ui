@@ -133,7 +133,7 @@
   <widget class="QPushButton" name="btnLev10">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>40</x>
      <y>270</y>
      <width>141</width>
      <height>51</height>
@@ -154,6 +154,32 @@
    </property>
    <property name="text">
     <string>关卡9</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnLev11">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>270</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>关卡11</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnLev12">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>270</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>关卡12</string>
    </property>
   </widget>
  </widget>

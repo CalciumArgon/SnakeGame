@@ -167,3 +167,13 @@ void QLevel::on_btnLev10_clicked()
     gw->show();
 }
 
+void QLevel::on_btnLev11_clicked()
+{
+
+}
+
+void QLevel::on_btnLev12_clicked()
+{
+
+}
+

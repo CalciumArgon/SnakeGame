@@ -28,6 +28,8 @@ public slots:
     void on_btnLev8_clicked();
     void on_btnLev9_clicked();
     void on_btnLev10_clicked();
+    void on_btnLev11_clicked();
+    void on_btnLev12_clicked();
 };
 
 #endif // QLEVEL_H
