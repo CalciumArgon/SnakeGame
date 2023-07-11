@@ -6,180 +6,359 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>661</width>
-    <height>398</height>
+    <width>950</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">#QLevel 
+{
+border-image: url(:/background3.png);
+} 
+#QLevel * 
+{
+border-image: url();
+}</string>
+  </property>
   <widget class="QPushButton" name="btnLev1">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>100</x>
      <y>30</y>
-     <width>141</width>
-     <height>51</height>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡1</string>
+    <string>Level 1</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev2">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>310</x>
      <y>30</y>
-     <width>141</width>
-     <height>51</height>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡2</string>
+    <string>Level 2</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnReturn">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>350</y>
-     <width>71</width>
-     <height>31</height>
+     <x>60</x>
+     <y>630</y>
+     <width>91</width>
+     <height>51</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(230, 230, 230, 210);</string>
+   </property>
    <property name="text">
-    <string>返回</string>
+    <string>Return</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev3">
    <property name="geometry">
     <rect>
-     <x>420</x>
+     <x>520</x>
      <y>30</y>
-     <width>141</width>
-     <height>51</height>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡3</string>
+    <string>Level 3</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev4">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>110</y>
-     <width>141</width>
-     <height>51</height>
+     <x>730</x>
+     <y>30</y>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡4</string>
+    <string>Level 4</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev5">
    <property name="geometry">
     <rect>
-     <x>230</x>
-     <y>110</y>
-     <width>141</width>
-     <height>51</height>
+     <x>100</x>
+     <y>230</y>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡5</string>
+    <string>Level 5</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev6">
    <property name="geometry">
     <rect>
-     <x>420</x>
-     <y>110</y>
-     <width>141</width>
-     <height>51</height>
+     <x>310</x>
+     <y>230</y>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡6</string>
+    <string>Level 6</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev7">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>190</y>
-     <width>141</width>
-     <height>51</height>
+     <x>520</x>
+     <y>230</y>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡7</string>
+    <string>Level 7</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev8">
    <property name="geometry">
     <rect>
-     <x>230</x>
-     <y>190</y>
-     <width>141</width>
-     <height>51</height>
+     <x>730</x>
+     <y>230</y>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡8</string>
+    <string>Level 8</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev10">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>270</y>
-     <width>141</width>
-     <height>51</height>
+     <x>310</x>
+     <y>430</y>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡10</string>
+    <string>Level 10</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev9">
    <property name="geometry">
     <rect>
-     <x>420</x>
-     <y>190</y>
-     <width>141</width>
-     <height>51</height>
+     <x>100</x>
+     <y>430</y>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡9</string>
+    <string>Level 9</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev11">
    <property name="geometry">
     <rect>
-     <x>230</x>
-     <y>270</y>
-     <width>141</width>
-     <height>51</height>
+     <x>520</x>
+     <y>430</y>
+     <width>121</width>
+     <height>161</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡11</string>
+    <string>Level 11</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnLev12">
    <property name="geometry">
     <rect>
-     <x>420</x>
-     <y>270</y>
-     <width>141</width>
+     <x>730</x>
+     <y>430</y>
+     <width>121</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
+   <property name="text">
+    <string>Level 12</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnEasy">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>640</y>
+     <width>101</width>
      <height>51</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(220, 246, 255, 220);</string>
+   </property>
    <property name="text">
-    <string>关卡12</string>
+    <string>Easy</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnHard">
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>640</y>
+     <width>101</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(255, 138, 117, 220);</string>
+   </property>
+   <property name="text">
+    <string>Hard</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnNightmare">
+   <property name="geometry">
+    <rect>
+     <x>730</x>
+     <y>640</y>
+     <width>101</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+     <pointsize>7</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(192, 114, 255, 220);</string>
+   </property>
+   <property name="text">
+    <string>Nightmare</string>
    </property>
   </widget>
  </widget>

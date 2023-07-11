@@ -13,6 +13,8 @@ class QLevel : public QWidget
 
 public:
     explicit QLevel(QWidget *parent = nullptr);
+    int difficulty = 1;
+    void setBackground(QString s);
     ~QLevel();
 private:
     Ui::QLevel *ui;
@@ -30,6 +32,9 @@ public slots:
     void on_btnLev10_clicked();
     void on_btnLev11_clicked();
     void on_btnLev12_clicked();
+    void on_btnEasy_clicked();
+    void on_btnHard_clicked();
+    void on_btnNightmare_clicked();
 };
 
 #endif // QLEVEL_H
