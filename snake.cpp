@@ -13,19 +13,23 @@ inline int max(int x1, int x2) {
 Snake::Snake(vector<Loc> body, int length, int health, Direction direction, Grid* item_map_ptr) :
     body(body),
     length(length),
-    health(health),
     direction(direction),
-    item_map_ptr(item_map_ptr)
+    item_map_ptr(item_map_ptr),
+    health(health)
 {
     width = item_map_ptr->size();
     height = (*item_map_ptr)[0].size();
+    rebornLocation = body[0];
+    rebornDirection = direction;
 }
 
 Snake::Snake(Loc head, int length, int health, Direction direction, Grid* item_map_ptr) :
     length(length),
-    health(health),
     direction(direction),
-    item_map_ptr(item_map_ptr)
+    item_map_ptr(item_map_ptr),
+    health(health),
+    rebornLocation(head),
+    rebornDirection(direction)
 {
     body.clear();
     body.push_back(head);
@@ -267,30 +271,23 @@ void Snake::addHealth(int adding) {
 
 void Snake::initialize()
 {
-    health = max_health;
-    speed = 6;
+    health = 3;
+    speed = -30;
     cycle_recorder = 1;
-    eaten = 0;
-    killed = 0;
     direction = UP;
     magnetic = 0;
     revival = 0;
+    body = Snake( rebornLocation,
+                  min(max(2, 0.5 * length), 7),
+                  health,
+                  rebornDirection,
+                  item_map_ptr ).body;   // 用指定位置初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
 }
 
 bool Snake::death()
 {
     if (revival > 0) {
-        int previous_eaten = eaten; // 之前吃过的食物数量不清零
-        int previous_killed = killed; // 之前杀的蛇数量不清零
         initialize();
-        health = 3;
-        eaten = previous_eaten;
-        killed = previous_killed;
-        body = Snake( make_pair(item_map_ptr->size() / 2, (*item_map_ptr)[0].size() / 2),
-                      min(max(2, 0.5 * length), 5),
-                      max_health,
-                      UP,
-                      item_map_ptr ).body;   // 用中间初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
         return false;
     } else {
         // 返回接口 传递死亡的信息

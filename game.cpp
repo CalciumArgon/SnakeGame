@@ -194,7 +194,7 @@ void Game::initializeGame(int level)
 
 void Game::countDown()
 {
-    aerolite_counting = (aerolite_counting + 6) % 5 - 2;
+    aerolite_counting = (aerolite_counting + 31) % 60 - 30;
 }
 
 bool Game::isFall()

@@ -79,6 +79,8 @@ protected:
     int cycle_recorder = 1;
     int magnetic = 0;
     int revival = 0;
+    Loc rebornLocation;
+    Direction rebornDirection;
     int mp = 240;
 };
 
