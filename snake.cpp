@@ -290,6 +290,11 @@ bool Snake::death()
         initialize();
         return false;
     } else {
+        if (isAI())
+        {
+            vector<Loc> empty;
+            body = empty;
+        }
         // 返回接口 传递死亡的信息
         health = 0;
         return true;
