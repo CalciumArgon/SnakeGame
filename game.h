@@ -31,12 +31,13 @@ public:
     Field* getState();
     int test = 1;
     int target_score = 0;
+    int level = 1;
 protected:
 
     int aerolite_counting = 2;
 
     clock_t begin = 0;
-    int level = 1;
+
 
 
     int target_time = 0;

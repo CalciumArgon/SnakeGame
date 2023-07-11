@@ -6,6 +6,8 @@
 #include "snake.h"
 #include "game.h"
 #include "dialog.h"
+#include "path.h"
+#include <fstream>
 
 using namespace std;
 
@@ -15,22 +17,68 @@ QLevel::QLevel(QWidget *parent) :
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_StyledBackground);
+    string dir_save = WORKING_DIR + "\\" + "save.txt";
+    ifstream f;
+    f.open(dir_save.c_str());
+    for(int i = 0; i < 12; i++)
+    {
+        int num;
+        f >> num;
+        status.push_back(num);
+        stars.push_back(0);
+    }
+    buttons = {ui->btnLev1, ui->btnLev2, ui->btnLev3, ui->btnLev4, ui->btnLev5, ui->btnLev6, ui->btnLev7, ui->btnLev8, ui->btnLev9, ui->btnLev10, ui->btnLev11, ui->btnLev12};
+    for(int i = 1; i <= 12; i++)
+    {
+        paintStars(i);
+    }
 }
 
 void QLevel::setBackground(QString color)
 {
-    ui->btnLev1->setStyleSheet("background-color: "+color);
-    ui->btnLev2->setStyleSheet("background-color: "+color);
-    ui->btnLev3->setStyleSheet("background-color: "+color);
-    ui->btnLev4->setStyleSheet("background-color: "+color);
-    ui->btnLev5->setStyleSheet("background-color: "+color);
-    ui->btnLev6->setStyleSheet("background-color: "+color);
-    ui->btnLev7->setStyleSheet("background-color: "+color);
-    ui->btnLev8->setStyleSheet("background-color: "+color);
-    ui->btnLev9->setStyleSheet("background-color: "+color);
-    ui->btnLev10->setStyleSheet("background-color: "+color);
-    ui->btnLev11->setStyleSheet("background-color: "+color);
-    ui->btnLev12->setStyleSheet("background-color: "+color);
+    for(auto btn : buttons)
+        btn->setStyleSheet("background-color: "+color);
+}
+
+void QLevel::paintStars(int level)
+{
+    int id = level - 1;
+    int x = buttons[id]->x();
+    int y = buttons[id]->y();
+    int star_pre = stars[id];
+    int star_now = status[id];
+    while(star_pre < star_now)
+    {
+        star_pre++;
+        QLabel* ql = new QLabel();
+        ql->setParent(this);
+        switch(star_pre)
+        {
+        case 1:
+            ql->setGeometry(x+5, y+125, 30, 30);
+            break;
+        case 2:
+            ql->setGeometry(x+45, y+125, 30, 30);
+            break;
+        case 3:
+            ql->setGeometry(x+85, y+125, 30, 30);
+            break;
+        }
+        ql->setStyleSheet("border-image:url(:/star.png)");
+        ql->show();
+    }
+    stars[id] = status[id];
+}
+
+void QLevel::saveData()
+{
+    string dir_save = WORKING_DIR + "\\" + "save.txt";
+    ofstream f;
+    f.open(dir_save.c_str());
+    for(int i = 0; i < 12; i++)
+    {
+        f << status[i] << " ";
+    }
 }
 
 QLevel::~QLevel()
@@ -54,6 +102,7 @@ void QLevel::on_btnLev1_clicked(){
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     //gw->setFocusPolicy(Qt::ClickFocus);
     //gw->resize(1250+gw->border, 1250);
     gw->show();
@@ -210,5 +259,13 @@ void QLevel::on_btnNightmare_clicked()
 {
     setBackground("rgba(192, 114, 255, 220)");
     difficulty = 3;
+}
+
+void QLevel::repaintStars(int result, int level, int difficulty)
+{
+    if(!result) return;
+    status[level-1] = difficulty;
+    paintStars(level);
+    saveData();
 }
 

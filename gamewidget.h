@@ -81,7 +81,7 @@ private:
     clock_t begin = 0;
     clock_t end = 0;
 signals:
-    void gameEnd(int);
+    void gameEnd(int, int, int);
 public slots:
     void on_btnNext_clicked();
     void on_btnSkip_clicked();

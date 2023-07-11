@@ -86,7 +86,6 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     Q_UNUSED(ev)
 
     //hide the label
-    ui->tabWidget->hide();
     ui->progressBarMp->hide();
     /*ui->labelGuide->hide();
     ui->btnNext->hide();
@@ -263,11 +262,11 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
     if(game_end != 0 && !is_emit) {
         if(game_end == 1){
-            emit(gameEnd(1));
+            emit(gameEnd(1, this->level, game->level));
             is_emit = true;
         }
         else {
-            emit(gameEnd(0));
+            emit(gameEnd(0, this->level, game->level));
             is_emit = true;
         }
     }

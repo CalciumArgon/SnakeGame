@@ -13,7 +13,7 @@ Dialog::~Dialog()
     delete ui;
 }
 
-void Dialog::endGame(int result)
+void Dialog::endGame(int result, int, int)
 {
     switch(result){
     case 0:
