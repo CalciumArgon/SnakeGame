@@ -7,6 +7,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setStyleSheet("#centralWidget{border-image: url(:/background2.png);}#centralWidget * {border-image: url();}");
+    ui->btnStart->setStyleSheet("background-color:rgb(240, 240, 240, 200)");
+    ui->btnQuit->setStyleSheet("background-color:rgb(240, 240, 240, 200)");
 
 }
 

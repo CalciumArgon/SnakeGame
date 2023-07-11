@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 #include "path.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -17,13 +18,17 @@ GameWidget::GameWidget(Game* game, int level, QWidget *parent) : ui(new Ui::Game
     ui->setupUi(this);
     this->game = game;
     this->level = level;
+}
+
+void GameWidget::initialize()
+{
+    this->setFocusPolicy(Qt::ClickFocus);
+    this->resize(1250+border, 1250);
 
     QPalette pal(this->palette());
     pal.setColor(QPalette::Background, QColor(204, 230, 199));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
-
-    //paintBlocks();
 
     //paint static items
     Field* mstate = game->getState();
@@ -35,13 +40,20 @@ GameWidget::GameWidget(Game* game, int level, QWidget *parent) : ui(new Ui::Game
             if(mstate->getItemName(i, j) == WALL){
                 paintItem(i, j, WALL);
             }
-            if(mstate->getItemName(i, j) == OBSTACLE){
-                paintItem(i, j, OBSTACLE);
-            }
-            if(mstate->getItemName(i, j) == FIRSTAID){
-                paintItem(i, j, FIRSTAID);
-            }
         }
+    }
+
+    ui->labelCntDn->hide();
+
+    vector<Snake*> msnakes = game->getState()->getSnakes();
+    int num = msnakes.size();
+    for(int i = 0; i < num; i++)
+    {
+        vector<QLabel*> vec;
+        snake_label.push_back(vec);
+        vector<Direction> vec2;
+        snake_direction.push_back(vec2);
+        snake_length.push_back(0);
     }
 }
 
@@ -56,16 +68,11 @@ QRect GameWidget::getRect(int x, int y)
 
 void GameWidget::paintEvent(QPaintEvent *ev)
 {
+    loop_counter++;
     Q_UNUSED(ev)
 
     //hide the label
-    ui->labelBackground->hide();
-    ui->labelCntDn->hide();
-    ui->labelTime->hide();
-    ui->labelHp1->hide();
-    ui->labelHp2->hide();
-    ui->labelHp3->hide();
-    ui->labelHp4->hide();
+    ui->tabWidget->hide();
     ui->progressBarMp->hide();
     /*ui->labelGuide->hide();
     ui->btnNext->hide();
@@ -73,10 +80,9 @@ void GameWidget::paintEvent(QPaintEvent *ev)
 
     //get current time and show
     end = clock();
-    if(countdown < 0){
+    if(countdown < 0 && game_start){
         if(!game_end)
             showTime(int((end - begin) / CLK_TCK));
-
     }
     else {
         showTime(0);
@@ -87,11 +93,10 @@ void GameWidget::paintEvent(QPaintEvent *ev)
 
     //set the position of the label
     ui->labelCntDn->setGeometry(380, 400, 600, 600);
-    ui->labelBackground->setGeometry(unitlen, unitlen+100, unitlen*game->getState()->getWidth(), unitlen*game->getState()->getHeight());
     //show game time
 
     QString s;
-    ui->labelTime->setText("游戏时间" + s.setNum(cnt_time));
+    ui->labelTime->setText("速度" + s.setNum(game->getState()->getSnakes()[0]->speed));
     //ui->labelTime->show();
 
     //paint the area of hp and mp
@@ -102,6 +107,8 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     showHp();
     //show mp level
     showMp();
+
+    showScore();
 
     //paint the blocks
     Field* mstate = game->getState();
@@ -119,6 +126,9 @@ void GameWidget::paintEvent(QPaintEvent *ev)
 
     //delete food label
     deleteFoodLabel();
+    deleteMagnetLabel();
+    deleteObstacleLabel();
+    deleteFirstaidLabel();
 
     //paint food
     for (size_t i = 0; i < mstate->getWidth(); i++) {
@@ -126,23 +136,37 @@ void GameWidget::paintEvent(QPaintEvent *ev)
             if(mstate->getItemName(i, j) == FOOD && mstate->getItem(i, j)->is_print == false){
                 paintItem(i, j, FOOD);
             }
-            if(mstate->getItemName(i, j) == MAGNET){
+            if(mstate->getItemName(i, j) == MAGNET && mstate->getItem(i, j)->is_print == false){
                 paintItem(i, j, MAGNET);
+            }
+            if(mstate->getItemName(i, j) == OBSTACLE && mstate->getItem(i, j)->is_print == false){
+                paintItem(i, j, OBSTACLE);
+            }
+            if(mstate->getItemName(i, j) == FIRSTAID && mstate->getItem(i, j)->is_print == false){
+                paintItem(i, j, FIRSTAID);
             }
         }
     }
 
+    vector<Snake*> msnakes = game->getState()->getSnakes();
+
     //paint snake
-    paintMySnake();
-    painter.setBrush(Qt::yellow);
-    painter.setPen(Qt::yellow);
-    for(int i = 1; i < game->getState()->getSnakes().size(); i++){
-        Snake* osnake = game->getState()->getSnakes()[i];
-        for (std::size_t i = 0; i < osnake->getLength(); i++) {
-            QRect rect = getRect(osnake->getBody()[i].first, osnake->getBody()[i].second);
-            painter.drawRect(rect);
-        }
+    paintSnake(0, msnakes[0]->getLength() - snake_length[0]);
+    for(int i = 1; i < msnakes.size(); i++){
+        paintSnake(i, msnakes[i]->getLength() - snake_length[i]);
     }
+
+    for(int i = 0; i < msnakes.size(); i++){
+        snake_length[i] = msnakes[i]->getLength();
+        vector<Direction> mlength_vec;
+        for(int j = 0; j < msnakes[i]->getLength(); j++)
+        {
+            mlength_vec.push_back(msnakes[i]->getBodyDirection(j));
+        }
+        snake_direction[i] = mlength_vec;
+    }
+
+
 
     if(countdown == 4 && !on_guide){
         enterGuide();
@@ -173,8 +197,6 @@ void GameWidget::paintEvent(QPaintEvent *ev)
             break;
         }
         case -1:
-            begin = clock();
-            this->game->setBeginTime(begin);
             break;
         default:
             break;
@@ -192,7 +214,14 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
 
     //move the determine whether the game is over
-    if(game_end  == 0 && !on_guide) game_end = game->runGame();
+    if(game_end  == 0 && !on_guide && countdown < 0) {
+        if(!game_start){
+            begin = clock();
+            this->game->setBeginTime(begin);
+            game_start = true;
+        }
+        game_end = game->runGame();
+    }
     if(game_end != 0 && !is_emit) {
         if(game_end == 1){
             emit(gameEnd(1));
@@ -366,6 +395,29 @@ void GameWidget::showMp()
     ui->progressBarMp->show();
 }
 
+void GameWidget::showScore()
+{
+    QFont font("华文新魏", 30);
+    QString s;
+
+    int score = game->getState()->getSnakes()[0]->score();
+    ui->labelScore->setGeometry(50, 860, 200, 150);
+    ui->labelScore->setFont(font);
+    ui->labelScore->setText(s.setNum(score));
+    ui->labelScore->show();
+
+    int target = game->target_score;
+    ui->labelTarget->setGeometry(210, 860, 200, 150);
+    ui->labelTarget->setFont(font);
+    ui->labelTarget->setText(s.setNum(target));
+    ui->labelTarget->show();
+
+    ui->labelSlash->setText("/");
+    ui->labelSlash->setGeometry(150, 860, 200, 150);
+    ui->labelSlash->setFont(font);
+    ui->labelSlash->show();
+}
+
 void GameWidget::paintItem(int i, int j, ItemType type)
 {
     QLabel *ql = new QLabel();
@@ -404,51 +456,167 @@ void GameWidget::paintItem(int i, int j, ItemType type)
 
 }
 
-void GameWidget::paintMySnake()
+void GameWidget::paintSnake(int id, int change)
 {
-    Snake* msnake = game->getState()->getSnakes()[0];
-    Loc head = msnake->getBody()[0];
-    QLabel* ql = new QLabel();
-    ql->setParent(this);
-    ql->setGeometry((head.first+1)*unitlen+border, (head.second+1)*unitlen, unitlen, unitlen);
-    switch(msnake->getDirection()){
-    case UP:
-        ql->setStyleSheet("border-image: url(:/snakehead_up.png)");
-        break;
-    case DOWN:
-        ql->setStyleSheet("border-image: url(:/snakehead_down.png)");
-        break;
-    case LEFT:
-        ql->setStyleSheet("border-image: url(:/snakehead_left.png)");
-        break;
-    case RIGHT:
-        ql->setStyleSheet("border-image: url(:/snakehead_right.png)");
-        break;
-    }
-    ql->show();
-    ql->raise();
-    dynamic_label.push_back(ql);
-    for (std::size_t i = 1; i < msnake->getLength(); i++) {
+    Snake* msnake = game->getState()->getSnakes()[id];
+    int length = snake_label[id].size();
+    if(snake_label[id].size() == 0)
+    {
+        Loc head = msnake->getBody()[0];
         QLabel* ql = new QLabel();
         ql->setParent(this);
-        ql->setGeometry((msnake->getBody()[i].first+1)*unitlen+border, (msnake->getBody()[i].second+1)*unitlen, unitlen, unitlen);
-        switch(msnake->getBodyDirection(i)){
+        ql->setGeometry((head.first+1)*unitlen+border, (head.second+1)*unitlen, unitlen, unitlen);
+        switch(msnake->getDirection()){
         case UP:
-            ql->setStyleSheet("border-image: url(:/snakebody_up.png)");
+            if(id == 0)
+                ql->setStyleSheet("border-image: url(:/snakehead_up.png)");
+            else
+                ql->setStyleSheet("border-image: url(:/aisnakehead_up.png)");
             break;
         case DOWN:
-            ql->setStyleSheet("border-image: url(:/snakebody_down.png)");
+            if(id == 0)
+                ql->setStyleSheet("border-image: url(:/snakehead_down.png)");
+            else
+                ql->setStyleSheet("border-image: url(:/aisnakehead_down.png)");
             break;
         case LEFT:
-            ql->setStyleSheet("border-image: url(:/snakebody_left.png)");
+            if(id == 0)
+                ql->setStyleSheet("border-image: url(:/snakehead_left.png)");
+            else
+                ql->setStyleSheet("border-image: url(:/aisnakehead_left.png)");
             break;
         case RIGHT:
-            ql->setStyleSheet("border-image: url(:/snakebody_right.png)");
+            if(id == 0)
+                ql->setStyleSheet("border-image: url(:/snakehead_right.png)");
+            else
+                ql->setStyleSheet("border-image: url(:/aisnakehead_right.png)");
             break;
         }
         ql->show();
         ql->raise();
-        dynamic_label.push_back(ql);
+        snake_label[id].push_back(ql);
+        change--;
+    }
+    if(change < 0)
+    {
+        reverse(snake_label[id].begin(), snake_label[id].end());
+        vector<QLabel*>::iterator vec_it = snake_label[id].begin();
+        for(int i = 0; i < -change; i++)
+        {
+            delete *vec_it;
+            *vec_it = NULL;
+            vec_it++;
+        }
+        reverse(snake_label[id].begin(), snake_label[id].end());
+        for(int i = 0; i < -change; i++)
+        {
+            snake_label[id].pop_back();
+        }
+        length += change;
+    }
+    if(change > 0)
+    {
+        for(int i = msnake->getLength() - change; i < msnake->getLength(); i++)
+        {
+            QLabel* ql = new QLabel();
+            ql->setParent(this);
+            ql->setGeometry((msnake->getBody()[i].first+1)*unitlen+border, (msnake->getBody()[i].second+1)*unitlen, unitlen, unitlen);
+            switch(msnake->getBodyDirection(i)){
+            case UP:
+                if(id == 0)
+                    ql->setStyleSheet("border-image: url(:/snakebody_up.png)");
+                else
+                    ql->setStyleSheet("border-image: url(:/aisnakebody_up.png)");
+                break;
+            case DOWN:
+                if(id == 0)
+                    ql->setStyleSheet("border-image: url(:/snakebody_down.png)");
+                else
+                    ql->setStyleSheet("border-image: url(:/aisnakebody_down.png)");
+                break;
+            case LEFT:
+                if(id == 0)
+                    ql->setStyleSheet("border-image: url(:/snakebody_left.png)");
+                else
+                    ql->setStyleSheet("border-image: url(:/aisnakebody_left.png)");
+                break;
+            case RIGHT:
+                if(id == 0)
+                    ql->setStyleSheet("border-image: url(:/snakebody_right.png)");
+                else
+                    ql->setStyleSheet("border-image: url(:/aisnakebody_right.png)");
+                break;
+            }
+            ql->show();
+            ql->raise();
+            snake_label[id].push_back(ql);
+        }
+    }
+    for (std::size_t i = 0; i < length; i++) {
+        snake_label[id][i]->setGeometry((msnake->getBody()[i].first+1)*unitlen+border, (msnake->getBody()[i].second+1)*unitlen, unitlen, unitlen);
+        Direction old_direction = snake_direction[id][i];
+        Direction new_direction = msnake->getBodyDirection(i);
+        if(old_direction != new_direction)
+        {
+            switch(msnake->getBodyDirection(i)){
+            case UP:
+                if(id == 0){
+                    if(i == 0)
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/snakehead_up.png)");
+                    else
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/snakebody_up.png)");
+                }
+                else {
+                    if(i == 0)
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakehead_up.png)");
+                    else
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakebody_up.png)");
+                }
+                break;
+            case DOWN:
+                if(id == 0){
+                    if(i == 0)
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/snakehead_down.png)");
+                    else
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/snakebody_down.png)");
+                }
+                else {
+                    if(i == 0)
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakehead_down.png)");
+                    else
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakebody_down.png)");
+                }
+                break;
+            case LEFT:
+                if(id == 0){
+                    if(i == 0)
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/snakehead_left.png)");
+                    else
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/snakebody_left.png)");
+                }
+                else {
+                    if(i == 0)
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakehead_left.png)");
+                    else
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakebody_left.png)");
+                }
+                break;
+            case RIGHT:
+                if(id == 0){
+                    if(i == 0)
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/snakehead_right.png)");
+                    else
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/snakebody_right.png)");
+                }
+                else {
+                    if(i == 0)
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakehead_right.png)");
+                    else
+                        snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakebody_right.png)");
+                }
+                break;
+            }
+        }
     }
 }
 
@@ -490,7 +658,77 @@ void GameWidget::deleteFoodLabel()
             food_label.push_back(*vec_it);
 }
 
+void GameWidget::deleteMagnetLabel()
+{
+    vector<QLabel*>::iterator vec_it = magnet_label.begin();
+    for(; vec_it != magnet_label.end(); vec_it++)
+    {
+        if(*vec_it == NULL) continue;
+        int i = ((*vec_it)->x()-border)/unitlen - 1;
+        int j = (*vec_it)->y()/unitlen - 1;
+        if(game->getState()->getItemName(i, j) != MAGNET){
+            delete *vec_it;
+            *vec_it = NULL;
+        }
+    }
+    vec_it = magnet_label.begin();
+    vector<QLabel*> labeltmp;
+    for(; vec_it != magnet_label.end(); vec_it++)
+        labeltmp.push_back(*vec_it);
+    magnet_label.clear();
+    vec_it = labeltmp.begin();
+    for(; vec_it != labeltmp.end(); vec_it++)
+        if(*vec_it != NULL)
+            magnet_label.push_back(*vec_it);
+}
 
+void GameWidget::deleteObstacleLabel()
+{
+    vector<QLabel*>::iterator vec_it = obstacle_label.begin();
+    for(; vec_it != obstacle_label.end(); vec_it++)
+    {
+        if(*vec_it == NULL) continue;
+        int i = ((*vec_it)->x()-border)/unitlen - 1;
+        int j = (*vec_it)->y()/unitlen - 1;
+        if(game->getState()->getItemName(i, j) != OBSTACLE){
+            delete *vec_it;
+            *vec_it = NULL;
+        }
+    }
+    vec_it = obstacle_label.begin();
+    vector<QLabel*> labeltmp;
+    for(; vec_it != obstacle_label.end(); vec_it++)
+        labeltmp.push_back(*vec_it);
+    obstacle_label.clear();
+    vec_it = labeltmp.begin();
+    for(; vec_it != labeltmp.end(); vec_it++)
+        if(*vec_it != NULL)
+            obstacle_label.push_back(*vec_it);
+}
+
+void GameWidget::deleteFirstaidLabel()
+{
+    vector<QLabel*>::iterator vec_it = firstaid_label.begin();
+    for(; vec_it != firstaid_label.end(); vec_it++)
+    {
+        if(*vec_it == NULL) continue;
+        int i = ((*vec_it)->x()-border)/unitlen - 1;
+        int j = (*vec_it)->y()/unitlen - 1;
+        if(game->getState()->getItemName(i, j) != FIRSTAID){
+            delete *vec_it;
+            *vec_it = NULL;
+        }
+    }
+    vec_it = firstaid_label.begin();
+    vector<QLabel*> labeltmp;
+    for(; vec_it != firstaid_label.end(); vec_it++)
+        labeltmp.push_back(*vec_it);
+    firstaid_label.clear();
+    vec_it = labeltmp.begin();
+    for(; vec_it != labeltmp.end(); vec_it++)
+        if(*vec_it != NULL)
+            firstaid_label.push_back(*vec_it);
+}
 
 GameWidget::~GameWidget()
 {
