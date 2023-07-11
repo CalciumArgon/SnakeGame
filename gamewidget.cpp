@@ -129,6 +129,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     deleteMagnetLabel();
     deleteObstacleLabel();
     deleteFirstaidLabel();
+    deleteShieldLabel();
 
     //paint food
     for (size_t i = 0; i < mstate->getWidth(); i++) {
@@ -144,6 +145,9 @@ void GameWidget::paintEvent(QPaintEvent *ev)
             }
             if(mstate->getItemName(i, j) == FIRSTAID && mstate->getItem(i, j)->is_print == false){
                 paintItem(i, j, FIRSTAID);
+            }
+            if(mstate->getItemName(i, j) == SHIELD && mstate->getItem(i, j)->is_print == false){
+                paintItem(i, j, SHIELD);
             }
         }
     }
@@ -441,15 +445,23 @@ void GameWidget::paintItem(int i, int j, ItemType type)
         break;
     case MAGNET:
         ql->setStyleSheet("border-image: url(:/magnet.png)");
-        dynamic_label.push_back(ql);
+        game->getState()->getItem(i, j)->is_print = true;
+        magnet_label.push_back(ql);
         break;
     case OBSTACLE:
         ql->setStyleSheet("border-image: url(:/obstacle.png)");
-        static_label.push_back(ql);
+        game->getState()->getItem(i, j)->is_print = true;
+        obstacle_label.push_back(ql);
         break;
     case FIRSTAID:
         ql->setStyleSheet("border-image: url(:/firstaid.png)");
-        static_label.push_back(ql);
+        game->getState()->getItem(i, j)->is_print = true;
+        firstaid_label.push_back(ql);
+        break;
+    case SHIELD:
+        ql->setStyleSheet("border-image: url(:/shield.png)");
+        game->getState()->getItem(i, j)->is_print = true;
+        shield_label.push_back(ql);
         break;
     }
 
@@ -728,6 +740,30 @@ void GameWidget::deleteFirstaidLabel()
     for(; vec_it != labeltmp.end(); vec_it++)
         if(*vec_it != NULL)
             firstaid_label.push_back(*vec_it);
+}
+
+void GameWidget::deleteShieldLabel()
+{
+    vector<QLabel*>::iterator vec_it = shield_label.begin();
+    for(; vec_it != shield_label.end(); vec_it++)
+    {
+        if(*vec_it == NULL) continue;
+        int i = ((*vec_it)->x()-border)/unitlen - 1;
+        int j = (*vec_it)->y()/unitlen - 1;
+        if(game->getState()->getItemName(i, j) != SHIELD){
+            delete *vec_it;
+            *vec_it = NULL;
+        }
+    }
+    vec_it = shield_label.begin();
+    vector<QLabel*> labeltmp;
+    for(; vec_it != shield_label.end(); vec_it++)
+        labeltmp.push_back(*vec_it);
+    shield_label.clear();
+    vec_it = labeltmp.begin();
+    for(; vec_it != labeltmp.end(); vec_it++)
+        if(*vec_it != NULL)
+            shield_label.push_back(*vec_it);
 }
 
 GameWidget::~GameWidget()

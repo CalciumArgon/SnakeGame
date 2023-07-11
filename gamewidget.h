@@ -46,12 +46,14 @@ public:
     void deleteMagnetLabel();
     void deleteObstacleLabel();
     void deleteFirstaidLabel();
+    void deleteShieldLabel();
     std::vector<QLabel*> static_label;
     std::vector<QLabel*> dynamic_label;
     std::vector<QLabel*> food_label;
     std::vector<QLabel*> magnet_label;
     std::vector<QLabel*> obstacle_label;
     std::vector<QLabel*> firstaid_label;
+    std::vector<QLabel*> shield_label;
     std::vector<QString> guide_line;
     std::vector<std::vector<QLabel*>> snake_label;
     std::vector<int> snake_length;
