@@ -1,7 +1,3 @@
-//
-// Created by lenovo on 2023/7/3.
-//
-
 #ifndef SNAKE_SRC_FULL_AISNAKE_H
 #define SNAKE_SRC_FULL_AISNAKE_H
 #include "snake.h"
@@ -10,8 +6,11 @@
 
 typedef std::pair<int, int> Loc;
 class AISnake:public Snake {
+protected:
+    Loc next_target = {-1, -1};
 public:
     Direction go_to(Loc target);
+    bool reachtarget(Loc target);
     AISnake(std::vector<Loc> body, int length, int max_health, Direction direction, Grid* item_map_ptr):Snake(body, length, max_health, direction, item_map_ptr){};
     AISnake(Loc head, int length, int max_health, Direction direction, Grid* item_map_ptr):Snake(head, length, max_health, direction, item_map_ptr){};
     virtual Direction act(Field* state) = 0;
@@ -42,5 +41,3 @@ public:
     void setPath(std::queue<Loc> path);
 };
 #endif //SNAKE_SRC_FULL_AISNAKE_H
-
-

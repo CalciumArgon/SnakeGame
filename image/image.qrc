@@ -1,14 +1,39 @@
 <RCC>
     <qresource prefix="/">
+        <file>036d850baabf240093cabc2bc92414e9.jpg</file>
+        <file>60ed4209cccbf115b7a47d7b075c0ca5.jpeg</file>
+        <file>9b4ce26fffec99322e34d7bd29a44a31.jpeg</file>
         <file>background.jpeg</file>
         <file>background.png</file>
         <file>cd1.png</file>
         <file>cd2.png</file>
         <file>cd3.png</file>
         <file>cdgo.png</file>
+        <file>firstaid.png</file>
         <file>food.jpg</file>
+        <file>food1.jpg</file>
+        <file>food1.png</file>
+        <file>food2.jpeg</file>
+        <file>food2.png</file>
+        <file>food3.jpeg</file>
+        <file>food3.png</file>
+        <file>health.png</file>
+        <file>hptext.png</file>
         <file>image.qrc</file>
+        <file>magnet.png</file>
         <file>marsh.jpg</file>
         <file>marsh.png</file>
+        <file>no_health.png</file>
+        <file>obstacle.png</file>
+        <file>snakebody_down.png</file>
+        <file>snakebody_left.png</file>
+        <file>snakebody_right.png</file>
+        <file>snakebody_up.png</file>
+        <file>snakehead_down.png</file>
+        <file>snakehead_left.png</file>
+        <file>snakehead_right.png</file>
+        <file>snakehead_up.png</file>
+        <file>wall.jpeg</file>
+        <file>wall.png</file>
     </qresource>
 </RCC>

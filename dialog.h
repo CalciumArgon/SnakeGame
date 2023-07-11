@@ -17,6 +17,8 @@ public:
 
 private:
     Ui::Dialog *ui;
+public slots:
+    void endGame(int);
 };
 
 #endif // DIALOG_H

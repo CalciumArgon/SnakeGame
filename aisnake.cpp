@@ -1,7 +1,3 @@
-//
-// Created by lenovo on 2023/7/3.
-//
-
 #include "aisnake.h"
 #include <queue>
 #include <set>
@@ -9,19 +5,47 @@
 using namespace std;
 Direction AISnake::go_to(Loc target) {
 
-    if (target.first < this->body[0].first){
-        return LEFT;
+    if (this->direction == UP || this->direction == DOWN){
+        if (target.first < this->body[0].first){
+            return LEFT;
+        }
+        if (target.first > this->body[0].first){
+            return RIGHT;
+        }
+        if (target.first == this->body[0].first){
+
+            if (target.second > this->body[0].second && this->direction == UP) {
+                return (this->body[0].first < 30) ? RIGHT : LEFT;
+            }
+            if (target.second < this->body[0].second && this->direction == DOWN) {
+                return (this->body[0].first > 10) ? LEFT : RIGHT;
+            }
+            return this->direction;
+        }
+
     }
-    if (target.first > this->body[0].first){
-        return RIGHT;
-    }
-    if (target.second < this->body[0].second){
-        return DOWN;
-    }
-    if (target.second > this->body[0].second){
-        return UP;
+    else {
+        if (target.second < this->body[0].second) {
+            return UP;
+        }
+        if (target.second > this->body[0].second) {
+            return DOWN;
+        }
+        if (target.second == this->body[0].second) {
+            if (target.first > this->body[0].first && this->direction == LEFT) {
+                return (this->body[0].second < 30) ? DOWN : UP;
+            }
+            if (target.first < this->body[0].first && this->direction == RIGHT) {
+                return (this->body[0].second > 10) ? UP : DOWN;
+            }
+            return this->direction;
+        }
     }
     return this->direction;
+}
+
+bool AISnake::reachtarget(Loc target) {
+    return this->body[0] == target;
 }
 
 pair<int, int> GreedyFood::getNearestFood() {
@@ -32,7 +56,7 @@ pair<int, int> GreedyFood::getNearestFood() {
     while(!toSearch.empty()){
         pair<int,int> target = toSearch.front();
         toSearch.pop();
-        if (item_map_ptr->at(target.first)[target.second]){
+        if (item_map_ptr->at(target.first)[target.second] && item_map_ptr->at(target.first)[target.second]->getName() == FOOD){
             return target;
         } else{
             if (target.first > 0 && searched.find(make_pair(target.first-1, target.second)) == searched.end()){
@@ -70,11 +94,21 @@ void WalkingSnake::setPath(std::queue<Loc> path) {
 }
 
 Direction WalkingSnake::act(Field *state) {
-    if (this->path.empty()){
-        return this->direction;
+    if (next_target == make_pair(-1, -1)) {
+        if (path.empty()) {
+            return this->direction;
+        }
+        next_target = path.front();
+        path.pop();
+        path.push(next_target);
     }
-    Loc target = this->path.front();
-    this->path.pop();
-    this->path.push(target);
-    return this->go_to(target);
+    if (!this->reachtarget(next_target)) {
+        return this->go_to(next_target);
+    }
+    else{
+        next_target = path.front();
+        path.pop();
+        path.push(next_target);
+        return this->go_to(next_target);
+    }
 }

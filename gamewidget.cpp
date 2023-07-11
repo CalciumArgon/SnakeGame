@@ -2,22 +2,55 @@
 #include "ui_gamewidget.h"
 #include <QThread>
 #include <QColor>
+#include <QDir>
+#include <QTime>
+#include <QDebug>
+#include <string>
+#include <fstream>
+#include "path.h"
 
 using namespace std;
 
-GameWidget::GameWidget(Game* game, QWidget *parent) : ui(new Ui::GameWidget)
+GameWidget::GameWidget(Game* game, int level, QWidget *parent) : ui(new Ui::GameWidget)
 {
     Q_UNUSED(parent);
     ui->setupUi(this);
     this->game = game;
+    this->level = level;
+
+    QPalette pal(this->palette());
+    pal.setColor(QPalette::Background, QColor(204, 230, 199));
+    this->setAutoFillBackground(true);
+    this->setPalette(pal);
+
+    //paintBlocks();
+
+    //paint static items
+    Field* mstate = game->getState();
+    for (size_t i = 0; i < mstate->getWidth(); i++) {
+        for (size_t j = 0; j < mstate->getHeight(); j++){
+            if(mstate->getItemName(i, j) == MARSH){
+                paintItem(i, j, MARSH);
+            }
+            if(mstate->getItemName(i, j) == WALL){
+                paintItem(i, j, WALL);
+            }
+            if(mstate->getItemName(i, j) == OBSTACLE){
+                paintItem(i, j, OBSTACLE);
+            }
+            if(mstate->getItemName(i, j) == FIRSTAID){
+                paintItem(i, j, FIRSTAID);
+            }
+        }
+    }
 }
 
 QRect GameWidget::getRect(int x, int y)
 {
-    int x1 = (x + 1) * unitlen;
-    int y1 = (y + 1) * unitlen + 100;
-    int x2 = (x + 2) * unitlen;
-    int y2 = (y + 2) * unitlen + 100;
+    int x1 = (x + 1) * unitlen + border;
+    int y1 = (y + 1) * unitlen;
+    int x2 = (x + 2) * unitlen + border;
+    int y2 = (y + 2) * unitlen;
     return QRect(QPoint(x2,y2), QPoint(x1, y1));
 }
 
@@ -27,67 +60,121 @@ void GameWidget::paintEvent(QPaintEvent *ev)
 
     //hide the label
     ui->labelBackground->hide();
-    ui->labelFood->hide();
     ui->labelCntDn->hide();
     ui->labelTime->hide();
+    ui->labelHp1->hide();
+    ui->labelHp2->hide();
+    ui->labelHp3->hide();
+    ui->labelHp4->hide();
+    ui->progressBarMp->hide();
+    /*ui->labelGuide->hide();
+    ui->btnNext->hide();
+    ui->btnSkip->hide();*/
+
+    //get current time and show
+    end = clock();
+    if(countdown < 0){
+        if(!game_end)
+            showTime(int((end - begin) / CLK_TCK));
+
+    }
+    else {
+        showTime(0);
+    }
+
+    //set the painter of the main event
+    QPainter painter(this);
 
     //set the position of the label
     ui->labelCntDn->setGeometry(380, 400, 600, 600);
     ui->labelBackground->setGeometry(unitlen, unitlen+100, unitlen*game->getState()->getWidth(), unitlen*game->getState()->getHeight());
     //show game time
-    QString s;
-    ui->labelTime->setText(s.setNum(cnt_time));
-    ui->labelTime->show();
 
-    //set the painter of the main event
-    QPainter painter(this);
+    QString s;
+    ui->labelTime->setText("游戏时间" + s.setNum(cnt_time));
+    //ui->labelTime->show();
+
+    //paint the area of hp and mp
+    painter.setPen(QColor(222, 199, 12, 255));
+    QRect hm = QRect(QPoint(5, 290), QPoint(320, 450));
+    painter.drawRect(hm);
+    //show hp level
+    showHp();
+    //show mp level
+    showMp();
 
     //paint the blocks
     Field* mstate = game->getState();
     painter.setPen(Qt::black);
     painter.setBrush(QColor(1, 1, 1, 0));
-    //painter.setRenderHint(QPainter::Antialiasing);
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++) {
-            if(mstate->getItemName(i, j) == BASIC){
-                painter.setBrush(Qt::gray);
                 QRect rect = getRect(i, j);
                 painter.drawRect(rect);
-            }
         }
     }
 
-    //paint the background
-    //ui->labelBackground->setStyleSheet("border-image: url(:/background.png)");
-    //ui->labelBackground->show();
+    //delete label
+    deleteLabel();
+
+    //delete food label
+    deleteFoodLabel();
 
     //paint food
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++){
-            if(mstate->getItemName(i, j) == FOOD){
-                painter.setBrush(Qt::red);
+            if(mstate->getItemName(i, j) == FOOD && mstate->getItem(i, j)->is_print == false){
+                paintItem(i, j, FOOD);
+            }
+            if(mstate->getItemName(i, j) == MAGNET){
+                paintItem(i, j, MAGNET);
+            }
+            if(mstate->getItemName(i, j) == FIRSTAID){
+                painter.setBrush(Qt::black);
                 QRect rect = getRect(i, j);
                 painter.drawRect(rect);
             }
-            if(mstate->getItemName(i, j) == MARSH){
-                /*
-                ui->labelMarsh->setStyleSheet("border-image: url(:/marsh.png)");
-                ui->labelMarsh->setGeometry((i+1)*unitlen, (j+1)*unitlen+100, unitlen, unitlen);
-                ui->labelMarsh->raise();*/
+            if(mstate->getItemName(i, j) == OBSTACLE){
                 painter.setBrush(Qt::blue);
                 QRect rect = getRect(i, j);
                 painter.drawRect(rect);
+            }
+            if(mstate->getItemName(i, j) == SHIELD){
+                painter.setBrush(Qt::white);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+            }
+            if(mstate->getItemName(i, j) == AEROLITE){
+                if (game->isFall()) {
+                    painter.setBrush(Qt::red);
+                    QRect rect = getRect(i, j);
+                    painter.drawRect(rect);
+                } else {
+                    painter.setBrush(Qt::yellow);
+                    QRect rect = getRect(i, j);
+                    painter.drawRect(rect);
+                }
             }
         }
     }
 
     //paint snake
-    painter.setBrush(Qt::green);
-    painter.setPen(Qt::green);
-    Snake* msnake = game->getState()->getSnakes()[0];
-    for (std::size_t i = 0; i < msnake->getLength(); i++) {
-        QRect rect = getRect(msnake->getBody()[i].first, msnake->getBody()[i].second);
-        painter.drawRect(rect);
+    paintMySnake();
+    painter.setBrush(Qt::yellow);
+    painter.setPen(Qt::yellow);
+    for(int i = 1; i < game->getState()->getSnakes().size(); i++){
+        Snake* osnake = game->getState()->getSnakes()[i];
+        for (std::size_t i = 0; i < osnake->getLength(); i++) {
+            QRect rect = getRect(osnake->getBody()[i].first, osnake->getBody()[i].second);
+            painter.drawRect(rect);
+        }
+    }
+
+    if(countdown == 4 && !on_guide){
+        enterGuide();
+        //countdown--;
+        update();
+        return QWidget::paintEvent(ev);
     }
     painter.setBrush(Qt::yellow);
     painter.setPen(Qt::yellow);
@@ -100,13 +187,15 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
 
     //paint the countdown
-    if(countdown >= -1)
+    if(countdown >= -1 && countdown <= 3)
     {
         ui->labelCntDn->show();
         ui->labelCntDn->raise();
         switch(countdown)
         {
         case 3:
+            begin = clock();
+            this->game->setBeginTime(begin);
             ui->labelCntDn->setStyleSheet("border-image: url(:/cd3.png)");
             break;
         case 2:
@@ -116,32 +205,44 @@ void GameWidget::paintEvent(QPaintEvent *ev)
             ui->labelCntDn->setStyleSheet("border-image: url(:/cd1.png)");
             break;
         case 0:
+        {
             ui->labelCntDn->setStyleSheet("border-image: url(:/cdgo.png)");
+            break;
+        }
+        case -1:
+            begin = clock();
+            this->game->setBeginTime(begin);
             break;
         default:
             break;
         }
         countdown--;
         if(countdown != 2){
-        QThread::msleep(1000);
-        update();
+            QThread::msleep(1000);
+            update();
 
-        return QWidget::paintEvent(ev);
+            return QWidget::paintEvent(ev);
         }
-    }
-    else {
+    } else {
         ui->labelCntDn->hide();
     }
 
     //move the determine whether the game is over
-    if(!game_over) game_over = !game->runGame();
-    if(game_over && !is_emit) {
-        emit(gameover());
-        is_emit = true;
+    if(game_end  == 0 && !on_guide) game_end = game->runGame();
+    if(game_end != 0 && !is_emit) {
+        if(game_end == 1){
+            emit(gameEnd(1));
+            is_emit = true;
+        }
+        else {
+            emit(gameEnd(0));
+            is_emit = true;
+        }
     }
+
     QThread::msleep(5);
-    if(!game_over) {
-        cnt_time = game->test;
+    if (game_end == 0) {
+        cnt_time++;
         update();
     }
     return QWidget::paintEvent(ev);
@@ -168,10 +269,279 @@ void GameWidget::keyPressEvent(QKeyEvent *event)
     case Qt::Key_D:
         game->getState()->getSnakes()[0]->changeDireciton(RIGHT);
         break;
+    case Qt::Key_Control:
+        game->getState()->getSnakes()[0]->speed_buff = true;
     }
 }
+
+void GameWidget::keyReleaseEvent(QKeyEvent *event)
+{
+    event->accept();
+    if(event->key() == Qt::Key_Control)
+        game->getState()->getSnakes()[0]->speed_buff = false;
+}
+
+void GameWidget::enterGuide()
+{
+    readFile(level);
+    startGuide();
+}
+
+void GameWidget::readFile(int level)
+{
+    string dir = WORKING_DIR + "\\guide\\" + to_string(level) + ".txt";
+    ifstream guide_file;
+    guide_file.open(dir.c_str());
+    string s;
+    while(getline(guide_file, s))
+        guide_line.push_back(QString::fromStdString(s));
+    page_num = 1;
+}
+
+void GameWidget::startGuide()
+{
+    ui->labelGuide->setStyleSheet("background-color:rgb(191, 255, 155, 200)");
+    ui->labelGuide->setGeometry(590, 0, 950, 400);
+    QFont font("微软雅黑", 20);
+    ui->labelGuide->setFont(font);
+    ui->labelGuide->setText(guide_line[0]);
+    ui->btnNext->setGeometry(1220, 340, 100, 40);
+    ui->btnSkip->setGeometry(1350, 340, 100, 40);
+    ui->labelGuide->show();
+    ui->btnNext->show();
+    ui->btnSkip->show();
+    ui->labelGuide->raise();
+    ui->btnNext->raise();
+    ui->btnSkip->raise();
+    on_guide = true;
+}
+
+void GameWidget::turnPage()
+{
+    if(page_num == guide_line.size())
+        endGuide();
+    else {
+        page_num++;
+    }
+    ui->labelGuide->setText(guide_line[page_num-1]);
+}
+
+void GameWidget::endGuide()
+{
+    ui->labelGuide->close();
+    ui->btnNext->close();
+    ui->btnSkip->close();
+    on_guide = false;
+    countdown = 3;
+}
+
+void GameWidget::paintBlocks()
+{
+    QPainter painter(this);
+    Field* mstate = game->getState();
+    painter.setPen(Qt::black);
+    painter.setBrush(QColor(1, 1, 1, 0));
+    for (size_t i = 0; i < mstate->getWidth(); i++) {
+        for (size_t j = 0; j < mstate->getHeight(); j++) {
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+        }
+    }
+}
+
+void GameWidget::showTime(int time)
+{
+    ui->lcdNum4->setGeometry(0, 70, 81, 101);
+    ui->lcdNum3->setGeometry(70, 70, 81, 101);
+    ui->lcdNum2->setGeometry(140, 70, 81, 101);
+    ui->lcdNum1->setGeometry(210, 70, 81, 101);
+    ui->labelColon->setGeometry(135, 90, 21, 51);
+    ui->labelColon->setText(":");
+    QFont font;
+    font.setPointSize(25);
+    ui->labelColon->setFont(font);
+    int minute = time / 60;
+    int sec = time % 60;
+    ui->lcdNum1->display(sec % 10);
+    ui->lcdNum2->display(sec / 10);
+    ui->lcdNum3->display(minute % 10);
+    ui->lcdNum4->display(minute / 10);
+
+}
+
+void GameWidget::showHp()
+{
+    int hp = game->getState()->getSnakes()[0]->getHp();
+    ui->labelHp1->setGeometry(10, 300, 70, 70);
+    ui->labelHp2->setGeometry(90, 300, 70, 70);
+    ui->labelHp3->setGeometry(170, 300, 70, 70);
+    ui->labelHp4->setGeometry(250, 300, 70, 70);
+    ui->labelHp1->setStyleSheet("border-image: url(:/no_health.png)");
+    ui->labelHp2->setStyleSheet("border-image: url(:/no_health.png)");
+    ui->labelHp3->setStyleSheet("border-image: url(:/no_health.png)");
+    ui->labelHp4->setStyleSheet("border-image: url(:/no_health.png)");
+    if(hp >= 1)
+        ui->labelHp1->setStyleSheet("border-image: url(:/health.png)");
+    if(hp >= 2)
+        ui->labelHp2->setStyleSheet("border-image: url(:/health.png)");
+    if(hp >= 3)
+        ui->labelHp3->setStyleSheet("border-image: url(:/health.png)");
+    if(hp >= 4)
+        ui->labelHp4->setStyleSheet("border-image: url(:/health.png)");
+    ui->labelHp1->show();
+    ui->labelHp2->show();
+    ui->labelHp3->show();
+    ui->labelHp4->show();
+}
+
+void GameWidget::showMp()
+{
+    ui->progressBarMp->setValue(int(game->getState()->getSnakes()[0]->getMp()*100.0/240.0));
+    ui->progressBarMp->setGeometry(10, 400, 300, 40);
+    ui->progressBarMp->setStyleSheet("QProgressBar::chunk{background-color: rgb(0, 59, 255)}");
+    ui->progressBarMp->show();
+}
+
+void GameWidget::paintItem(int i, int j, ItemType type)
+{
+    QLabel *ql = new QLabel();
+    ql->setParent(this);
+    ql->setGeometry((i+1)*unitlen+border, (j+1)*unitlen, unitlen, unitlen);
+    ql->show();
+    ql->raise();
+    switch(type){
+    case FOOD:
+        ql->setStyleSheet("border-image: url(:/food1.png)");
+        game->getState()->getItem(i, j)->is_print = true;
+        food_label.push_back(ql);
+        break;
+    case WALL:
+        ql->setStyleSheet("border-image: url(:/wall.png)");
+        static_label.push_back(ql);
+        break;
+    case MARSH:
+        ql->setStyleSheet("border-image: url(:/marsh.png)");
+        static_label.push_back(ql);
+        break;
+    case MAGNET:
+        ql->setStyleSheet("border-image: url(:/magnet.png)");
+        dynamic_label.push_back(ql);
+        break;
+    case OBSTACLE:
+        ql->setStyleSheet("border-image: url(:/obstacle.png)");
+        static_label.push_back(ql);
+        break;
+    case FIRSTAID:
+        ql->setStyleSheet("border-image: url(:/firstaid.png)");
+        static_label.push_back(ql);
+        break;
+    }
+
+
+}
+
+void GameWidget::paintMySnake()
+{
+    Snake* msnake = game->getState()->getSnakes()[0];
+    Loc head = msnake->getBody()[0];
+    QLabel* ql = new QLabel();
+    ql->setParent(this);
+    ql->setGeometry((head.first+1)*unitlen+border, (head.second+1)*unitlen, unitlen, unitlen);
+    switch(msnake->getDirection()){
+    case UP:
+        ql->setStyleSheet("border-image: url(:/snakehead_up.png)");
+        break;
+    case DOWN:
+        ql->setStyleSheet("border-image: url(:/snakehead_down.png)");
+        break;
+    case LEFT:
+        ql->setStyleSheet("border-image: url(:/snakehead_left.png)");
+        break;
+    case RIGHT:
+        ql->setStyleSheet("border-image: url(:/snakehead_right.png)");
+        break;
+    }
+    ql->show();
+    ql->raise();
+    dynamic_label.push_back(ql);
+    for (std::size_t i = 1; i < msnake->getLength(); i++) {
+        QLabel* ql = new QLabel();
+        ql->setParent(this);
+        ql->setGeometry((msnake->getBody()[i].first+1)*unitlen+border, (msnake->getBody()[i].second+1)*unitlen, unitlen, unitlen);
+        switch(msnake->getBodyDirection(i)){
+        case UP:
+            ql->setStyleSheet("border-image: url(:/snakebody_up.png)");
+            break;
+        case DOWN:
+            ql->setStyleSheet("border-image: url(:/snakebody_down.png)");
+            break;
+        case LEFT:
+            ql->setStyleSheet("border-image: url(:/snakebody_left.png)");
+            break;
+        case RIGHT:
+            ql->setStyleSheet("border-image: url(:/snakebody_right.png)");
+            break;
+        }
+        ql->show();
+        ql->raise();
+        dynamic_label.push_back(ql);
+    }
+}
+
+void GameWidget::deleteLabel()
+{
+    vector<QLabel*>::iterator vec_it = dynamic_label.begin();
+    for(; vec_it != dynamic_label.end(); vec_it++)
+    {
+        if(*vec_it != NULL)
+        {
+          delete *vec_it;
+          *vec_it = NULL;
+        }
+    }
+    dynamic_label.clear();
+}
+
+void GameWidget::deleteFoodLabel()
+{
+    vector<QLabel*>::iterator vec_it = food_label.begin();
+    for(; vec_it != food_label.end(); vec_it++)
+    {
+        if(*vec_it == NULL) continue;
+        int i = ((*vec_it)->x()-border)/unitlen - 1;
+        int j = (*vec_it)->y()/unitlen - 1;
+        if(game->getState()->getItemName(i, j) != FOOD){
+            delete *vec_it;
+            *vec_it = NULL;
+        }
+    }
+    vec_it = food_label.begin();
+    vector<QLabel*> labeltmp;
+    for(; vec_it != food_label.end(); vec_it++)
+        labeltmp.push_back(*vec_it);
+    food_label.clear();
+    vec_it = labeltmp.begin();
+    for(; vec_it != labeltmp.end(); vec_it++)
+        if(*vec_it != NULL)
+            food_label.push_back(*vec_it);
+}
+
+
 
 GameWidget::~GameWidget()
 {
     delete ui;
 }
+
+void GameWidget::on_btnNext_clicked()
+{
+    if(on_guide)
+        turnPage();
+}
+
+void GameWidget::on_btnSkip_clicked()
+{
+    if(on_guide)
+        endGuide();
+}
+

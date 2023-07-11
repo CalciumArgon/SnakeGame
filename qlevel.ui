@@ -16,10 +16,10 @@
   <widget class="QPushButton" name="btnLev1">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>60</y>
-     <width>80</width>
-     <height>81</height>
+     <x>40</x>
+     <y>30</y>
+     <width>141</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -29,10 +29,10 @@
   <widget class="QPushButton" name="btnLev2">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>60</y>
-     <width>80</width>
-     <height>81</height>
+     <x>230</x>
+     <y>30</y>
+     <width>141</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -42,8 +42,8 @@
   <widget class="QPushButton" name="btnReturn">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>330</y>
+     <x>20</x>
+     <y>350</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -55,10 +55,10 @@
   <widget class="QPushButton" name="btnLev3">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>60</y>
-     <width>80</width>
-     <height>81</height>
+     <x>420</x>
+     <y>30</y>
+     <width>141</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -68,10 +68,10 @@
   <widget class="QPushButton" name="btnLev4">
    <property name="geometry">
     <rect>
-     <x>470</x>
-     <y>60</y>
-     <width>80</width>
-     <height>81</height>
+     <x>40</x>
+     <y>110</y>
+     <width>141</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -81,10 +81,10 @@
   <widget class="QPushButton" name="btnLev5">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>210</y>
-     <width>80</width>
-     <height>81</height>
+     <x>230</x>
+     <y>110</y>
+     <width>141</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -94,10 +94,10 @@
   <widget class="QPushButton" name="btnLev6">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>210</y>
-     <width>80</width>
-     <height>81</height>
+     <x>420</x>
+     <y>110</y>
+     <width>141</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -107,10 +107,10 @@
   <widget class="QPushButton" name="btnLev7">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>210</y>
-     <width>80</width>
-     <height>81</height>
+     <x>40</x>
+     <y>190</y>
+     <width>141</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -120,14 +120,40 @@
   <widget class="QPushButton" name="btnLev8">
    <property name="geometry">
     <rect>
-     <x>470</x>
-     <y>210</y>
-     <width>80</width>
-     <height>81</height>
+     <x>230</x>
+     <y>190</y>
+     <width>141</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
     <string>关卡8</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnLev10">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>270</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>关卡10</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnLev9">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>190</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>关卡9</string>
    </property>
   </widget>
  </widget>

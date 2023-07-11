@@ -27,6 +27,7 @@ public:
     Snake* hitBodySnake(std::vector<Snake*>);
     virtual void action(Snake*) = 0;
     virtual ItemType getName();
+    bool is_print = false;
 protected:
     Loc location;
 };

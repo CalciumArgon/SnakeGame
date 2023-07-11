@@ -1,187 +1,173 @@
 #include "game.h"
 #include <QThread>
 #include <fstream>
-#include "AISnake.h"
+#include "aisnake.h"
 #include "queue"
+#include "path.h"
 using namespace std;
 typedef pair<int, int> Loc;
-Game::Game(GameMode playMode, int height, int width, std::vector<int> info) :
+Game::Game(GameMode game_mode, int height, int width, std::vector<int> info) :
     level(1),
     clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
     game_mode(game_mode)
 {
     state = new Field(height, width);
-    if (game_mode == TIMELIMIT) {
-        target_food = info[0];
-        target_time = info[1];
-    } else if (game_mode == TIMEFREE) {
-        target_food = info[0];
-    } else if (game_mode == KILLSNAKE) {
-        target_kill = info[0];
-    }
+    target_score = info[0];
+    target_time = info[1];
 }
 
 Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
     level(1),
+    target_score(info[0]),
+    target_time(info[1]),
     clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
     state(state),
-    game_mode(game_mode)
+    game_mode(game_mode) {}
+
+
+void Game::setBeginTime(clock_t begin)
 {
-    if (game_mode == TIMELIMIT) {
-        target_food = info[0];
-        target_time = info[1];
-    } else if (game_mode == TIMEFREE) {
-        target_food = info[0];
-    } else if (game_mode == KILLSNAKE) {
-        target_kill = info[0];
-    }
+    this->begin = begin;
 }
+
 
 bool Game::snakeAction(Snake *snake)
 {
+    //if (snake->getHealth() <= 0) assert(false);
     if (snake->isAI()){
         snake->changeDireciton(snake->act(this->getState()));
-//        throw "AI snake not implemented";
     }
 
-    // Snake* msnake = state->getSnakes()[0];
     snake->move();   // 完成移动
     if (snake->hitSelf() || snake->hitEdge()) {
-        return false;
+        bool dead = snake->death();
+        if (dead) return false;
     }
     if (snake->hitOtherSnake(state->getSnakes())) {
         bool dead = snake->death();
-        if (dead && snake == state->getSnakes()[0]) {
-            return false;
-        }
+        if (dead) return false;
     }
     return true;
-    // TODO: 判断胜负
 }
 
-bool Game::runGame()
+short Game::runGame()
 {
-    //clock.run();
+    // 删除血量为 0 的蛇
+    getState()->clearSnake();
 
-    // 每个时钟周期设置物体
-    // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮snakeAction周期
-    // 一些应该从文件中读取的数据 ===================== //
     Loc location;
-    // ============================================= //
-    /*if (type != BASIC) {    // 非 BASIC 的物体都会被设到地图上
-            state->createItem(type, location, info);
-    }*/
-
-    // 所有蛇进行行动
-    for (int i=0; i<state->getSnakes().size(); ++i) {
-        // 蛇的行动 和 所撞物体产生的效果
+    // 所有蛇进行行动 和 所撞物体产生的效果
+    for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
         Snake *snake = state->getSnakes()[i];
 
-        if (i == 0) {
-            if (!snakeAction(snake)) {  // 玩家没有成功移动, 直接结束游戏
-                return false;
-            }
-        } else {
-            snakeAction(snake);
+        // 未到时钟周期, 更改 cycle_record 并退出
+        bool snake_action_ability = snake->ableMove();
+        if (!snake_action_ability) {
+            continue;
         }
-        snake->recover();
 
-        if(snake->hitItem() != nullptr ) {
-            switch (snake->hitItem()->getName()) {
-                case FOOD:{
-                    snake->hitItem()->action(snake);
-                    location = state->createRandomLoc();
-                    while(snake->isPartOfSnake(location))
-                        location = state->createRandomLoc();
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    state->createItem(FOOD, location, 1);
-                    break;
-                }
-                case WALL: {
-                    // dead
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    return false;
-                }
-                case FIRSTAID:
-                case OBSTACLE: {
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    if (snake->getHealth() <= 0 && snake->death()) {
-                        return false;
-                    }
-                    break;
-                }
-                case MARSH:
-                    break;
-                default:
-                    throw "Error: unknown item type";
-            }
+        // 判断是否存活, 如果存活判断是否成功移动没有碰到障碍物 ----------
+        bool alive = snake->getHealth() > 0;
+        bool move_success = false;
+        if (alive) {
+            move_success = snakeAction(snake);
         }
-        if(snake->touchMarsh() != nullptr)
-        {
-            test = 0;
-            Marsh * msh = snake->touchMarsh();
-            msh->action(snake);
+        if (!move_success) {
+            if (snake->isAI()) { continue; }
+            else { return -1; }
+        }
+        // -------------------------------------------------------
+
+        snake->recover();
+        Item* hit_item = snake->hitItem();
+        Loc item_location = snake->getBody()[0];
+        if(snake->speed_buff){
+            if(snake->getMp() > 0){
+                snake->addSpeed(3);
+                snake->decMp();
+            }
         }
         else {
-            test = 1;
+            snake->incMp();
         }
-        snake->recover();
-
-        if(snake->hitItem() != nullptr ) {
-            switch (snake->hitItem()->getName()) {
-                case FOOD:{
-                    snake->hitItem()->action(snake);
+        if(hit_item != nullptr)
+        {
+            switch (hit_item->getName()) {
+            case FOOD:
+            {
+                hit_item->action(snake);
+                do {
                     location = state->createRandomLoc();
-                    while(snake->isPartOfSnake(location))
-                        location = state->createRandomLoc();
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    state->createItem(FOOD, location, 1);
-                    break;
-                }
-                case WALL: {
-                    // dead
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    return false;
-                }
-                case FIRSTAID:
-                case OBSTACLE: {
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    if (snake->getHealth() <= 0 && snake->death()) {
-                        return false;
-                    }
-                    break;
-                }
-                case MARSH:
-                    break;
-                default:
-                    throw "Error: unknown item type";
+                } while (snake->isPartOfSnake(location));
+                state->deleteItem(item_location);
+                state->createItem(FOOD, location, 1);
+                break;
+            }
+            case MAGNET:
+            case SHIELD:
+            case FIRSTAID:
+            case OBSTACLE:
+                state->deleteItem(item_location);
+                hit_item->action(snake);
+                break;
+            case WALL:
+            {
+                hit_item->action(snake);
+                break;
+            }
+            default:    // BASIC, AEROLITE, MARSH
+                break;
             }
         }
-        if(snake->touchMarsh() != nullptr)
-        {
-            test = 0;
-            Marsh * msh = snake->touchMarsh();
-            msh->action(snake);
-        }
-        else {
-            test = 1;
 
+        // 检查陨石
+        if (this->isFall()) {
+            Aerolite* aerolite = snake->touchAerolite();
+            if (aerolite != nullptr) {
+                aerolite->action(snake);
+            }
+        }
+        this->countDown();  // 新的一轮陨石倒计时
+
+
+        // 检查死亡 ----------------------
+        if (snake->getHealth() <= 0) {
+            if (snake->isAI()) {
+                continue;
+            } else {
+                return -1;
+            }
+        }
+        // ------------------------------
+
+        if (snake->ableMagnetic()) {
+            // 有吸铁石, 吃九宫格内且不在蛇身上的位置
+            for (int i=-1; i<=1; ++i) {
+                for (int j=-1; j<=1; ++j) {
+                    Loc check = make_pair(item_location.first + i, item_location.second + j);
+                    if (snake->isPartOfSnake(check)) {
+                        continue;
+                    } else {
+                        hit_item = getState()->getItem(check.first, check.second);
+                        if (hit_item == nullptr) continue;
+                        switch (hit_item->getName()) {
+                        case FOOD:
+                            hit_item->action(snake);
+                            state->deleteItem(check);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
     }
 
-    // 陨石和沼泽的特殊效果判断
-    /*for (vector<Item*> row: *state->getMapPtr()) {
-        for (auto item: row) {
-            if (item->getName() == AEROLITE || item->getName() == MARSH) {
-                // 对每个陨石看是否砸到了蛇; 对每个沼泽看是否有蛇在上面
-                // 砸到了任何一部分则另一个函数一定返回 nullptr, 因此不用 if-else 判断
-                item->action(item->hitHeadSnake(state->snakes));
-                item->action(item->hitBodySnake(state->snakes));
-            }
-        }
-    }*/
-    return true;
+    // 胜负判断
+    short game_status = reachTarget();
+    return game_status;
 }
 
 void Game::initializeGame(int level)
@@ -198,15 +184,26 @@ void Game::initializeGame(int level)
     state->createItem(type, location, info);
 }
 
+void Game::countDown()
+{
+    aerolite_counting = (aerolite_counting + 31) % 60 - 30;
+}
+
+bool Game::isFall()
+{
+    return this->aerolite_counting < 0;
+}
+
 bool Game::loadMap(string map_name)
 {
     /*
      * Map 格式：第一行输入地图所包含的物体数量（包括任何Item）|是否确定蛇的初始化位置（0：否，1：只确定蛇头位置, 先输入方向，再输入长度，再输入蛇头位置 2：先输入方向，长度，再输入完整的蛇身坐标)
+     * 11: 在 1 的基础上，输入蛇的max_health
      * 方向：0：上，1：下，2：左，3：右
      * 长度：蛇的长度
      * 蛇头位置：蛇头的坐标
      * 蛇身坐标：蛇身的坐标
-     * 类型：1：食物，2：墙，3：陨石，4：沼泽
+     * 类型：1：食物，2：墙，3：陨石，4：沼泽，5：吸铁石，6：护盾，7：血包，8：障碍物
      * 然后每行输入一个物体的信息 类型 + 坐标 + info
      * 输入完物体后，如果需要确定蛇的位置，则输入蛇的坐标 坐标每行一个
      * */
@@ -252,6 +249,14 @@ bool Game::loadMap(string map_name)
             this->state->addSnake(snk);
             break;
         }
+        case 11:{
+            int direction, snake_len, x, y, max_health;
+            map_file >> direction >> snake_len >> x >> y >> max_health;
+            Loc head = Loc(x, y);
+            Snake* snk = new Snake(head, snake_len, max_health, (Direction)direction, this->state->getMapPtr());
+            this->state->addSnake(snk);
+            break;
+        }
         default:
             throw "Error: unknown snake_init type";
 
@@ -260,29 +265,16 @@ bool Game::loadMap(string map_name)
     return true;
 }
 
-int Game::reachTarget()
+short Game::reachTarget()
 {
     Snake* player = state->getSnakes()[0];
-    if (game_mode == TIMELIMIT) {
-        if (player->getEaten() >= target_food) {
-            return 1;   // 赢
-        } else if (clock.getTime() >= target_time) {
-            return -1;  // 输
-        } else {
-            return 0;   // 继续
-        }
-    } else if (game_mode == TIMEFREE) {
-        if (player->getEaten() == target_food) {
-            return 1;   // 不限时, 有足够食物就赢
-        } else {
-            return 0;   // 只要没死, 就一直继续
-        }
-    } else if (game_mode == KILLSNAKE) {
-        if (player->getKilled() >= target_kill) {
-            return 1;   // 不限时, 杀足够蛇就赢
-        } else {
-            return 0;   // 只要没死, 就一直继续
-        }
+    clock_t end = std::clock();
+    if (player->score() >= this->target_score) {
+        return 1;
+    } else if ((end - this->begin) > CLK_TCK * target_time) {
+        return -1;
+    } else {
+        return 0;
     }
 }
 
@@ -298,7 +290,7 @@ AddWallGame::AddWallGame(Field *state, GameMode game_mode, std::vector<int> info
 
 void AddWallGame::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\addwallgame.txt"))
+    if (!this->loadMap(WORKING_DIR + "\\map\\addwallgame.txt"))
         assert(false);
     this->level = level;
 }
@@ -318,56 +310,83 @@ void TestAISnake::initializeGame(int level) {
     state->createItem(type, location, info);
 }
 
-bool TestAISnake::runGame() {
-        //clock.run();
+short TestAISnake::runGame() {
+    Loc location;
+    for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
+        Snake *snake = state->getSnakes()[i];
+        if (snake->getHealth() <= 0) {
+            continue;   // 电脑蛇死亡后不再有任何操作
+        }
 
-        // 每个时钟周期设置物体
-        // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮周期
-        // 一些应该从文件中读取的数据 ===================== //
-        Loc location;
-        // ============================================= //
-        /*if (type != BASIC) {    // 非 BASIC 的物体都会被设到地图上
-                state->createItem(type, location, info);
-        }*/
+        // 未到时钟周期, 更改 cycle_record 并退出 -------------
+        bool snake_action_ability = snake->ableMove();
+        if (!snake_action_ability) {
+            continue;
+        }
+        // ------------------------------------------------
 
-        // 所有蛇进行行动
-        bool maction = true;
-        Snake* msnake = state->getSnakes()[0];
-        maction = snakeAction(msnake);
-        if(!maction) return false;
-        if(msnake->hitItem() != nullptr )
+        bool move_success = snakeAction(snake);
+        if (i == 0 && !move_success) {
+            return false;   // 玩家没有成功移动, 直接结束游戏
+        }
+
+        Item* hit_item = snake->hitItem();
+        Loc item_location = snake->getBody()[0];
+        if(hit_item != nullptr)
         {
-            switch (msnake->hitItem()->getName()) {
-                case FOOD:{
+            switch (hit_item->getName()) {
+            case FOOD:
+            {
+                hit_item->action(snake);
+
+                do {
                     location = state->createRandomLoc();
-                    while(msnake->isPartOfSnake(location))
-                        location = state->createRandomLoc();
-                    state->createItem(BASIC, msnake->getBody()[0], 0);
-                    state->createItem(FOOD, location, 1);
-                    break;
-                }
-                case WALL: {
-                    // dead
-                    return false;
-                }
-                default:
-                    throw "Error: unknown item type";
+                } while (snake->isPartOfSnake(location));
+                state->deleteItem(item_location);
+                state->createItem(FOOD, location, 1);
+                break;
             }
+            case MAGNET:
+            case SHIELD:
+            case FIRSTAID:
+            case OBSTACLE:
+            {
+                hit_item->action(snake);
+                break;
+            }
+            case WALL:
+            {
+                hit_item->action(snake);
+                return false;
+            }
+            }
+        }
+
+        if(snake->touchMarsh() != nullptr)
+        {
+            test = 0;
+            Marsh * msh = snake->touchMarsh();
+            msh->action(snake);
+        }
+        else {
+            test = 1;
+        }
+        snake->recover();
+
+        if(snake->touchMarsh() != nullptr)
+        {
+            test = 0;
+            Marsh * msh = snake->touchMarsh();
+            msh->action(snake);
+        }
+        else {
+            test = 1;
 
         }
-        // 陨石和沼泽的特殊效果判断
-        /*for (vector<Item*> row: *state->getMapPtr()) {
-            for (auto item: row) {
-                if (item->getName() == AEROLITE || item->getName() == MARSH) {
-                    // 对每个陨石看是否砸到了蛇; 对每个沼泽看是否有蛇在上面
-                    // 砸到了任何一部分则另一个函数一定返回 nullptr, 因此不用 if-else 判断
-                    item->action(item->hitHeadSnake(state->snakes));
-                    item->action(item->hitBodySnake(state->snakes));
-                }
-            }
-        }*/
-        return true;
+
     }
+    return true;
+}
 
 Level3::Level3(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
 
@@ -375,7 +394,7 @@ Level3::Level3(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level3::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level3.txt"))
+    if (!this->loadMap(WORKING_DIR + "\\map\\level3.txt"))
         assert(false);
     this->level = level;
 }
@@ -384,15 +403,16 @@ Level4::Level4(GameMode game_mode, int height, int width, std::vector<int> info)
 Level4::Level4(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level4::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level4.txt"))
+    if (!this->loadMap(WORKING_DIR + "\\map\\level4.txt"))
         assert(false);
     this->level = level;
     queue<Loc> path;
-    path.push(make_pair(15, 15));
-    path.push(make_pair(15, 30));
-    path.push(make_pair(30, 30));
-    path.push(make_pair(30, 15));
-    Snake* snake = new WalkingSnake(path, {10, 20}, 5, 1, UP, this->state->getMapPtr());
+    path.push(make_pair(16, 15));
+    path.push(make_pair(25, 15));
+    path.push(make_pair(25, 25));
+    path.push(make_pair(16, 25));
+    Snake* snake = new WalkingSnake(path, {16, 20}, 5, 1, UP, this->state->getMapPtr());
+    Snake* snake2 = new GreedyFood({5, 5}, 2, 1, DOWN, this->state->getMapPtr());
     this->state->addSnake(snake);
 }
 
@@ -402,7 +422,47 @@ Level5::Level5(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level5::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level5.txt"))
+    if (!this->loadMap(WORKING_DIR + "\\map\\level5.txt"))
+        assert(false);
+    this->level = level;
+}
+
+Level6::Level6(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level6::Level6(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level6::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level6.txt"))
+        assert(false);
+    this->level = level;
+}
+
+Level7::Level7(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level7::Level7(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level7::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level7.txt"))
+        assert(false);
+    this->level = level;
+}
+
+Level8::Level8(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level8::Level8(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level8::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level8.txt"))
+        assert(false);
+    this->level = level;
+}
+
+Level9::Level9(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level9::Level9(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level9::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level9.txt"))
+        assert(false);
+    this->level = level;
+}
+
+Level10::Level10(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level10::Level10(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+void Level10::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level10.txt"))
         assert(false);
     this->level = level;
 }

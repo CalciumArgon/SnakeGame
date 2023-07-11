@@ -13,42 +13,61 @@ bool isWithin(int target, int low, int high);
 class Snake
 {
 public:
-    Snake(std::vector<Loc> body, int length, int max_health, Direction direction, Grid* item_map_ptr);
-    Snake(Loc head, int length, int max_health, Direction direction, Grid* item_map_ptr);
+    Snake(std::vector<Loc> body, int length, int health, Direction direction, Grid* item_map_ptr);
+    Snake(Loc head, int length, int health, Direction direction, Grid* item_map_ptr);
+    void initialize();
     bool operator == (const Snake* other);
-    int getLength();
-    int getHealth();
+
+    int getLength() const;
+    int getHealth() const;
     std::vector<Loc> &getBody();
+    Direction getDirection();
+    Direction getBodyDirection(int);
+
     void changeDireciton(Direction new_direction);
     Loc nextLoc();
     bool move();
+
     Item* hitItem();
     bool hitSelf();
     bool hitEdge();
     bool hitOtherSnake(std::vector<Snake*>);  // 在 Game 中可以把 field.snakes[1:] 传进来
     Marsh* touchMarsh();
+    Aerolite* touchAerolite();
     bool isPartOfSnake(Loc loc);
+
     void addLength(int adding);
     void addHealth(int adding);
-    void initialize();
-    bool death();
     void incEaten();
     void incKilled();
     int getEaten();
     int getKilled();
-    void addSpeed(int);
-    // 设置吸铁石能力
-    void setMagnetic(int);
-    // 设置护盾复活能力
-    void setRevival(int);
+
+    int score();
+
+    void setMagnetic(int);  // 设置吸铁石能力
+    bool ableMagnetic();
+    void setRevival(int);   // 设置护盾复活能力
+
+    int getHp();
+    void addSpeed(int adding);
+    int getMp();
+    void incMp();
+    void decMp();
+    bool ableMove();
+
+    bool death();
+
     void recover();
     virtual bool isAI() {return false;}
-    virtual Direction act(Field* state){assert(false);return this->direction;};
     //消除所有buff和debuff
+    bool speed_buff = false;
+    virtual Direction act(Field* state) { return this->direction; }
+
 protected:
     std::vector<Loc> body;
     int length;
-    int max_health;
+    int max_health = 4;
     Direction direction;
     Grid* item_map_ptr;
     int width;
@@ -60,6 +79,9 @@ protected:
     int cycle_recorder = 1;
     int magnetic = 0;
     int revival = 0;
+    Loc rebornLocation;
+    Direction rebornDirection;
+    int mp = 240;
 };
 
 #endif // SNAKE_H
