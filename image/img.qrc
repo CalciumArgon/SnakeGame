@@ -40,5 +40,8 @@
         <file>snakehead_right.png</file>
         <file>snakehead_up.png</file>
         <file>wall.png</file>
+        <file>asteroid.png</file>
+        <file>star.png</file>
+        <file>warning.png</file>
     </qresource>
 </RCC>

@@ -54,6 +54,8 @@ public:
     std::vector<QLabel*> obstacle_label;
     std::vector<QLabel*> firstaid_label;
     std::vector<QLabel*> shield_label;
+    std::vector<QLabel*> aerolite_label;
+    std::vector<QLabel*> warning_label;
     std::vector<QString> guide_line;
     std::vector<std::vector<QLabel*>> snake_label;
     std::vector<int> snake_length;
@@ -79,7 +81,7 @@ private:
     clock_t begin = 0;
     clock_t end = 0;
 signals:
-    void gameEnd(int);
+    void gameEnd(int, int, int);
 public slots:
     void on_btnNext_clicked();
     void on_btnSkip_clicked();

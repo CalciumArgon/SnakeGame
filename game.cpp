@@ -214,6 +214,11 @@ bool Game::isFall()
     return this->aerolite_counting < 0;
 }
 
+bool Game::isWarning()
+{
+    return (aerolite_counting > 10 && aerolite_counting < 20);
+}
+
 bool Game::loadMap(string map_name)
 {
     /*

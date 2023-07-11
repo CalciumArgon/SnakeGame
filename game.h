@@ -24,18 +24,20 @@ public:
     // 全局陨石掉落信息
     void countDown();
     bool isFall();
+    bool isWarning();
 
     bool loadMap(std::string map_path);
     short reachTarget();
     Field* getState();
     int test = 1;
     int target_score = 0;
+    int level = 1;
 protected:
 
     int aerolite_counting = 2;
 
     clock_t begin = 0;
-    int level = 1;
+
 
 
     int target_time = 0;
