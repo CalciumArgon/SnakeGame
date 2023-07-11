@@ -53,7 +53,10 @@ bool Game::snakeAction(Snake *snake)
     }
     if (snake->hitOtherSnake(state->getSnakes())) {
         bool dead = snake->death();
-        if (dead) return false;
+        if (dead) {
+            this->state->getSnakes()[0]->incKilled();
+            return false;
+            }
     }
     return true;
 }
