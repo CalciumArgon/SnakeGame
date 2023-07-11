@@ -127,7 +127,16 @@ void QLevel::on_btnLev7_clicked()
 
 void QLevel::on_btnLev8_clicked()
 {
-
+    Field* fld = new Field(40, 40);
+    Game* game = new Level8(fld, TIMEFREE, {20, 100});
+    game->initializeGame(1);
+    GameWidget *gw = new GameWidget(game, 9);
+    gw->initialize();
+    Dialog *dlg = new Dialog();
+    connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
+    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
+    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    gw->show();
 }
 
 void QLevel::on_btnLev9_clicked()
