@@ -135,4 +135,13 @@ public:
     Level11(Field* state, GameMode game_mode, std::vector<int> info);
     virtual void initializeGame(int level);
 };
+
+class Greedy : public Game
+{
+public:
+    Greedy(GameMode game_mode, int height, int width, std::vector<int> info);
+    Greedy(Field* state, GameMode game_mode, std::vector<int> info);
+    virtual void initializeGame(int level);
+    virtual short runGame();
+};
 #endif // GAME_H

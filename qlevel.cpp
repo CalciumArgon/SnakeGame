@@ -174,6 +174,15 @@ void QLevel::on_btnLev11_clicked()
 
 void QLevel::on_btnLev12_clicked()
 {
-
+    Field* fld = new Field(40, 40);
+    Game* game = new Greedy(fld, TIMEFREE, {100, 100000});
+    game->initializeGame(1);
+    GameWidget *gw = new GameWidget(game, 10);
+    gw->initialize();
+    Dialog *dlg = new Dialog();
+    connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
+    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
+    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    gw->show();
 }
 

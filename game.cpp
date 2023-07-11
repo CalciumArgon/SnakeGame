@@ -41,7 +41,15 @@ bool Game::snakeAction(Snake *snake)
     snake->move();   // 完成移动
     if (snake->hitSelf() || snake->hitEdge()) {
         bool dead = snake->death();
-        if (dead) return false;
+        if (dead){
+            if (snake->isAI()) {
+                this->state->getSnakes()[0]->incKilled();
+                return false;
+            }
+            else {
+                return false;
+            }
+        }
     }
     if (snake->hitOtherSnake(state->getSnakes())) {
         bool dead = snake->death();
@@ -505,4 +513,150 @@ void Level10::initializeGame(int level) {
     if (!this->loadMap(WORKING_DIR + "\\map\\level10.txt"))
         assert(false);
     this->level = level;
+}
+
+Greedy::Greedy(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Greedy::Greedy(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+void Greedy::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\greedy.txt"))
+        assert(false);
+    this->level = level;
+    Snake* snake = new GreedyFood({5, 5}, 2, 1, DOWN, this->state->getMapPtr());
+    this->state->addSnake(snake);
+}
+
+short Greedy::runGame()
+{
+    // 删除血量为 0 的蛇
+    getState()->clearSnake();
+    Loc location;
+    if (state->getSnakes().size() == 1){
+        do {
+            location = state->createRandomLoc();
+        } while (state->getSnakes()[0]->isPartOfSnake(location) || state->getMapPtr()->at(location.first)[location.second] != 0);
+        int direction = rand() % 4;
+        Snake* snake = new GreedyFood(location, 2, 1, (Direction)direction, this->state->getMapPtr());
+        this->state->addSnake(snake);
+    }
+    // 所有蛇进行行动 和 所撞物体产生的效果
+    for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
+        Snake *snake = state->getSnakes()[i];
+
+        // 未到时钟周期, 更改 cycle_record 并退出
+        bool snake_action_ability = snake->ableMove();
+        if (!snake_action_ability) {
+            continue;
+        }
+
+        // 判断是否存活, 如果存活判断是否成功移动没有碰到障碍物 ----------
+        bool alive = snake->getHealth() > 0;
+        bool move_success = false;
+        if (alive) {
+            move_success = snakeAction(snake);
+        }
+        if (!move_success) {
+            if (snake->isAI()) { continue; }
+            else { return -1; }
+        }
+        // -------------------------------------------------------
+
+        snake->recover();
+        Item* hit_item = snake->hitItem();
+        Loc item_location = snake->getBody()[0];
+        if(snake->speed_buff){
+            if(snake->getMp() > 0){
+                snake->addSpeed(3);
+                snake->decMp();
+            }
+        }
+        else {
+            snake->incMp();
+        }
+        if(hit_item != nullptr)
+        {
+            switch (hit_item->getName()) {
+                case FOOD:
+                {
+                    hit_item->action(snake);
+                    do {
+                        location = state->createRandomLoc();
+                    } while (snake->isPartOfSnake(location));
+                    state->deleteItem(item_location);
+                    state->createItem(FOOD, location, 1);
+                    break;
+                }
+                case MAGNET:
+                case SHIELD:
+                case FIRSTAID:
+                case OBSTACLE:
+                    state->deleteItem(item_location);
+                    hit_item->action(snake);
+                    break;
+                case WALL:
+                {
+                    hit_item->action(snake);
+                    break;
+                }
+                default:    // BASIC, AEROLITE, MARSH
+                    break;
+            }
+        }
+
+        // 检查陨石
+        if (this->isFall()) {
+            Aerolite* aerolite = snake->touchAerolite();
+            if (aerolite != nullptr) {
+                aerolite->action(snake);
+            }
+        }
+        this->countDown();  // 新的一轮陨石倒计时
+
+
+        // 检查死亡 ----------------------
+        if (snake->getHealth() <= 0) {
+            if (snake->isAI()) {
+                continue;
+            } else {
+                return -1;
+            }
+        }
+        // ------------------------------
+
+        if (snake->ableMagnetic()) {
+            // 有吸铁石, 吃九宫格内且不在蛇身上的位置
+            for (int i=-1; i<=1; ++i) {
+                for (int j=-1; j<=1; ++j) {
+                    Loc check = make_pair(item_location.first + i, item_location.second + j);
+                    if (snake->isPartOfSnake(check)) {
+                        continue;
+                    } else {
+                        hit_item = getState()->getItem(check.first, check.second);
+                        if (hit_item == nullptr) continue;
+                        switch (hit_item->getName()) {
+                            case FOOD:
+                                hit_item->action(snake);
+                                state->deleteItem(check);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        //检查沼泽减速
+        if(snake->touchMarsh() != nullptr)
+        {
+            test = 0;
+            Marsh* msh = snake->touchMarsh();
+            msh->action(snake);
+        }
+        else {
+            test = 1;
+        }
+    }
+
+    // 胜负判断
+    short game_status = reachTarget();
+    return game_status;
 }
