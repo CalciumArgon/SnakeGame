@@ -94,7 +94,7 @@ void QLevel::on_btnReturn_clicked()
 
 void QLevel::on_btnLev1_clicked(){
     Field* fld = new Field(40, 40);
-    Game* game = new Game(fld, TIMEFREE, {5, 30});
+    Game* game = new Game(fld, TIMEFREE, {5, 45});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 1);
     gw->initialize();
@@ -110,7 +110,7 @@ void QLevel::on_btnLev1_clicked(){
 void QLevel::on_btnLev2_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new AddWallGame(fld, TIMEFREE, {5, 30});
+    Game* game = new AddWallGame(fld, TIMEFREE, {5, 60});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 2);
     gw->initialize();
@@ -118,13 +118,14 @@ void QLevel::on_btnLev2_clicked()
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
 
 void QLevel::on_btnLev3_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level3(fld, TIMEFREE, {15, 30});
+    Game* game = new Level3(fld, TIMEFREE, {15, 60});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 3);
     gw->initialize();
@@ -132,13 +133,14 @@ void QLevel::on_btnLev3_clicked()
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
 
 void QLevel::on_btnLev4_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level4(fld, TIMEFREE, {5, 30});
+    Game* game = new Level4(fld, TIMEFREE, {5, 60});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 4);
     gw->initialize();
@@ -146,6 +148,7 @@ void QLevel::on_btnLev4_clicked()
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
 
@@ -160,6 +163,7 @@ void QLevel::on_btnLev5_clicked()
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
 
@@ -174,13 +178,14 @@ void QLevel::on_btnLev6_clicked()
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
 
 void QLevel::on_btnLev7_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level7(fld, TIMEFREE, {10, 100});
+    Game* game = new Level7(fld, TIMEFREE, {5, 100});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 7);
     gw->initialize();
@@ -188,6 +193,7 @@ void QLevel::on_btnLev7_clicked()
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
 
@@ -202,6 +208,7 @@ void QLevel::on_btnLev8_clicked()
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
 
@@ -216,6 +223,7 @@ void QLevel::on_btnLev9_clicked()
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
 
@@ -230,6 +238,7 @@ void QLevel::on_btnLev10_clicked()
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
 
@@ -249,6 +258,7 @@ void QLevel::on_btnLev12_clicked()
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
     connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
 

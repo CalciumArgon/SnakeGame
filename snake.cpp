@@ -382,7 +382,7 @@ void Snake::setRevival(int effective_time) {
 
 void Snake::recover()
 {
-    speed = 6;
+    speed = 1 + 2 * (level - 1);
 }
 
 bool isWithin(int target, int low, int high)

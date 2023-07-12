@@ -195,7 +195,7 @@ void Game::initializeGame(int level)
     Loc head = std::make_pair(20, 20);
     Snake* snk = new Snake(head, 5, 1, LEFT, this->state->getMapPtr());
     this->state->addSnake(snk);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
     Loc location = state->createRandomLoc();
     while(state->getSnakes()[0]->isPartOfSnake(location))
         location = state->createRandomLoc();
@@ -206,7 +206,7 @@ void Game::initializeGame(int level)
 
 void Game::countDown()
 {
-    aerolite_counting = (aerolite_counting + 31) % 60 - 30;
+    aerolite_counting = (aerolite_counting + 11) % 60 - 10;
 }
 
 bool Game::isFall()
@@ -216,7 +216,7 @@ bool Game::isFall()
 
 bool Game::isWarning()
 {
-    return (aerolite_counting > 10 && aerolite_counting < 20);
+    return (aerolite_counting > 30 && aerolite_counting < 45);
 }
 
 bool Game::loadMap(string map_name)
@@ -317,101 +317,102 @@ void AddWallGame::initializeGame(int level) {
 
     if (!this->loadMap(WORKING_DIR + "\\map\\addwallgame.txt"))
         assert(false);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
+
 }
 
-TestAISnake::TestAISnake(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
-TestAISnake::TestAISnake(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
-void TestAISnake::initializeGame(int level) {
-    Loc head = std::make_pair(20, 20);
-    Snake* snk = new GreedyFood(head, 5, 1, LEFT, this->state->getMapPtr());
-    this->state->addSnake(snk);
-    this->level = level;
-    Loc location = state->createRandomLoc();
-    while(state->getSnakes()[0]->isPartOfSnake(location))
-        location = state->createRandomLoc();
-    ItemType type = FOOD;
-    int info = 1;
-    state->createItem(type, location, info);
-}
+//TestAISnake::TestAISnake(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+//TestAISnake::TestAISnake(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+//void TestAISnake::initializeGame(int level) {
+//    Loc head = std::make_pair(20, 20);
+//    Snake* snk = new GreedyFood(head, 5, 1, LEFT, this->state->getMapPtr());
+//    this->state->addSnake(snk);
+//    this->level = level;
+//    Loc location = state->createRandomLoc();
+//    while(state->getSnakes()[0]->isPartOfSnake(location))
+//        location = state->createRandomLoc();
+//    ItemType type = FOOD;
+//    int info = 1;
+//    state->createItem(type, location, info);
+//}
 
-short TestAISnake::runGame() {
-    Loc location;
-    for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
-        Snake *snake = state->getSnakes()[i];
-        if (snake->getHealth() <= 0) {
-            continue;   // 电脑蛇死亡后不再有任何操作
-        }
+//short TestAISnake::runGame() {
+//    Loc location;
+//    for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
+//        Snake *snake = state->getSnakes()[i];
+//        if (snake->getHealth() <= 0) {
+//            continue;   // 电脑蛇死亡后不再有任何操作
+//        }
 
-        // 未到时钟周期, 更改 cycle_record 并退出 -------------
-        bool snake_action_ability = snake->ableMove();
-        if (!snake_action_ability) {
-            continue;
-        }
-        // ------------------------------------------------
+//        // 未到时钟周期, 更改 cycle_record 并退出 -------------
+//        bool snake_action_ability = snake->ableMove();
+//        if (!snake_action_ability) {
+//            continue;
+//        }
+//        // ------------------------------------------------
 
-        bool move_success = snakeAction(snake);
-        if (i == 0 && !move_success) {
-            return false;   // 玩家没有成功移动, 直接结束游戏
-        }
+//        bool move_success = snakeAction(snake);
+//        if (i == 0 && !move_success) {
+//            return false;   // 玩家没有成功移动, 直接结束游戏
+//        }
 
-        Item* hit_item = snake->hitItem();
-        Loc item_location = snake->getBody()[0];
-        if(hit_item != nullptr)
-        {
-            switch (hit_item->getName()) {
-            case FOOD:
-            {
-                hit_item->action(snake);
+//        Item* hit_item = snake->hitItem();
+//        Loc item_location = snake->getBody()[0];
+//        if(hit_item != nullptr)
+//        {
+//            switch (hit_item->getName()) {
+//            case FOOD:
+//            {
+//                hit_item->action(snake);
 
-                do {
-                    location = state->createRandomLoc();
-                } while (snake->isPartOfSnake(location));
-                state->deleteItem(item_location);
-                state->createItem(FOOD, location, 1);
-                break;
-            }
-            case MAGNET:
-            case SHIELD:
-            case FIRSTAID:
-            case OBSTACLE:
-            {
-                hit_item->action(snake);
-                break;
-            }
-            case WALL:
-            {
-                hit_item->action(snake);
-                return false;
-            }
-            }
-        }
+//                do {
+//                    location = state->createRandomLoc();
+//                } while (snake->isPartOfSnake(location));
+//                state->deleteItem(item_location);
+//                state->createItem(FOOD, location, 1);
+//                break;
+//            }
+//            case MAGNET:
+//            case SHIELD:
+//            case FIRSTAID:
+//            case OBSTACLE:
+//            {
+//                hit_item->action(snake);
+//                break;
+//            }
+//            case WALL:
+//            {
+//                hit_item->action(snake);
+//                return false;
+//            }
+//            }
+//        }
 
-        if(snake->touchMarsh() != nullptr)
-        {
-            test = 0;
-            Marsh * msh = snake->touchMarsh();
-            msh->action(snake);
-        }
-        else {
-            test = 1;
-        }
-        snake->recover();
+//        if(snake->touchMarsh() != nullptr)
+//        {
+//            test = 0;
+//            Marsh * msh = snake->touchMarsh();
+//            msh->action(snake);
+//        }
+//        else {
+//            test = 1;
+//        }
+//        snake->recover();
 
-        if(snake->touchMarsh() != nullptr)
-        {
-            test = 0;
-            Marsh * msh = snake->touchMarsh();
-            msh->action(snake);
-        }
-        else {
-            test = 1;
+//        if(snake->touchMarsh() != nullptr)
+//        {
+//            test = 0;
+//            Marsh * msh = snake->touchMarsh();
+//            msh->action(snake);
+//        }
+//        else {
+//            test = 1;
 
-        }
+//        }
 
-    }
-    return true;
-}
+//    }
+//    return true;
+//}
 
 Level3::Level3(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
 
@@ -421,7 +422,7 @@ void Level3::initializeGame(int level) {
 
     if (!this->loadMap(WORKING_DIR + "\\map\\level3.txt"))
         assert(false);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
 }
 
 Level4::Level4(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
@@ -430,7 +431,7 @@ void Level4::initializeGame(int level) {
 
     if (!this->loadMap(WORKING_DIR + "\\map\\level4.txt"))
         assert(false);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
     queue<Loc> path;
     path.push(make_pair(16, 15));
     path.push(make_pair(25, 15));
@@ -449,7 +450,7 @@ void Level5::initializeGame(int level) {
 
     if (!this->loadMap(WORKING_DIR + "\\map\\level5.txt"))
         assert(false);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
 }
 
 Level6::Level6(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
@@ -457,7 +458,7 @@ Level6::Level6(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 void Level6::initializeGame(int level) {
     if (!this->loadMap(WORKING_DIR + "\\map\\level6.txt"))
         assert(false);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
 }
 
 Level7::Level7(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
@@ -465,7 +466,7 @@ Level7::Level7(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 void Level7::initializeGame(int level) {
     if (!this->loadMap(WORKING_DIR + "\\map\\level7.txt"))
         assert(false);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
 }
 
 Level8::Level8(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
@@ -473,7 +474,7 @@ Level8::Level8(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 void Level8::initializeGame(int level) {
     if (!this->loadMap(WORKING_DIR + "\\map\\level8.txt"))
         assert(false);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
     queue<Loc> path;
     path.push(make_pair(30, 13));
     path.push(make_pair(30, 28));
@@ -512,7 +513,7 @@ Level9::Level9(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 void Level9::initializeGame(int level) {
     if (!this->loadMap(WORKING_DIR + "\\map\\level9.txt"))
         assert(false);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
 }
 
 Level10::Level10(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
@@ -520,7 +521,7 @@ Level10::Level10(Field *state, GameMode game_mode, std::vector<int> info): Game(
 void Level10::initializeGame(int level) {
     if (!this->loadMap(WORKING_DIR + "\\map\\level10.txt"))
         assert(false);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
 }
 
 Greedy::Greedy(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
@@ -528,7 +529,7 @@ Greedy::Greedy(GameMode game_mode, int height, int width, std::vector<int> info)
 void Greedy::initializeGame(int level) {
     if (!this->loadMap(WORKING_DIR + "\\map\\greedy.txt"))
         assert(false);
-    this->level = level;
+    this->state->getSnakes()[0]->level = level;
     Snake* snake = new GreedyFood({5, 5}, 2, 1, DOWN, this->state->getMapPtr());
     this->state->addSnake(snake);
 }

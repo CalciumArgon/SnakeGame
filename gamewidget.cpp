@@ -262,7 +262,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
     if(game_end != 0 && !is_emit) {
         if(game_end == 1){
-            emit(gameEnd(1, this->level, game->level));
+            emit(gameEnd(1, this->level, game->getState()->getSnakes()[0]->level));
             is_emit = true;
         }
         else {

@@ -63,7 +63,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    image/img.qrc
+    image/image.qrc
 
 DISTFILES += \
     guide/1.txt \

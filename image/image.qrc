@@ -8,6 +8,7 @@
         <file>aisnakehead_left.png</file>
         <file>aisnakehead_right.png</file>
         <file>aisnakehead_up.png</file>
+        <file>asteroid.png</file>
         <file>background.jpeg</file>
         <file>background.png</file>
         <file>background2.png</file>
@@ -38,6 +39,8 @@
         <file>snakehead_left.png</file>
         <file>snakehead_right.png</file>
         <file>snakehead_up.png</file>
+        <file>star.png</file>
         <file>wall.png</file>
+        <file>warning.png</file>
     </qresource>
 </RCC>
