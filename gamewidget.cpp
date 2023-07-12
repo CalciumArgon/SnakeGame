@@ -520,7 +520,7 @@ void GameWidget::paintSnake(int id, int change)
 {
     Snake* msnake = game->getState()->getSnakes()[id];
     int length = snake_label[id].size();
-    if(snake_label[id].size() == 0)
+    if(snake_label[id].size() == 0 && msnake->getLength() != 0)
     {
         Loc head = msnake->getBody()[0];
         QLabel* ql = new QLabel();

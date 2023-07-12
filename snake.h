@@ -66,6 +66,7 @@ public:
     int speed = -30;
     bool finishmove = true;
     int level = 1;
+    int magnetic = 0;
 protected:
     std::vector<Loc> body;
     int length;
@@ -79,7 +80,6 @@ protected:
     int eaten = 0;
     int killed = 0;
     int cycle_recorder = 1;
-    int magnetic = 0;
     int revival = 0;
     Loc rebornLocation;
     Direction rebornDirection;

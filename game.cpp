@@ -169,6 +169,8 @@ short Game::runGame()
                 }
             }
         }
+        snake->magnetic--;
+
         //检查沼泽减速
         if(snake->touchMarsh() != nullptr)
         {
@@ -698,6 +700,40 @@ void Level10::initializeGame(int level) {
     if (!this->loadMap(WORKING_DIR + "\\map\\level10.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
+}
+
+Level11::Level11(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+
+Level11::Level11(Field* state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+
+void Level11::initializeGame(int level) {
+    if (!this->loadMap(WORKING_DIR + "\\map\\level11.txt"))
+        assert(false);
+    this->state->getSnakes()[0]->level = level;
+    queue<Loc> path1;
+    Loc birthplace1 = {2, 28};
+    path1.push(make_pair(2, 34));
+    path1.push(make_pair(4, 34));
+    path1.push(make_pair(4, 36));
+    path1.push(make_pair(7, 36));
+    path1.push(make_pair(7, 34));
+    path1.push(make_pair(5, 34));
+    path1.push(make_pair(5, 30));
+    path1.push(make_pair(4, 30));
+    path1.push(make_pair(4, 28));
+    path1.push(make_pair(2, 28));
+    Snake* snake1 = new WalkingSnake(path1, birthplace1, 3, 1, LEFT, this->state->getMapPtr());
+    this->state->addSnake(snake1);
+    queue<Loc> path2;
+    Loc birthplace2 = {28, 37};
+    path2.push(make_pair(28, 38));
+    path2.push(make_pair(35, 38));
+    path2.push(make_pair(35, 30));
+    path2.push(make_pair(38, 30));
+    path2.push(make_pair(38, 35));
+    path2.push(make_pair(28, 35));
+    Snake* snake2 = new WalkingSnake(path2, birthplace2, 3, 1, DOWN, this->state->getMapPtr());
+    this->state->addSnake(snake2);
 }
 
 Greedy::Greedy(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
