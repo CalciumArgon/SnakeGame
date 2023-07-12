@@ -17,6 +17,8 @@
         <file>cd2.png</file>
         <file>cd3.png</file>
         <file>cdgo.png</file>
+        <file>defeat.png</file>
+        <file>explaination.png</file>
         <file>firstaid.png</file>
         <file>food1.png</file>
         <file>food2.jpeg</file>
@@ -40,6 +42,8 @@
         <file>snakehead_right.png</file>
         <file>snakehead_up.png</file>
         <file>star.png</file>
+        <file>tree.png</file>
+        <file>victory.png</file>
         <file>wall.png</file>
         <file>warning.png</file>
     </qresource>

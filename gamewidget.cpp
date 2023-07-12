@@ -16,6 +16,7 @@ GameWidget::GameWidget(Game* game, int level, QWidget *parent) : ui(new Ui::Game
 {
     Q_UNUSED(parent);
     ui->setupUi(this);
+    this->setWindowTitle("贪吃蛇大冒险");
     this->game = game;
     this->level = level;
 }
@@ -95,7 +96,9 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     end = clock();
     if(countdown < 0 && game_start){
         if(!game_end)
+        {
             showTime(int((end - begin) / CLK_TCK));
+        }
     }
     else {
         showTime(0);
@@ -110,12 +113,8 @@ void GameWidget::paintEvent(QPaintEvent *ev)
 
     QString s;
     ui->labelTime->setText("速度" + s.setNum(game->getState()->getSnakes()[0]->speed));
-    //ui->labelTime->show();
+    ui->labelTime->hide();
 
-    //paint the area of hp and mp
-    painter.setPen(QColor(222, 199, 12, 255));
-    QRect hm = QRect(QPoint(5, 290), QPoint(320, 450));
-    painter.drawRect(hm);
     //show hp level
     showHp();
     //show mp level
@@ -215,6 +214,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     //paint the countdown
     if(countdown >= -1 && countdown <= 3)
     {
+        ui->labelCntDn->setGeometry(400, 200, 800, 800);
         ui->labelCntDn->show();
         ui->labelCntDn->raise();
         switch(countdown)
@@ -262,7 +262,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
     if(game_end != 0 && !is_emit) {
         if(game_end == 1){
-            emit(gameEnd(1, this->level, game->getState()->getSnakes()[0]->level));
+            emit(gameEnd(1, this->level, game->level));
             is_emit = true;
         }
         else {
@@ -332,8 +332,9 @@ void GameWidget::readFile(int level)
 void GameWidget::startGuide()
 {
     ui->labelGuide->setStyleSheet("background-color:rgb(191, 255, 155, 200)");
+    ui->labelGuide->setWordWrap(true);
     ui->labelGuide->setGeometry(590, 0, 950, 400);
-    QFont font("微软雅黑", 20);
+    QFont font("华文新魏", 18);
     ui->labelGuide->setFont(font);
     ui->labelGuide->setText(guide_line[0]);
     ui->btnNext->setGeometry(1220, 340, 100, 40);
@@ -382,11 +383,20 @@ void GameWidget::paintBlocks()
 
 void GameWidget::showTime(int time)
 {
-    ui->lcdNum4->setGeometry(0, 70, 81, 101);
-    ui->lcdNum3->setGeometry(70, 70, 81, 101);
-    ui->lcdNum2->setGeometry(140, 70, 81, 101);
-    ui->lcdNum1->setGeometry(210, 70, 81, 101);
-    ui->labelColon->setGeometry(135, 90, 21, 51);
+    GameMode gm = game->game_mode;
+    ui->labelTextTime->setGeometry(20, -30, 600, 200);
+    if(gm == TIMELIMIT) {
+        ui->labelTextTime->setText("Time Remained");
+        time = game->target_time - time;
+    }
+    else {
+        ui->labelTextTime->setText("Time Used");
+    }
+    ui->lcdNum4->setGeometry(0, 120, 81, 101);
+    ui->lcdNum3->setGeometry(70, 120, 81, 101);
+    ui->lcdNum2->setGeometry(140, 120, 81, 101);
+    ui->lcdNum1->setGeometry(210, 120, 81, 101);
+    ui->labelColon->setGeometry(130, 140, 21, 51);
     ui->labelColon->setText(":");
     QFont font;
     font.setPointSize(25);
@@ -435,25 +445,29 @@ void GameWidget::showMp()
 
 void GameWidget::showScore()
 {
+    ui->labelTextScore->setGeometry(30, 500, 400, 100);
+
     QFont font("华文新魏", 30);
     QString s;
 
     int score = game->getState()->getSnakes()[0]->score();
-    ui->labelScore->setGeometry(50, 860, 200, 150);
+    ui->labelScore->setGeometry(50, 560, 200, 150);
     ui->labelScore->setFont(font);
     ui->labelScore->setText(s.setNum(score));
     ui->labelScore->show();
 
     int target = game->target_score;
-    ui->labelTarget->setGeometry(210, 860, 200, 150);
+    ui->labelTarget->setGeometry(210, 560, 200, 150);
     ui->labelTarget->setFont(font);
     ui->labelTarget->setText(s.setNum(target));
     ui->labelTarget->show();
 
     ui->labelSlash->setText("/");
-    ui->labelSlash->setGeometry(150, 860, 200, 150);
+    ui->labelSlash->setGeometry(150, 560, 200, 150);
     ui->labelSlash->setFont(font);
     ui->labelSlash->show();
+
+    ui->labelExplain->setGeometry(50, 680, 220, 60);
 }
 
 void GameWidget::paintItem(int i, int j, ItemType type)

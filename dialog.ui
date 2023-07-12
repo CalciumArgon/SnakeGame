@@ -6,34 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>600</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>240</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>50</y>
+     <x>150</x>
+     <y>90</y>
      <width>291</width>
      <height>171</height>
     </rect>
@@ -44,25 +28,49 @@
     </font>
    </property>
    <property name="text">
-    <string>游戏结束</string>
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnOK">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>360</y>
+     <width>121</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(230, 230, 230, 210);</string>
+   </property>
+   <property name="text">
+    <string>OK</string>
    </property>
   </widget>
  </widget>
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
+   <sender>btnOK</sender>
+   <signal>clicked()</signal>
    <receiver>Dialog</receiver>
-   <slot>accept()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>239</x>
+     <y>339</y>
     </hint>
     <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
+     <x>240</x>
+     <y>187</y>
     </hint>
    </hints>
   </connection>

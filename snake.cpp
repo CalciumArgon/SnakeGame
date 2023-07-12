@@ -293,7 +293,6 @@ bool Snake::death()
         {
             vector<Loc> empty;
             body = empty;
-
         }
         // 返回接口 传递死亡的信息
         health = 0;
@@ -382,7 +381,7 @@ void Snake::setRevival(int effective_time) {
 
 void Snake::recover()
 {
-    speed = 1 + 2 * (level - 1);
+    speed = 1 + 3 * (level - 1);
 }
 
 bool isWithin(int target, int low, int high)

@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setStyleSheet("#centralWidget{border-image: url(:/background2.png);}#centralWidget * {border-image: url();}");
     ui->btnStart->setStyleSheet("background-color:rgb(240, 240, 240, 200)");
     ui->btnQuit->setStyleSheet("background-color:rgb(240, 240, 240, 200)");
-
+    this->setWindowTitle("贪吃蛇大冒险");
 }
 
 MainWindow::~MainWindow()

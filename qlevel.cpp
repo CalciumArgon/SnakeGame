@@ -17,6 +17,7 @@ QLevel::QLevel(QWidget *parent) :
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_StyledBackground);
+    this->setWindowTitle("贪吃蛇大冒险");
     string dir_save = WORKING_DIR + "\\" + "save.txt";
     ifstream f;
     f.open(dir_save.c_str());
@@ -94,14 +95,13 @@ void QLevel::on_btnReturn_clicked()
 
 void QLevel::on_btnLev1_clicked(){
     Field* fld = new Field(40, 40);
-    Game* game = new Game(fld, TIMEFREE, {5, 45});
+    Game* game = new Level1(fld, TIMELIMIT, {5, 45});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 1);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     //gw->setFocusPolicy(Qt::ClickFocus);
     //gw->resize(1250+gw->border, 1250);
@@ -110,14 +110,13 @@ void QLevel::on_btnLev1_clicked(){
 void QLevel::on_btnLev2_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new AddWallGame(fld, TIMEFREE, {5, 60});
+    Game* game = new Level2(fld, TIMELIMIT, {5, 60});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 2);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
@@ -125,14 +124,13 @@ void QLevel::on_btnLev2_clicked()
 void QLevel::on_btnLev3_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level3(fld, TIMEFREE, {15, 60});
+    Game* game = new Level3(fld, TIMELIMIT, {15, 75});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 3);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
@@ -140,14 +138,13 @@ void QLevel::on_btnLev3_clicked()
 void QLevel::on_btnLev4_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level4(fld, TIMEFREE, {5, 60});
+    Game* game = new Level4(fld, TIMELIMIT, {5, 30});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 4);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
@@ -155,14 +152,13 @@ void QLevel::on_btnLev4_clicked()
 void QLevel::on_btnLev5_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level5(fld, TIMEFREE, {30, 30});
+    Game* game = new Level5(fld, TIMELIMIT, {30, 30});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 5);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
@@ -170,14 +166,13 @@ void QLevel::on_btnLev5_clicked()
 void QLevel::on_btnLev6_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level6(fld, TIMEFREE, {10, 100});
+    Game* game = new Level6(fld, TIMELIMIT, {10, 100});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 6);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
@@ -185,14 +180,13 @@ void QLevel::on_btnLev6_clicked()
 void QLevel::on_btnLev7_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level7(fld, TIMEFREE, {5, 100});
+    Game* game = new Level7(fld, TIMELIMIT, {10, 100});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 7);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
@@ -200,14 +194,13 @@ void QLevel::on_btnLev7_clicked()
 void QLevel::on_btnLev8_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level8(fld, TIMEFREE, {20, 100});
+    Game* game = new Level8(fld, TIMELIMIT, {20, 100});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 9);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
@@ -215,14 +208,13 @@ void QLevel::on_btnLev8_clicked()
 void QLevel::on_btnLev9_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level9(fld, TIMEFREE, {20, 100});
+    Game* game = new Level9(fld, TIMELIMIT, {7, 1000});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 9);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
@@ -230,14 +222,13 @@ void QLevel::on_btnLev9_clicked()
 void QLevel::on_btnLev10_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level10(fld, TIMEFREE, {1, 100});
+    Game* game = new Level10(fld, TIMELIMIT, {1, 100});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 10);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
+    connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
@@ -249,17 +240,7 @@ void QLevel::on_btnLev11_clicked()
 
 void QLevel::on_btnLev12_clicked()
 {
-    Field* fld = new Field(40, 40);
-    Game* game = new Greedy(fld, TIMEFREE, {100, 100000});
-    game->initializeGame(1);
-    GameWidget *gw = new GameWidget(game, 10);
-    gw->initialize();
-    Dialog *dlg = new Dialog();
-    connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
-    connect(dlg, &Dialog::accepted, gw, &GameWidget::close);
-    connect(dlg, &Dialog::rejected, gw, &GameWidget::close);
-    connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
-    gw->show();
+
 }
 
 void QLevel::on_btnEasy_clicked()

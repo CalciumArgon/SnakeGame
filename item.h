@@ -49,7 +49,7 @@ protected:
 
 /*
     吸铁石
-    让 Snake实例在 effective_time 时间里能吸收头部四周九宫格的 Food
+    让 Snake实例在 effective_time 时间里能吸收头部四周九宫格的 Item
     effective_time 跟随全局时钟变化
 */
 class Magnet: public Item
@@ -152,7 +152,7 @@ public:
     virtual void action(Snake*);
     virtual ItemType getName();
 protected:
-    int decelerate = 5;
+    int decelerate = 10;
 };
 
 

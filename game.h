@@ -32,6 +32,8 @@ public:
     int test = 1;
     int target_score = 0;
     int level = 1;
+    int target_time = 0;
+    GameMode game_mode;
 protected:
 
     int aerolite_counting = 2;
@@ -39,31 +41,27 @@ protected:
     clock_t begin = 0;
 
 
-
-    int target_time = 0;
-
     Clock clock;
     Field* state;    // state 里面有: [地图] [Item] [snakes]
-    GameMode game_mode;
+
 };
 
-
-
-class AddWallGame: public Game
+class Level1: public Game
 {
 public:
-    AddWallGame(GameMode game_mode, int height, int width, std::vector<int> info);
-    AddWallGame(Field* state, GameMode game_mode, std::vector<int> info);
+    Level1(GameMode game_mode, int height, int width, std::vector<int> info);
+    Level1(Field* state, GameMode game_mode, std::vector<int> info);
     virtual void initializeGame(int level);
+    short runGame();
 };
 
-class TestAISnake: public Game
+class Level2: public Game
 {
 public:
-    TestAISnake(GameMode game_mode, int height, int width, std::vector<int> info);
-    TestAISnake(Field* state, GameMode game_mode, std::vector<int> info);
+    Level2(GameMode game_mode, int height, int width, std::vector<int> info);
+    Level2(Field* state, GameMode game_mode, std::vector<int> info);
     virtual void initializeGame(int level);
-    virtual short runGame();
+    short runGame();
 };
 
 class Level3: public Game

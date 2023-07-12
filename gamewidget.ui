@@ -10,6 +10,12 @@
     <height>396</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>黑体</family>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -32,8 +38,8 @@
   <widget class="QLabel" name="labelCntDn">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>90</y>
+     <x>320</x>
+     <y>30</y>
      <width>231</width>
      <height>221</height>
     </rect>
@@ -231,17 +237,41 @@
   <widget class="QLabel" name="labelGuide">
    <property name="geometry">
     <rect>
-     <x>350</x>
+     <x>310</x>
      <y>10</y>
-     <width>261</width>
+     <width>950</width>
      <height>151</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>350</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <family>华文新魏</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::ActionsContextMenu</enum>
    </property>
    <property name="frameShape">
     <enum>QFrame::Box</enum>
    </property>
    <property name="text">
-    <string>TextLabel</string>
+    <string>开始游戏</string>
+   </property>
+   <property name="scaledContents">
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="btnNext">
@@ -252,6 +282,12 @@
      <width>80</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Next</string>
@@ -275,6 +311,12 @@
      <height>20</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Book Antiqua</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
    <property name="text">
     <string>Skip</string>
    </property>
@@ -291,6 +333,7 @@
    <property name="font">
     <font>
      <family>华文新魏</family>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="text">
@@ -318,6 +361,62 @@
      <width>54</width>
      <height>12</height>
     </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelTextTime">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>240</y>
+     <width>191</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Bookman Old Style</family>
+     <pointsize>12</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Time Remained</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelTextScore">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>320</y>
+     <width>111</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Bookman Old Style</family>
+     <pointsize>15</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Score</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelExplain">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>320</y>
+     <width>161</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-image: url(:/explaination.png);</string>
    </property>
    <property name="text">
     <string/>

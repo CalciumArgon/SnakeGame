@@ -17,8 +17,11 @@ public:
 
 private:
     Ui::Dialog *ui;
+signals:
+    void gameClose();
 public slots:
     void endGame(int, int, int);
+    void on_btnOK_clicked();
 };
 
 #endif // DIALOG_H
