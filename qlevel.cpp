@@ -121,7 +121,7 @@ void QLevel::on_btnLev2_clicked()
 void QLevel::on_btnLev3_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level3(fld, TIMELIMIT, {15, 150});
+    Game* game = new Level3(fld, TIMELIMIT, {15, 120});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 3);
     gw->initialize();

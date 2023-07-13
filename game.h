@@ -19,7 +19,9 @@ public:
     // 核心运行, 包含 [一轮时钟周期里] 对 [一条蛇] 的全部操作
     bool snakeAction(Snake*);
     // 核心运行, 包含 [对时钟的控制] [接收决策信号] [对每条蛇的 snakeAction() 的调用]
-    virtual short runGame();
+    short runGame();
+    virtual bool createFood() { return false; }
+    virtual bool createSnake() { return false; }
 
     // 用来给图形界面初始化信息
     virtual void initializeGame(int level);
@@ -61,7 +63,7 @@ public:
     Level1(GameMode game_mode, int height, int width, std::vector<int> info);
     Level1(Field* state, GameMode game_mode, std::vector<int> info);
     virtual void initializeGame(int level);
-    short runGame();
+    virtual bool createFood() { return true; }
 };
 
 class Level2: public Game
@@ -70,7 +72,7 @@ public:
     Level2(GameMode game_mode, int height, int width, std::vector<int> info);
     Level2(Field* state, GameMode game_mode, std::vector<int> info);
     virtual void initializeGame(int level);
-    short runGame();
+    virtual bool createFood() { return true; }
 };
 
 class Level3: public Game
@@ -151,6 +153,7 @@ public:
     Greedy(GameMode game_mode, int height, int width, std::vector<int> info);
     Greedy(Field* state, GameMode game_mode, std::vector<int> info);
     virtual void initializeGame(int level);
-    virtual short runGame();
+    virtual bool createSnake() { return true; }
+    virtual bool createFood() { return true; }
 };
 #endif // GAME_H
