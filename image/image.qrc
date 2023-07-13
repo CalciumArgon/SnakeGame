@@ -28,10 +28,12 @@
         <file>hptext.png</file>
         <file>image.qrc</file>
         <file>magnet.png</file>
+        <file>magnetic.png</file>
         <file>marsh.png</file>
         <file>marsh1.png</file>
         <file>no_health.png</file>
         <file>obstacle.png</file>
+        <file>revival.png</file>
         <file>shield.png</file>
         <file>snakebody_down.png</file>
         <file>snakebody_left.png</file>

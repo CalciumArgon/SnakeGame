@@ -366,6 +366,21 @@ bool Snake::ableMove()
     }
 }
 
+int Snake::getMagnetic()
+{
+    return magnetic;
+}
+
+int Snake::getRevival()
+{
+    return revival;
+}
+
+void Snake::decMagnectic()
+{
+    magnetic--;
+}
+
 void Snake::setMagnetic(int effective_time) {
     this->magnetic = effective_time;
 }

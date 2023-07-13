@@ -21,7 +21,6 @@ class Item
 {
 public:
     Item(Loc location);
-    //virtual ~Item() = 0;
     Loc getLoc();
     Snake* hitHeadSnake(std::vector<Snake*>);
     Snake* hitBodySnake(std::vector<Snake*>);
@@ -55,7 +54,8 @@ protected:
 class Magnet: public Item
 {
 public:
-    Magnet(Loc, int);    // 以指定有效时长来初始化
+    // 以指定有效时长来初始化
+    Magnet(Loc, int);
     virtual void action(Snake*);
     virtual ItemType getName();
 
@@ -65,14 +65,13 @@ protected:
 
 /*
     护盾
-    让 Snake实例在 effective_time 时间里具有护盾, 保护一次死亡
-    effective_time 跟随全局时钟变化
+    让 Snake实例具有护盾, 保护一次死亡
     (护盾的保护机制在 Snake类中实现)
 */
 class Shield: public Item
 {
 public:
-    Shield(Loc, int);    // 以指定有效时长来初始化
+    Shield(Loc, int);
     virtual void action(Snake*);
     virtual ItemType getName();
 
@@ -87,7 +86,8 @@ protected:
 class Firstaid: public Item
 {
 public:
-    Firstaid(Loc, int);     // 以能增加的血量值初始化
+    // 以能增加的血量值初始化
+    Firstaid(Loc, int);
 
     virtual void action(Snake*);
     virtual ItemType getName();
@@ -104,7 +104,8 @@ protected:
 class Obstacle: public Item
 {
 public:
-    Obstacle(Loc, int);  // 以伤害量初始化
+    // 以伤害量初始化
+    Obstacle(Loc, int);
     virtual void action(Snake*);
     virtual ItemType getName();
 
@@ -147,7 +148,8 @@ public:
 class Marsh: public Item
 {
 public:
-    Marsh(Loc);     // 以减速程度初始化
+    // 以减速程度初始化
+    Marsh(Loc);
 
     virtual void action(Snake*);
     virtual ItemType getName();

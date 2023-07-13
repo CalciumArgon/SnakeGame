@@ -1,8 +1,0 @@
-*.o
-.vscode
-.idea
-*.dat
-snakegame
-tanchisnake.pro.user*
-*.autosave
-path.h

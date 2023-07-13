@@ -14,7 +14,9 @@ public:
     Field(int, int);
     ItemType getItemName(size_t w, size_t h);
 
+    //在指定地点创建物品
     void createItem(ItemType type, Loc location, int info);
+
     Loc createRandomLoc();
     void deleteItem(Loc location);
     bool existFood(Loc location);
@@ -22,6 +24,7 @@ public:
     Item* getItem(size_t w, size_t h);
     int getHeight();
     int getWidth();
+
     Grid* getMapPtr();
 
     void clearSnake();
@@ -32,7 +35,6 @@ private:
     int height, width;
     Grid item_map;
     std::vector<Snake*> snakes;
-
 };
 
 #endif // FIELD_H

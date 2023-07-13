@@ -7,7 +7,6 @@
 #include <QDebug>
 #include <string>
 #include <fstream>
-#include "path.h"
 #include <algorithm>
 
 using namespace std;
@@ -23,15 +22,17 @@ GameWidget::GameWidget(Game* game, int level, QWidget *parent) : ui(new Ui::Game
 
 void GameWidget::initialize()
 {
-    this->setFocusPolicy(Qt::ClickFocus);
+    //设置宽度与焦点策略
+    this->setFocusPolicy(Qt::StrongFocus);
     this->resize(1250+border, 1250);
 
+    //设置背景颜色
     QPalette pal(this->palette());
     pal.setColor(QPalette::Background, QColor(204, 230, 199));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
 
-    //paint static items
+    //打印地形物品，储存陨石的QLabel实例
     Field* mstate = game->getState();
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++){
@@ -60,6 +61,7 @@ void GameWidget::initialize()
 
     ui->labelCntDn->hide();
 
+    //初始化蛇打印相关变量
     vector<Snake*> msnakes = game->getState()->getSnakes();
     int num = msnakes.size();
     for(int i = 0; i < num; i++)
@@ -86,13 +88,11 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     loop_counter++;
     Q_UNUSED(ev)
 
-    //hide the label
+    //隐藏进度条类型ui
     ui->progressBarMp->hide();
-    /*ui->labelGuide->hide();
-    ui->btnNext->hide();
-    ui->btnSkip->hide();*/
+    ui->progressBarMag->hide();
 
-    //get current time and show
+    //打印时间
     end = clock();
     if(countdown < 0 && game_start){
         if(!game_end)
@@ -104,25 +104,22 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         showTime(0);
     }
 
-    //set the painter of the main event
     QPainter painter(this);
 
-    //set the position of the label
     ui->labelCntDn->setGeometry(380, 400, 600, 600);
-    //show game time
 
-    QString s;
-    ui->labelTime->setText("速度" + s.setNum(game->getState()->getSnakes()[0]->speed));
-    ui->labelTime->hide();
-
-    //show hp level
+    //打印血量
     showHp();
-    //show mp level
+    //打印蓝量
     showMp();
-
+    //打印分数
     showScore();
+    //打印磁铁生效时间
+    showMagnetic();
+    //打印是否有护盾
+    showShield();
 
-    //paint the blocks
+    //绘制格子
     Field* mstate = game->getState();
     painter.setPen(Qt::black);
     painter.setBrush(QColor(1, 1, 1, 0));
@@ -133,17 +130,14 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         }
     }
 
-    //delete label
-    deleteLabel();
-
-    //delete food label
+    //对交互物品的QLabel实例进行动态调整
     deleteFoodLabel();
     deleteMagnetLabel();
     deleteObstacleLabel();
     deleteFirstaidLabel();
     deleteShieldLabel();
 
-    //paint food
+    //绘制交互物品
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++){
             if(mstate->getItemName(i, j) == FOOD && mstate->getItem(i, j)->is_print == false){
@@ -164,6 +158,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         }
     }
 
+    //绘制陨石前的警告
     if(game->isWarning())
     {
         for(auto ql : warning_label)
@@ -176,8 +171,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
 
     vector<Snake*> msnakes = game->getState()->getSnakes();
 
-    //paint snake
-
+    //绘制蛇
     paintSnake(0, msnakes[0]->getLength() - snake_length[0]);
     for(int i = 1; i < msnakes.size(); i++){
         paintSnake(i, msnakes[i]->getLength() - snake_length[i]);
@@ -193,6 +187,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         snake_direction[i] = mlength_vec;
     }
 
+    //绘制陨石
     if(game->isFall())
     {
         for(auto ql : aerolite_label)
@@ -204,14 +199,14 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
 
 
+    //进入导引环节
     if(countdown == 4 && !on_guide){
         enterGuide();
-        //countdown--;
         update();
         return QWidget::paintEvent(ev);
     }
 
-    //paint the countdown
+    //打印倒计时
     if(countdown >= -1 && countdown <= 3)
     {
         ui->labelCntDn->setGeometry(400, 200, 800, 800);
@@ -251,7 +246,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         ui->labelCntDn->hide();
     }
 
-    //move the determine whether the game is over
+    //运行游戏
     if(game_end  == 0 && !on_guide && countdown < 0) {
         if(!game_start){
             begin = clock();
@@ -260,13 +255,14 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         }
         game_end = game->runGame();
     }
+    //判断游戏是否结束并发送信号
     if(game_end != 0 && !is_emit) {
         if(game_end == 1){
-            emit(gameEnd(1, this->level, game->level));
+            emit(gameEnd(1, this->level, game->getState()->getSnakes()[0]->level));
             is_emit = true;
         }
         else {
-            emit(gameEnd(0, this->level, game->level));
+            emit(gameEnd(0, this->level, game->getState()->getSnakes()[0]->level));
             is_emit = true;
         }
     }
@@ -320,7 +316,7 @@ void GameWidget::enterGuide()
 
 void GameWidget::readFile(int level)
 {
-    string dir = WORKING_DIR + "\\guide\\" + to_string(level) + ".txt";
+    string dir = ".\\guide\\" + to_string(level) + ".txt";
     ifstream guide_file;
     guide_file.open(dir.c_str());
     string s;
@@ -367,27 +363,13 @@ void GameWidget::endGuide()
     countdown = 3;
 }
 
-void GameWidget::paintBlocks()
-{
-    QPainter painter(this);
-    Field* mstate = game->getState();
-    painter.setPen(Qt::black);
-    painter.setBrush(QColor(1, 1, 1, 0));
-    for (size_t i = 0; i < mstate->getWidth(); i++) {
-        for (size_t j = 0; j < mstate->getHeight(); j++) {
-                QRect rect = getRect(i, j);
-                painter.drawRect(rect);
-        }
-    }
-}
-
 void GameWidget::showTime(int time)
 {
-    GameMode gm = game->game_mode;
+    GameMode gm = game->getMode();
     ui->labelTextTime->setGeometry(20, -30, 600, 200);
     if(gm == TIMELIMIT) {
         ui->labelTextTime->setText("Time Remained");
-        time = game->target_time - time;
+        time = game->getTargetTime() - time;
     }
     else {
         ui->labelTextTime->setText("Time Used");
@@ -456,7 +438,7 @@ void GameWidget::showScore()
     ui->labelScore->setText(s.setNum(score));
     ui->labelScore->show();
 
-    int target = game->target_score;
+    int target = game->getTargetScore();
     ui->labelTarget->setGeometry(210, 560, 200, 150);
     ui->labelTarget->setFont(font);
     ui->labelTarget->setText(s.setNum(target));
@@ -468,6 +450,35 @@ void GameWidget::showScore()
     ui->labelSlash->show();
 
     ui->labelExplain->setGeometry(50, 680, 220, 60);
+}
+
+void GameWidget::showShield()
+{
+    if(game->getState()->getSnakes()[0]->getRevival())
+    {
+        ui->labelShield->setGeometry(200, 470, 50, 50);
+        ui->labelShield->show();
+    }
+    else {
+        ui->labelShield->hide();
+    }
+}
+
+void GameWidget::showMagnetic()
+{
+    if(game->getState()->getSnakes()[0]->getMagnetic() > 0)
+    {
+        ui->labelMagnet->setGeometry(10, 470, 50, 50);
+        ui->labelMagnet->show();
+        ui->progressBarMag->setValue(int(game->getState()->getSnakes()[0]->getMagnetic() * 100.0 / 100.0));
+        ui->progressBarMag->setGeometry(70, 485, 150, 20);
+        ui->progressBarMag->setStyleSheet("QProgressBar::chunk{background-color: rgb(255, 205, 71)}");
+        ui->progressBarMag->show();
+    }
+    else {
+        ui->labelMagnet->hide();
+        ui->progressBarMag->hide();
+    }
 }
 
 void GameWidget::paintItem(int i, int j, ItemType type)
@@ -518,8 +529,10 @@ void GameWidget::paintItem(int i, int j, ItemType type)
 
 void GameWidget::paintSnake(int id, int change)
 {
+    //id表示第几条蛇，change表示蛇与前一次循环相比长度的变化量
     Snake* msnake = game->getState()->getSnakes()[id];
     int length = snake_label[id].size();
+    //若初次打印，则先打印蛇头
     if(snake_label[id].size() == 0 && msnake->getLength() != 0)
     {
         Loc head = msnake->getBody()[0];
@@ -557,6 +570,7 @@ void GameWidget::paintSnake(int id, int change)
         snake_label[id].push_back(ql);
         change--;
     }
+    //若变化量小于0，则删去相应的QLabel实例
     if(change < 0)
     {
         reverse(snake_label[id].begin(), snake_label[id].end());
@@ -574,6 +588,7 @@ void GameWidget::paintSnake(int id, int change)
         }
         length += change;
     }
+    //若变化量大于0，则新建相应的QLabel实例
     if(change > 0)
     {
         for(int i = msnake->getLength() - change; i < msnake->getLength(); i++)
@@ -612,6 +627,7 @@ void GameWidget::paintSnake(int id, int change)
             snake_label[id].push_back(ql);
         }
     }
+    //对蛇剩下的部分（与前一次循环共有的长度）进行判断，若方向变化，则重新加载图片
     for (std::size_t i = 0; i < length; i++) {
         snake_label[id][i]->setGeometry((msnake->getBody()[i].first+1)*unitlen+border, (msnake->getBody()[i].second+1)*unitlen, unitlen, unitlen);
         Direction old_direction = snake_direction[id][i];
@@ -678,20 +694,6 @@ void GameWidget::paintSnake(int id, int change)
             }
         }
     }
-}
-
-void GameWidget::deleteLabel()
-{
-    vector<QLabel*>::iterator vec_it = dynamic_label.begin();
-    for(; vec_it != dynamic_label.end(); vec_it++)
-    {
-        if(*vec_it != NULL)
-        {
-          delete *vec_it;
-          *vec_it = NULL;
-        }
-    }
-    dynamic_label.clear();
 }
 
 void GameWidget::deleteFoodLabel()

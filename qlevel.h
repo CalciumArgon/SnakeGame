@@ -14,16 +14,21 @@ class QLevel : public QWidget
 
 public:
     explicit QLevel(QWidget *parent = nullptr);
-    int difficulty = 1;
+    //将背景设置为特定颜色
     void setBackground(QString s);
-    std::vector<int> status;
-    std::vector<int> stars;
+    //绘制关卡下面的星星
     void paintStars(int);
-    std::vector<QPushButton*> buttons;
+    //保存当前游戏进度
     void saveData();
     ~QLevel();
 private:
     Ui::QLevel *ui;
+    int difficulty = 1;
+    //当前游戏进度
+    std::vector<int> status;
+    //当前关卡下星星数量
+    std::vector<int> stars;
+    std::vector<QPushButton*> buttons;
 public slots:
     void on_btnReturn_clicked();
     void on_btnLev1_clicked();
@@ -41,6 +46,7 @@ public slots:
     void on_btnEasy_clicked();
     void on_btnHard_clicked();
     void on_btnNightmare_clicked();
+    //游戏结束后对星星进行重绘
     void repaintStars(int, int, int);
 };
 

@@ -3,8 +3,8 @@
 
 #include "field.h"
 #include "snake.h"
-#include "clock.h"
 #include <ctime>
+#include <string>
 
 enum GameMode {TIMELIMIT=0, TIMEFREE, KILLSNAKE};
 enum PlayMode {Normal=0};
@@ -16,34 +16,43 @@ public:
 
     void setBeginTime(clock_t);
 
-    bool snakeAction(Snake*);    // 核心运行, 包含 [一轮时钟周期里] 对 [一条蛇] 的全部操作
-    virtual short runGame();     // 核心运行, 包含 [对时钟的控制] [接收决策信号] [对每条蛇的 snakeAction() 的调用]
+    // 核心运行, 包含 [一轮时钟周期里] 对 [一条蛇] 的全部操作
+    bool snakeAction(Snake*);
+    // 核心运行, 包含 [对时钟的控制] [接收决策信号] [对每条蛇的 snakeAction() 的调用]
+    virtual short runGame();
 
-    virtual void initializeGame(int level);  // 用来给图形界面初始化信息
+    // 用来给图形界面初始化信息
+    virtual void initializeGame(int level);
 
     // 全局陨石掉落信息
     void countDown();
     bool isFall();
     bool isWarning();
 
+    //地图载入
     bool loadMap(std::string map_path);
+    //判断游戏是否结束
     short reachTarget();
+
     Field* getState();
-    int test = 1;
+    int getTargetTime();
+    int getTargetScore();
+    GameMode getMode();
+protected:
     int target_score = 0;
+
+    //游戏难度
     int level = 1;
+
     int target_time = 0;
     GameMode game_mode;
-protected:
 
     int aerolite_counting = 2;
 
     clock_t begin = 0;
 
-
-    Clock clock;
-    Field* state;    // state 里面有: [地图] [Item] [snakes]
-
+    // state 里面有: [地图] [Item] [snakes]
+    Field* state;
 };
 
 class Level1: public Game

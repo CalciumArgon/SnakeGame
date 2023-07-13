@@ -6,7 +6,6 @@
 #include "snake.h"
 #include "game.h"
 #include "dialog.h"
-#include "path.h"
 #include <fstream>
 
 using namespace std;
@@ -18,7 +17,7 @@ QLevel::QLevel(QWidget *parent) :
     ui->setupUi(this);
     setAttribute(Qt::WA_StyledBackground);
     this->setWindowTitle("贪吃蛇大冒险");
-    string dir_save = WORKING_DIR + "\\" + "save.txt";
+    string dir_save = ".\\save.txt";
     ifstream f;
     f.open(dir_save.c_str());
     for(int i = 0; i < 12; i++)
@@ -73,7 +72,7 @@ void QLevel::paintStars(int level)
 
 void QLevel::saveData()
 {
-    string dir_save = WORKING_DIR + "\\" + "save.txt";
+    string dir_save = ".\\save.txt";
     ofstream f;
     f.open(dir_save.c_str());
     for(int i = 0; i < 12; i++)
@@ -103,8 +102,6 @@ void QLevel::on_btnLev1_clicked(){
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
     connect(dlg, &Dialog::gameClose, gw, &GameWidget::close);
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
-    //gw->setFocusPolicy(Qt::ClickFocus);
-    //gw->resize(1250+gw->border, 1250);
     gw->show();
 }
 void QLevel::on_btnLev2_clicked()
@@ -124,7 +121,7 @@ void QLevel::on_btnLev2_clicked()
 void QLevel::on_btnLev3_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level3(fld, TIMELIMIT, {15, 75});
+    Game* game = new Level3(fld, TIMELIMIT, {15, 150});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 3);
     gw->initialize();
@@ -196,7 +193,7 @@ void QLevel::on_btnLev8_clicked()
     Field* fld = new Field(40, 40);
     Game* game = new Level8(fld, TIMELIMIT, {20, 100});
     game->initializeGame(difficulty);
-    GameWidget *gw = new GameWidget(game, 9);
+    GameWidget *gw = new GameWidget(game, 8);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
@@ -208,7 +205,7 @@ void QLevel::on_btnLev8_clicked()
 void QLevel::on_btnLev9_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level9(fld, TIMELIMIT, {7, 1000});
+    Game* game = new Level9(fld, TIMELIMIT, {7, 120});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 9);
     gw->initialize();
@@ -222,7 +219,7 @@ void QLevel::on_btnLev9_clicked()
 void QLevel::on_btnLev10_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level10(fld, TIMELIMIT, {1, 100});
+    Game* game = new Level10(fld, TIMEFREE, {4, 100000});
     game->initializeGame(difficulty);
     GameWidget *gw = new GameWidget(game, 10);
     gw->initialize();
@@ -236,9 +233,9 @@ void QLevel::on_btnLev10_clicked()
 void QLevel::on_btnLev11_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Level11(fld, TIMEFREE, {5, 1000});
+    Game* game = new Level11(fld, TIMEFREE, {5, 100000});
     game->initializeGame(difficulty);
-    GameWidget *gw = new GameWidget(game, 10);
+    GameWidget *gw = new GameWidget(game, 11);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);
@@ -251,9 +248,9 @@ void QLevel::on_btnLev11_clicked()
 void QLevel::on_btnLev12_clicked()
 {
     Field* fld = new Field(40, 40);
-    Game* game = new Greedy(fld, TIMEFREE, {100, 100000});
+    Game* game = new Greedy(fld, TIMELIMIT, {100, 400});
     game->initializeGame(difficulty);
-    GameWidget *gw = new GameWidget(game, 10);
+    GameWidget *gw = new GameWidget(game, 12);
     gw->initialize();
     Dialog *dlg = new Dialog();
     connect(gw, &GameWidget::gameEnd, dlg, &Dialog::endGame);

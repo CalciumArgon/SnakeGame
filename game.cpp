@@ -3,12 +3,10 @@
 #include <fstream>
 #include "aisnake.h"
 #include "queue"
-#include "path.h"
 using namespace std;
 typedef pair<int, int> Loc;
 Game::Game(GameMode game_mode, int height, int width, std::vector<int> info) :
         level(1),
-        clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
         game_mode(game_mode)
 {
     state = new Field(height, width);
@@ -20,7 +18,6 @@ Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
         level(1),
         target_score(info[0]),
         target_time(info[1]),
-        clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
         state(state),
         game_mode(game_mode) {}
 
@@ -126,6 +123,8 @@ short Game::runGame()
                     break;
             }
         }
+        if(snake->getMagnetic() > 0)
+            snake->decMagnectic();
 
         // 检查陨石
         if (this->isFall()) {
@@ -169,17 +168,14 @@ short Game::runGame()
                 }
             }
         }
-        snake->magnetic--;
+        if(snake->getMagnetic() > 0)
+            snake->decMagnectic();
 
         //检查沼泽减速
         if(snake->touchMarsh() != nullptr)
         {
-            test = 0;
             Marsh* msh = snake->touchMarsh();
             msh->action(snake);
-        }
-        else {
-            test = 1;
         }
     }
 
@@ -204,7 +200,7 @@ void Game::initializeGame(int level)
 
 void Game::countDown()
 {
-    aerolite_counting = (aerolite_counting + 11) % 60 - 10;
+    aerolite_counting = (aerolite_counting + 16) % 45 - 15;
 }
 
 bool Game::isFall()
@@ -304,6 +300,21 @@ short Game::reachTarget()
 Field *Game::getState()
 {
     return state;
+}
+
+int Game::getTargetTime()
+{
+    return target_time;
+}
+
+int Game::getTargetScore()
+{
+    return target_score;
+}
+
+GameMode Game::getMode()
+{
+    return game_mode;
 }
 
 Level1::Level1(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
@@ -437,12 +448,8 @@ short Level1::runGame()
         //检查沼泽减速
         if(snake->touchMarsh() != nullptr)
         {
-            test = 0;
             Marsh* msh = snake->touchMarsh();
             msh->action(snake);
-        }
-        else {
-            test = 1;
         }
     }
 
@@ -570,12 +577,8 @@ short Level2::runGame()
         //检查沼泽减速
         if(snake->touchMarsh() != nullptr)
         {
-            test = 0;
             Marsh* msh = snake->touchMarsh();
             msh->action(snake);
-        }
-        else {
-            test = 1;
         }
     }
 
@@ -586,7 +589,7 @@ short Level2::runGame()
 
 void Level2::initializeGame(int level) {
 
-    if (!this->loadMap(WORKING_DIR + "\\map\\addwallgame.txt"))
+    if (!this->loadMap(".\\map\\addwallgame.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 
@@ -598,7 +601,7 @@ Level3::Level3(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level3::initializeGame(int level) {
 
-    if (!this->loadMap(WORKING_DIR + "\\map\\level3.txt"))
+    if (!this->loadMap(".\\map\\level3.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
@@ -607,7 +610,7 @@ Level4::Level4(GameMode game_mode, int height, int width, std::vector<int> info)
 Level4::Level4(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level4::initializeGame(int level) {
 
-    if (!this->loadMap(WORKING_DIR + "\\map\\level4.txt"))
+    if (!this->loadMap(".\\map\\level4.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
     queue<Loc> path;
@@ -626,7 +629,7 @@ Level5::Level5(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level5::initializeGame(int level) {
 
-    if (!this->loadMap(WORKING_DIR + "\\map\\level5.txt"))
+    if (!this->loadMap(".\\map\\level5.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
@@ -634,7 +637,7 @@ void Level5::initializeGame(int level) {
 Level6::Level6(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
 Level6::Level6(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level6::initializeGame(int level) {
-    if (!this->loadMap(WORKING_DIR + "\\map\\level6.txt"))
+    if (!this->loadMap(".\\map\\level6.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
@@ -642,7 +645,7 @@ void Level6::initializeGame(int level) {
 Level7::Level7(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
 Level7::Level7(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level7::initializeGame(int level) {
-    if (!this->loadMap(WORKING_DIR + "\\map\\level7.txt"))
+    if (!this->loadMap(".\\map\\level7.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
@@ -650,7 +653,7 @@ void Level7::initializeGame(int level) {
 Level8::Level8(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
 Level8::Level8(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level8::initializeGame(int level) {
-    if (!this->loadMap(WORKING_DIR + "\\map\\level8.txt"))
+    if (!this->loadMap(".\\map\\level8.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
     queue<Loc> path;
@@ -689,7 +692,7 @@ void Level8::initializeGame(int level) {
 Level9::Level9(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
 Level9::Level9(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level9::initializeGame(int level) {
-    if (!this->loadMap(WORKING_DIR + "\\map\\level9.txt"))
+    if (!this->loadMap(".\\map\\level9.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
@@ -697,7 +700,7 @@ void Level9::initializeGame(int level) {
 Level10::Level10(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
 Level10::Level10(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level10::initializeGame(int level) {
-    if (!this->loadMap(WORKING_DIR + "\\map\\level10.txt"))
+    if (!this->loadMap(".\\map\\level10.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
@@ -707,7 +710,7 @@ Level11::Level11(GameMode game_mode, int height, int width, std::vector<int> inf
 Level11::Level11(Field* state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 
 void Level11::initializeGame(int level) {
-    if (!this->loadMap(WORKING_DIR + "\\map\\level11.txt"))
+    if (!this->loadMap(".\\map\\level11.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
     queue<Loc> path1;
@@ -739,7 +742,7 @@ void Level11::initializeGame(int level) {
 Greedy::Greedy(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 Greedy::Greedy(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
 void Greedy::initializeGame(int level) {
-    if (!this->loadMap(WORKING_DIR + "\\map\\greedy.txt"))
+    if (!this->loadMap(".\\map\\greedy.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
     Snake* snake = new GreedyFood({5, 5}, 2, 1, DOWN, this->state->getMapPtr());
@@ -798,9 +801,13 @@ short Greedy::runGame()
             switch (hit_item->getName()) {
                 case FOOD:
                 {
-                    hit_item->action(snake);
-                    state->deleteItem(item_location);
-                    break;
+                hit_item->action(snake);
+                do {
+                    location = state->createRandomLoc();
+                    } while (snake->isPartOfSnake(location));
+                state->deleteItem(item_location);
+                state->createItem(FOOD, location, 1);
+                break;
                 }
                 case MAGNET:
                 case SHIELD:
@@ -860,16 +867,13 @@ short Greedy::runGame()
                     }
                 }
             }
+
         }
         //检查沼泽减速
         if(snake->touchMarsh() != nullptr)
         {
-            test = 0;
             Marsh* msh = snake->touchMarsh();
             msh->action(snake);
-        }
-        else {
-            test = 1;
         }
     }
 

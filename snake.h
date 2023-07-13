@@ -24,15 +24,23 @@ public:
     Direction getDirection();
     Direction getBodyDirection(int);
 
+    //蛇变换方向
     void changeDireciton(Direction new_direction);
+    //蛇的头部在当前方向上的下一个位置
     Loc nextLoc();
+    //蛇向当前方向移动
     bool move();
 
+    //返回蛇碰到的物体种类
     Item* hitItem();
+    //判断蛇与自己、边缘发生碰撞
     bool hitSelf();
     bool hitEdge();
-    bool hitOtherSnake(std::vector<Snake*>);  // 在 Game 中可以把 field.snakes[1:] 传进来
+    //判断蛇与其他蛇发生碰撞
+    bool hitOtherSnake(std::vector<Snake*>);
+    //判断蛇是否经过沼泽
     Marsh* touchMarsh();
+    //判断蛇是否与陨石发生碰撞
     Aerolite* touchAerolite();
     bool isPartOfSnake(Loc loc);
 
@@ -43,11 +51,14 @@ public:
     int getEaten();
     int getKilled();
 
+    //当前分数
     int score();
 
-    void setMagnetic(int);  // 设置吸铁石能力
+    // 设置吸铁石能力
+    void setMagnetic(int);
     bool ableMagnetic();
-    void setRevival(int);   // 设置护盾复活能力
+    // 设置护盾复活能力
+    void setRevival(int);
 
     int getHp();
     void addSpeed(int adding);
@@ -56,34 +67,49 @@ public:
     void decMp();
     bool ableMove();
 
+    int getMagnetic();
+    int getRevival();
+    void decMagnectic();
+
     bool death();
 
+    //蛇在每次判断加速或减速前先返回到初始速度
     void recover();
     virtual bool isAI() {return false;}
-    //消除所有buff和debuff
     bool speed_buff = false;
     virtual Direction act(Field* state) { return this->direction; }
-    int speed = -30;
-    bool finishmove = true;
+
+    //当前难度
     int level = 1;
-    int magnetic = 0;
 protected:
     std::vector<Loc> body;
     int length;
     int max_health = 4;
     Direction direction;
+    //包含所有物品的地图的指针
     Grid* item_map_ptr;
     int width;
     int height;
 
     int health;
+    //蛇吃过的食物数量
     int eaten = 0;
+    //蛇杀死的其他蛇的数量
     int killed = 0;
+    //控制蛇移动的时钟循环
     int cycle_recorder = 1;
-    int revival = 0;
+
+    //蛇重生的位置
     Loc rebornLocation;
+    //蛇重生的方向
     Direction rebornDirection;
     int mp = 240;
+    int speed = -30;
+    //蛇在改变方向后是否已完成移动，用于防止一次移动改变了两次方向
+    bool finishmove = true;
+
+    int magnetic = 0;
+    int revival = 0;
 };
 
 #endif // SNAKE_H

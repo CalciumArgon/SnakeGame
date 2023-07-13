@@ -26,7 +26,6 @@ CONFIG += c++11
 
 SOURCES += \
         aisnake.cpp \
-        clock.cpp \
         dialog.cpp \
         field.cpp \
         game.cpp \
@@ -39,15 +38,12 @@ SOURCES += \
 
 HEADERS += \
         aisnake.h \
-        clock.h \
         dialog.h \
         field.h \
-        g_s.h \
         game.h \
         gamewidget.h \
         item.h \
         mainwindow.h \
-        path.h \
         qlevel.h \
         snake.h
 
