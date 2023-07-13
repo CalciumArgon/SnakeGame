@@ -154,7 +154,7 @@ public:
     virtual void action(Snake*);
     virtual ItemType getName();
 protected:
-    int decelerate = 10;
+    int decelerate = 5;
 };
 
 

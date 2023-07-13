@@ -104,12 +104,13 @@ protected:
     //蛇重生的方向
     Direction rebornDirection;
     int mp = 240;
-    int speed = -30;
+
     //蛇在改变方向后是否已完成移动，用于防止一次移动改变了两次方向
     bool finishmove = true;
 
     int magnetic = 0;
     int revival = 0;
+    int speed = -30;
 };
 
 #endif // SNAKE_H

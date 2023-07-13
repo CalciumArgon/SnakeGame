@@ -91,7 +91,7 @@ short Game::runGame()
         Loc item_location = snake->getBody()[0];
         if(snake->speed_buff){
             if(snake->getMp() > 0){
-                snake->addSpeed(3);
+                snake->addSpeed(5);
                 snake->decMp();
             }
         }
@@ -366,7 +366,7 @@ short Level1::runGame()
         Loc item_location = snake->getBody()[0];
         if(snake->speed_buff){
             if(snake->getMp() > 0){
-                snake->addSpeed(3);
+                snake->addSpeed(5);
                 snake->decMp();
             }
         }
@@ -495,7 +495,7 @@ short Level2::runGame()
         Loc item_location = snake->getBody()[0];
         if(snake->speed_buff){
             if(snake->getMp() > 0){
-                snake->addSpeed(3);
+                snake->addSpeed(5);
                 snake->decMp();
             }
         }
@@ -789,7 +789,7 @@ short Greedy::runGame()
         Loc item_location = snake->getBody()[0];
         if(snake->speed_buff){
             if(snake->getMp() > 0){
-                snake->addSpeed(3);
+                snake->addSpeed(5);
                 snake->decMp();
             }
         }
