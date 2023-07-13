@@ -273,7 +273,7 @@ void Snake::initialize()
     health = 3;
     speed = -30;
     cycle_recorder = 1;
-    direction = UP;
+    direction = this->rebornDirection;
     magnetic = 0;
     revival = 0;
     body = Snake( rebornLocation,
@@ -396,7 +396,7 @@ void Snake::setRevival(int effective_time) {
 
 void Snake::recover()
 {
-    speed = 1 + 3 * (level - 1);
+    speed = 3 * (level - 1);
 }
 
 bool isWithin(int target, int low, int high)
