@@ -16,9 +16,9 @@
 
 **历史版本**
 
-《Snake Adventure》 基于 Qt 开发，总代码量约 4100行
+《Snake Adventure》 基于 Qt 开发，总代码量约 4100 行
 
-目前在 release 中发布的是第 1 版可执行程序
+目前在 Releases 中发布的是第 1 版可执行程序
 
 ```
 * 2023.7.14 第一次发布程序 Snake Adventure v1.0.0
@@ -44,7 +44,7 @@ SnakeAdventure
 ├─ src/
 ├─ ui/
 ├─ record.txt
-└─ tanchisnake.pro
+└─ snakeadventure.pro
 ```
 * `guide/` 是每关剧情
 * `image/` 是 Qt 用到的所有贴图
@@ -52,7 +52,7 @@ SnakeAdventure
 * `src/` 框架部分和 Qt 部分的源码
 * `ui/` 是 Qt 自动生成的描绘窗口的格式文件
 * `record.txt` 是本地记录玩家通关情况的文件
-* `tanchisnake.pro` 是 Qt 构建完成的项目
+* `snakeadventure.pro` 是 Qt 构建完成的项目
 
 ## 如何运行
 
@@ -65,8 +65,6 @@ SnakeAdventure
 ## 整体框架
 
 #### 1. 抽象层
-
-> 涉及文件：field.h field.cpp snake.h snake.cpp item.h item.cpp game.h game.cpp
 
 ![download](https://raw.githubusercontent.com/hanleo001/img/main/download.png)
 
@@ -168,11 +166,11 @@ SnakeAdventure
 
 ## 关卡设计
 
-level 设计：level 改变蛇初始的移动速度，使得玩家操作难度不同，根据挑战的不同难度，通关后有不同星级的显示
+`Game.level` 改变蛇初始的移动速度，使得玩家操作难度不同，根据挑战的不同难度，通关后有不同星级的显示
 
-**第一关** 基础关卡， 同基础版的逻辑一样，胜利目标是吃掉五个食物
+**第一关** 基础关卡， 与经典版贪吃蛇的逻辑一样，胜利目标是吃够足够的食物
 
-**第二关** 加入墙，沼泽，以及ctrl加速功能
+**第二关** 加入墙，沼泽，以及 `Ctrl` 加速功能
 
 **第三关** 整合了前两关的新增功能，本关给玩家提供了两种通关路径，既可以完整走过中间的迷宫，也可以在沼泽遍布的外面吃完食物通关
 
@@ -198,30 +196,25 @@ level 设计：level 改变蛇初始的移动速度，使得玩家操作难度�
 
 #### 组员分工
 
-陶瑞：
-```
-实现程序框架
-实现游戏运行逻辑
-设计小部分关卡
-代码测试和debug
-```
+* 陶瑞
+    * 实现程序框架
+    * 实现游戏运行逻辑
+    * 设计小部分关卡
+    * 代码测试和debug
 
-朱晟嘉：
-```
-实现Qt图形化界面
-与Qt的逻辑接口
-剧情设计和艺术设计
-代码测试和debug
-```
+* 朱晟嘉
+    * 实现Qt图形化界面
+    * 与Qt的逻辑接口
+    * 剧情设计和艺术设计
+    * 代码测试和debug
 
-韩潇申：
-```
-实现 AISnake
-设计大部分关卡
-实现关卡的地图生成和载入
-Git main 分支维护
-代码测试和debug
-```
+* 韩潇申
+    * 实现 AISnake
+    * 设计大部分关卡
+    * 实现关卡的地图生成和载入
+    * Git main 分支维护
+    * 代码测试和debug
+
 
 #### 继续可能的开发方向
 
@@ -235,7 +228,7 @@ Git main 分支维护
 
 我们是上海交通大学 IEEE 试点班 2022 级大一学生，欢迎对我们的项目提出修改建议
 
-可以通过以下方式联系我们 ~
+⭐ 可以通过以下方式联系我们 ~ ⭐
 
 * 陶瑞：taorui_sjtu@sjtu.edu.cn
 * 朱晟嘉：kepler_452b@sjtu.edu.cn
