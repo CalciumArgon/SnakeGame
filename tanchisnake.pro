@@ -34,7 +34,17 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         qlevel.cpp \
-        snake.cpp
+        snake.cpp \
+        src/aisnake.cpp \
+        src/dialog.cpp \
+        src/field.cpp \
+        src/game.cpp \
+        src/gamewidget.cpp \
+        src/item.cpp \
+        src/main.cpp \
+        src/mainwindow.cpp \
+        src/qlevel.cpp \
+        src/snake.cpp
 
 HEADERS += \
         aisnake.h \
@@ -45,13 +55,37 @@ HEADERS += \
         item.h \
         mainwindow.h \
         qlevel.h \
-        snake.h
+        snake.h \
+        src/aisnake.h \
+        src/dialog.h \
+        src/field.h \
+        src/game.h \
+        src/gamewidget.h \
+        src/item.h \
+        src/mainwindow.h \
+        src/qlevel.h \
+        src/snake.h
 
 FORMS += \
         dialog.ui \
+        form/dialog.ui \
+        form/gamewidget.ui \
+        form/mainwindow.ui \
+        form/qlevel.ui \
+        forms/dialog.ui \
+        forms/gamewidget.ui \
+        forms/mainwindow.ui \
+        forms/qlevel.ui \
+        gamewidget.ui \
         gamewidget.ui \
         mainwindow.ui \
-        qlevel.ui
+        mainwindow.ui \
+        qlevel.ui \
+        qlevel.ui \
+        ui/dialog.ui \
+        ui/gamewidget.ui \
+        ui/mainwindow.ui \
+        ui/qlevel.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
