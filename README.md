@@ -1,6 +1,4 @@
-# SnakeGame v1.0.0
-
-[TOC]
+# Snake Adventure v1.0
 
 ## 简介
 
@@ -10,11 +8,51 @@
 
 **游戏特性**
 
-- 增加了大量物品，包含正面效果和负面效果
+相比于传统贪吃蛇游戏，我们增加了：
+- 大量物品，包含正面效果的 buff 和负面效果的 debuff
 - 关卡设计，按照剧情发展，每关会显示剧情和道具用途说明
-- 难度设计，分为 easy，hard，nightmare，分别对应三种初始蛇的速度，通关后会根据完成的难度不同在关卡页面有所标记（星级显示）
-- 增加了与人对战的电脑蛇元素，可以像《贪吃蛇大作战》中一样杀掉电脑蛇完成 相应的任务
+- 难度设计，分为 easy，hard，nightmare，分别对应三种初始蛇的速度，通关后会根据完成的难度不同在关卡页面标记星级
+- 增加了与人对战的电脑蛇元素，可以用身体撞击电脑蛇头击杀电脑蛇，完成相应的任务
 
+**历史版本**
+
+《Snake Adventure》 基于 Qt 开发，总代码量约 4100行
+
+目前在 release 中发布的是第 1 版可执行程序
+
+```
+* 2023.7.14 第一次发布程序 Snake Adventure v1.0.0
+|
+* ...
+```
+
+**文件关系**
+
+```shell
+SnakeAdventure
+├─ guide/
+    ├─ 1.txt
+    ├─ ...
+    ├─ 12.txt
+├─ image/
+├─ map/
+    ├─ addwallgame.txt
+    ├─ 3.txt
+    ├─ ...
+    ├─ 11.txt
+    ├─ greedy.txt
+├─ src/
+├─ ui/
+├─ record.txt
+└─ tanchisnake.pro
+```
+* `guide/` 是每关剧情
+* `image/` 是 Qt 用到的所有贴图
+* `map/` 是每关的地图，我们实现了一套生成地图和读取地图的方式
+* `src/` 框架部分和 Qt 部分的源码
+* `ui/` 是 Qt 自动生成的描绘窗口的格式文件
+* `record.txt` 是本地记录玩家通关情况的文件
+* `tanchisnake.pro` 是 Qt 构建完成的项目
 
 ## 如何运行
 
@@ -34,7 +72,6 @@
 
 #### 2. 物品实现
 
-> 涉及文件：item.h item.cpp
 
 - `Item` 父类记录物体位置 `Loc loction` ，判断击中蛇的遍历函数 `hitSnakeHead()` `hitSnakeBody()`
 - 所有物品子类继承 `Item` ，重写 `action(Snake*)` 实现各自的功能，`getName()` 函数用于返回各自类别，用于外部 `Item*` 指针对物品类型的获取
@@ -88,8 +125,6 @@
 
 ## UI设计（Qt）
 
-> 涉及文件：mainwindow.h mainwindow.cpp qlevel.h qlevel.cpp gamewidget.h gamewidget.cpp dialog.h dialog.cpp mainwindow.ui qlevel.ui gamewidget.ui dialog.ui
-
 #### 1. 控件之间的关联逻辑
 
 - 基本思路：
@@ -119,8 +154,6 @@
 
 ## 人机 Snake
 
-> 涉及文件：aisnake.h aisnake.cpp
-
 - 基本思路：继承 `Snake` 类，构建 `AIsnake` 类作为接口，后实现基于不同算法的 AIsnake（受限于时间原因，只实现了两个基本的 AIsnake）
 
 #### `GreedyFood`
@@ -134,8 +167,6 @@
 - 实现细节：基于 `AIsnake` 类中的 `go_to` 函数，加上队列数据类型的特性实现的
 
 ## 关卡设计
-
-> 涉及文件：./map game.cpp game.h
 
 level 设计：level 改变蛇初始的移动速度，使得玩家操作难度不同，根据挑战的不同难度，通关后有不同星级的显示
 
@@ -194,14 +225,15 @@ Git main 分支维护
 
 #### 继续可能的开发方向
 
-- 血包，障碍物等改变血量的值容易调整（已经留有接口）利用 Qt 读入改变血量的值调整透明度可以实现不同改变血量的血包，障碍物
-- 关卡可以加入时间触发等其他的道具触发方式
-- AISnake可以使用更加高级的算法，包括加入接口，利用 ppo，ddpg 等算法实现聪明的蛇
-- 实现无尽模式 + 排行榜
+- 加入时间触发、位置触发等道具触发方式
+- AISnake 可以使用更有智力的算法，比如利用 ppo，ddpg 等实现可以完成躲避、击杀的蛇
+- 无尽模式和排行榜
+
+------
 
 #### 关于我们
 
-我们是上海交通大学 IEEE 试点班的 2022级大一学生，欢迎对我们的项目提出修改建议
+我们是上海交通大学 IEEE 试点班 2022 级大一学生，欢迎对我们的项目提出修改建议
 
 可以通过以下方式联系我们 ~
 
