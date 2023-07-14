@@ -8,6 +8,7 @@
         <file>aisnakehead_left.png</file>
         <file>aisnakehead_right.png</file>
         <file>aisnakehead_up.png</file>
+        <file>asteroid.png</file>
         <file>background.jpeg</file>
         <file>background.png</file>
         <file>background2.png</file>
@@ -16,6 +17,8 @@
         <file>cd2.png</file>
         <file>cd3.png</file>
         <file>cdgo.png</file>
+        <file>defeat.png</file>
+        <file>explaination.png</file>
         <file>firstaid.png</file>
         <file>food1.png</file>
         <file>food2.jpeg</file>
@@ -23,13 +26,13 @@
         <file>food3.png</file>
         <file>health.png</file>
         <file>hptext.png</file>
-        <file>image.qrc</file>
-        <file>img.qrc</file>
         <file>magnet.png</file>
+        <file>magnetic.png</file>
         <file>marsh.png</file>
         <file>marsh1.png</file>
         <file>no_health.png</file>
         <file>obstacle.png</file>
+        <file>revival.png</file>
         <file>shield.png</file>
         <file>snakebody_down.png</file>
         <file>snakebody_left.png</file>
@@ -39,15 +42,10 @@
         <file>snakehead_left.png</file>
         <file>snakehead_right.png</file>
         <file>snakehead_up.png</file>
-        <file>wall.png</file>
-        <file>asteroid.png</file>
         <file>star.png</file>
-        <file>warning.png</file>
-        <file>defeat.png</file>
-        <file>victory.png</file>
-        <file>explaination.png</file>
         <file>tree.png</file>
-        <file>magnetic.png</file>
-        <file>revival.png</file>
+        <file>victory.png</file>
+        <file>wall.png</file>
+        <file>warning.png</file>
     </qresource>
 </RCC>

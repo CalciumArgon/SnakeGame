@@ -64,6 +64,8 @@ RESOURCES += \
 DISTFILES += \
     guide/1.txt \
     guide/10.txt \
+    guide/11.txt \
+    guide/12.txt \
     guide/2.txt \
     guide/3.txt \
     guide/4.txt \
@@ -73,12 +75,26 @@ DISTFILES += \
     guide/8.txt \
     guide/9.txt \
     image/60ed4209cccbf115b7a47d7b075c0ca5.jpeg \
+    image/aisnakebody_down.png \
+    image/aisnakebody_left.png \
+    image/aisnakebody_right.png \
+    image/aisnakebody_up.png \
+    image/aisnakehead_down.png \
+    image/aisnakehead_left.png \
+    image/aisnakehead_right.png \
+    image/aisnakehead_up.png \
+    image/asteroid.png \
     image/background.jpeg \
     image/background.png \
+    image/background2.png \
+    image/background3.png \
     image/cd1.png \
     image/cd2.png \
     image/cd3.png \
     image/cdgo.png \
+    image/defeat.png \
+    image/explaination.png \
+    image/firstaid.png \
     image/food.jpg \
     image/food1.jpg \
     image/food1.png \
@@ -89,9 +105,14 @@ DISTFILES += \
     image/health.png \
     image/hptext.png \
     image/magnet.png \
+    image/magnetic.png \
     image/marsh.jpg \
     image/marsh.png \
+    image/marsh1.png \
     image/no_health.png \
+    image/obstacle.png \
+    image/revival.png \
+    image/shield.png \
     image/snakebody_down.png \
     image/snakebody_left.png \
     image/snakebody_right.png \
@@ -100,14 +121,21 @@ DISTFILES += \
     image/snakehead_left.png \
     image/snakehead_right.png \
     image/snakehead_up.png \
+    image/star.png \
+    image/tree.png \
+    image/victory.png \
     image/wall.jpeg \
     image/wall.png \
+    image/warning.png \
     map/addwallgame.txt \
+    map/greedy.txt \
     map/level10.txt \
+    map/level11.txt \
     map/level3.txt \
     map/level4.txt \
     map/level5.txt \
     map/level6.txt \
     map/level7.txt \
+    map/level8.txt \
     map/level9.txt \
     map/testaisnake.txt
