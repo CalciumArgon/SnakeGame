@@ -172,15 +172,15 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     vector<Snake*> msnakes = game->getState()->getSnakes();
 
     //绘制蛇
-    paintSnake(0, msnakes[0]->getLength() - snake_length[0]);
-    for(int i = 1; i < msnakes.size(); i++){
-        paintSnake(i, msnakes[i]->getLength() - snake_length[i]);
+    paintSnake(0, int(msnakes[0]->getLength() - snake_length[0]));
+    for(size_t i = 1; i < msnakes.size(); i++){
+        paintSnake(i, int(msnakes[i]->getLength() - snake_length[i]));
     }
 
-    for(int i = 0; i < msnakes.size(); i++){
+    for(size_t i = 0; i < msnakes.size(); i++){
         snake_length[i] = msnakes[i]->getLength();
         vector<Direction> mlength_vec;
-        for(int j = 0; j < msnakes[i]->getLength(); j++)
+        for(size_t j = 0; j < msnakes[i]->getLength(); j++)
         {
             mlength_vec.push_back(msnakes[i]->getBodyDirection(j));
         }
@@ -481,7 +481,7 @@ void GameWidget::showMagnetic()
     }
 }
 
-void GameWidget::paintItem(int i, int j, ItemType type)
+void GameWidget::paintItem(size_t i, size_t j, ItemType type)
 {
     QLabel *ql = new QLabel();
     ql->setParent(this);
@@ -522,16 +522,17 @@ void GameWidget::paintItem(int i, int j, ItemType type)
         game->getState()->getItem(i, j)->is_print = true;
         shield_label.push_back(ql);
         break;
+    default:
+        break;
     }
-
 
 }
 
-void GameWidget::paintSnake(int id, int change)
+void GameWidget::paintSnake(size_t id, int change)
 {
     //id表示第几条蛇，change表示蛇与前一次循环相比长度的变化量
     Snake* msnake = game->getState()->getSnakes()[id];
-    int length = snake_label[id].size();
+    size_t length = snake_label[id].size();
     //若初次打印，则先打印蛇头
     if(snake_label[id].size() == 0 && msnake->getLength() != 0)
     {
@@ -578,7 +579,7 @@ void GameWidget::paintSnake(int id, int change)
         for(int i = 0; i < -change; i++)
         {
             delete *vec_it;
-            *vec_it = NULL;
+            *vec_it = nullptr;
             vec_it++;
         }
         reverse(snake_label[id].begin(), snake_label[id].end());
@@ -701,12 +702,12 @@ void GameWidget::deleteFoodLabel()
     vector<QLabel*>::iterator vec_it = food_label.begin();
     for(; vec_it != food_label.end(); vec_it++)
     {
-        if(*vec_it == NULL) continue;
-        int i = ((*vec_it)->x()-border)/unitlen - 1;
-        int j = (*vec_it)->y()/unitlen - 1;
+        if(*vec_it == nullptr) continue;
+        size_t i = ((*vec_it)->x()-border)/unitlen - 1;
+        size_t j = (*vec_it)->y()/unitlen - 1;
         if(game->getState()->getItemName(i, j) != FOOD){
             delete *vec_it;
-            *vec_it = NULL;
+            *vec_it = nullptr;
         }
     }
     vec_it = food_label.begin();
@@ -716,7 +717,7 @@ void GameWidget::deleteFoodLabel()
     food_label.clear();
     vec_it = labeltmp.begin();
     for(; vec_it != labeltmp.end(); vec_it++)
-        if(*vec_it != NULL)
+        if(*vec_it != nullptr)
             food_label.push_back(*vec_it);
 }
 
@@ -725,12 +726,12 @@ void GameWidget::deleteMagnetLabel()
     vector<QLabel*>::iterator vec_it = magnet_label.begin();
     for(; vec_it != magnet_label.end(); vec_it++)
     {
-        if(*vec_it == NULL) continue;
+        if(*vec_it == nullptr) continue;
         int i = ((*vec_it)->x()-border)/unitlen - 1;
         int j = (*vec_it)->y()/unitlen - 1;
         if(game->getState()->getItemName(i, j) != MAGNET){
             delete *vec_it;
-            *vec_it = NULL;
+            *vec_it = nullptr;
         }
     }
     vec_it = magnet_label.begin();
@@ -740,7 +741,7 @@ void GameWidget::deleteMagnetLabel()
     magnet_label.clear();
     vec_it = labeltmp.begin();
     for(; vec_it != labeltmp.end(); vec_it++)
-        if(*vec_it != NULL)
+        if(*vec_it != nullptr)
             magnet_label.push_back(*vec_it);
 }
 
@@ -749,12 +750,12 @@ void GameWidget::deleteObstacleLabel()
     vector<QLabel*>::iterator vec_it = obstacle_label.begin();
     for(; vec_it != obstacle_label.end(); vec_it++)
     {
-        if(*vec_it == NULL) continue;
+        if(*vec_it == nullptr) continue;
         int i = ((*vec_it)->x()-border)/unitlen - 1;
         int j = (*vec_it)->y()/unitlen - 1;
         if(game->getState()->getItemName(i, j) != OBSTACLE){
             delete *vec_it;
-            *vec_it = NULL;
+            *vec_it = nullptr;
         }
     }
     vec_it = obstacle_label.begin();
@@ -764,7 +765,7 @@ void GameWidget::deleteObstacleLabel()
     obstacle_label.clear();
     vec_it = labeltmp.begin();
     for(; vec_it != labeltmp.end(); vec_it++)
-        if(*vec_it != NULL)
+        if(*vec_it != nullptr)
             obstacle_label.push_back(*vec_it);
 }
 
@@ -773,12 +774,12 @@ void GameWidget::deleteFirstaidLabel()
     vector<QLabel*>::iterator vec_it = firstaid_label.begin();
     for(; vec_it != firstaid_label.end(); vec_it++)
     {
-        if(*vec_it == NULL) continue;
+        if(*vec_it == nullptr) continue;
         int i = ((*vec_it)->x()-border)/unitlen - 1;
         int j = (*vec_it)->y()/unitlen - 1;
         if(game->getState()->getItemName(i, j) != FIRSTAID){
             delete *vec_it;
-            *vec_it = NULL;
+            *vec_it = nullptr;
         }
     }
     vec_it = firstaid_label.begin();
@@ -788,7 +789,7 @@ void GameWidget::deleteFirstaidLabel()
     firstaid_label.clear();
     vec_it = labeltmp.begin();
     for(; vec_it != labeltmp.end(); vec_it++)
-        if(*vec_it != NULL)
+        if(*vec_it != nullptr)
             firstaid_label.push_back(*vec_it);
 }
 
@@ -797,12 +798,12 @@ void GameWidget::deleteShieldLabel()
     vector<QLabel*>::iterator vec_it = shield_label.begin();
     for(; vec_it != shield_label.end(); vec_it++)
     {
-        if(*vec_it == NULL) continue;
+        if(*vec_it == nullptr) continue;
         int i = ((*vec_it)->x()-border)/unitlen - 1;
         int j = (*vec_it)->y()/unitlen - 1;
         if(game->getState()->getItemName(i, j) != SHIELD){
             delete *vec_it;
-            *vec_it = NULL;
+            *vec_it = nullptr;
         }
     }
     vec_it = shield_label.begin();
@@ -812,7 +813,7 @@ void GameWidget::deleteShieldLabel()
     shield_label.clear();
     vec_it = labeltmp.begin();
     for(; vec_it != labeltmp.end(); vec_it++)
-        if(*vec_it != NULL)
+        if(*vec_it != nullptr)
             shield_label.push_back(*vec_it);
 }
 

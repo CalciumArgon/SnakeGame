@@ -4,10 +4,8 @@
 #include "field.h"
 #include <queue>
 
-typedef std::pair<int, int> Loc;
-class AISnake:public Snake {
-protected:
-    Loc next_target = {-1, -1};
+typedef std::pair<size_t, size_t> Loc;
+class AISnake: public Snake {
 public:
     Direction go_to(Loc target);
     bool reachtarget(Loc target);
@@ -16,6 +14,9 @@ public:
     virtual Direction act(Field* state) = 0;
     virtual bool isAI() {return true;}
 
+protected:
+    virtual ~AISnake();
+    Loc next_target = {-1, -1};
 };
 
 

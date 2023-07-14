@@ -13,35 +13,33 @@ bool isWithin(int target, int low, int high);
 class Snake
 {
 public:
-    Snake(std::vector<Loc> body, int length, int health, Direction direction, Grid* item_map_ptr);
-    Snake(Loc head, int length, int health, Direction direction, Grid* item_map_ptr);
+    Snake(std::vector<Loc> body, size_t length, int health, Direction direction, Grid* item_map_ptr);
+    Snake(Loc head, size_t length, int health, Direction direction, Grid* item_map_ptr);
+    virtual ~Snake();
+
     void initialize();
     bool operator == (const Snake* other);
 
-    int getLength() const;
+    size_t getLength() const;
     int getHealth() const;
     std::vector<Loc> &getBody();
     Direction getDirection();
-    Direction getBodyDirection(int);
+    Direction getBodyDirection(size_t);
 
-    //蛇变换方向
     void changeDireciton(Direction new_direction);
-    //蛇的头部在当前方向上的下一个位置
+    // 蛇向 direction 方向移动
     Loc nextLoc();
-    //蛇向当前方向移动
     bool move();
 
-    //返回蛇碰到的物体种类
-    Item* hitItem();
-    //判断蛇与自己、边缘发生碰撞
+    // 检查碰撞
+    Item* hitItem();    // 返回蛇碰到的物体种类
     bool hitSelf();
     bool hitEdge();
-    //判断蛇与其他蛇发生碰撞
     bool hitOtherSnake(std::vector<Snake*>);
-    //判断蛇是否经过沼泽
+    // 判断蛇是否经过沼泽或与陨石发生碰撞
     Marsh* touchMarsh();
-    //判断蛇是否与陨石发生碰撞
     Aerolite* touchAerolite();
+
     bool isPartOfSnake(Loc loc);
 
     void addLength(int adding);
@@ -54,10 +52,9 @@ public:
     //当前分数
     int score();
 
-    // 设置吸铁石能力
+    // 设置特殊能力
     void setMagnetic(int);
     bool ableMagnetic();
-    // 设置护盾复活能力
     void setRevival(int);
 
     int getHp();
@@ -77,40 +74,40 @@ public:
     void recover();
     virtual bool isAI() {return false;}
     bool speed_buff = false;
-    virtual Direction act(Field* state) { return this->direction; }
+    virtual Direction act(Field* state);
 
     //当前难度
     int level = 1;
+
 protected:
+    // 身体
     std::vector<Loc> body;
-    int length;
-    int max_health = 4;
+    size_t length;
     Direction direction;
+    Loc rebornLocation;         //蛇重生和初始化的位置
+    Direction rebornDirection;  //蛇重生和初始化的方向
+
+    int max_health = 4;
+    int health;
+
     //包含所有物品的地图的指针
     Grid* item_map_ptr;
-    int width;
-    int height;
+    size_t width;
+    size_t height;
 
-    int health;
-    //蛇吃过的食物数量
-    int eaten = 0;
-    //蛇杀死的其他蛇的数量
-    int killed = 0;
-    //控制蛇移动的时钟循环
+    int eaten = 0;  //蛇吃过的食物数量
+    int killed = 0; //蛇杀死的其他蛇的数量
+
+    //控制蛇移动的时钟循环, 决定速度
     int cycle_recorder = 1;
-
-    //蛇重生的位置
-    Loc rebornLocation;
-    //蛇重生的方向
-    Direction rebornDirection;
     int mp = 240;
-
+    int speed = -30;
     //蛇在改变方向后是否已完成移动，用于防止一次移动改变了两次方向
     bool finishmove = true;
 
+    // 特殊能力
     int magnetic = 0;
     int revival = 0;
-    int speed = -30;
 };
 
 #endif // SNAKE_H

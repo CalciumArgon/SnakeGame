@@ -4,8 +4,8 @@
 #include "aisnake.h"
 #include "queue"
 using namespace std;
-typedef pair<int, int> Loc;
-Game::Game(GameMode game_mode, int height, int width, std::vector<int> info) :
+typedef pair<size_t, size_t> Loc;
+Game::Game(GameMode game_mode, size_t height, size_t width, std::vector<int> info) :
         level(1),
         game_mode(game_mode)
 {
@@ -16,10 +16,17 @@ Game::Game(GameMode game_mode, int height, int width, std::vector<int> info) :
 
 Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
         level(1),
-        target_score(info[0]),
-        target_time(info[1]),
-        state(state),
-        game_mode(game_mode) {}
+        game_mode(game_mode),
+        state(state)
+{
+    target_score = info[0];
+    target_time = info[1];
+}
+
+Game::~Game()
+{
+    delete this->state;
+}
 
 
 void Game::setBeginTime(clock_t begin)
@@ -31,7 +38,7 @@ void Game::setBeginTime(clock_t begin)
 bool Game::snakeAction(Snake *snake)
 {
     //if (snake->getHealth() <= 0) assert(false);
-    if (snake->isAI()){
+    if (snake->isAI()) {
         snake->changeDireciton(snake->act(this->getState()));
     }
 
@@ -169,8 +176,15 @@ short Game::runGame()
             // 有吸铁石, 吃九宫格内且不在蛇身上的位置
             for (int i=-1; i<=1; ++i) {
                 for (int j=-1; j<=1; ++j) {
-                    Loc check = make_pair(item_location.first + i, item_location.second + j);
+                    int new_w = int(item_location.first) + i;
+                    int new_h = int(item_location.first) + j;
+                    if (new_w < 0 || new_h < 0) {
+                        // 不在地图内
+                        continue;
+                    }
+                    Loc check = make_pair(new_w, new_h);
                     if (snake->isPartOfSnake(check)) {
+                        // 在蛇身上的部分不检查
                         continue;
                     } else {
                         hit_item = getState()->getItem(check.first, check.second);
@@ -268,7 +282,8 @@ bool Game::loadMap(string map_name)
             break;
         }
         case 1: {
-            int direction, snake_len, x, y;
+            int direction, x, y;
+            size_t snake_len;
             map_file >> direction >> snake_len >> x >> y;
             Loc head = Loc(x, y);
             Snake* snk = new Snake(head, snake_len, 1, (Direction)direction, this->state->getMapPtr());
@@ -276,10 +291,11 @@ bool Game::loadMap(string map_name)
             break;
         }
         case 2: {
-            int direction, snake_len, x, y;
+            int direction, x, y;
+            size_t snake_len;
             map_file >> direction >> snake_len;
             vector<Loc> body;
-            for (int i = 0; i < snake_len; i++) {
+            for (size_t i = 0; i < snake_len; i++) {
                 map_file >> x >> y;
                 body.push_back(Loc(x, y));
             }
@@ -288,7 +304,8 @@ bool Game::loadMap(string map_name)
             break;
         }
         case 11:{
-            int direction, snake_len, x, y, max_health;
+            int direction, x, y, max_health;
+            size_t snake_len;
             map_file >> direction >> snake_len >> x >> y >> max_health;
             Loc head = Loc(x, y);
             Snake* snk = new Snake(head, snake_len, max_health, (Direction)direction, this->state->getMapPtr());
@@ -389,7 +406,7 @@ void Level4::initializeGame(int level) {
     path.push(make_pair(25, 25));
     path.push(make_pair(16, 25));
     Snake* snake = new WalkingSnake(path, {16, 20}, 5, 1, UP, this->state->getMapPtr());
-    Snake* snake2 = new GreedyFood({5, 5}, 2, 1, DOWN, this->state->getMapPtr());
+    // Snake* snake2 = new GreedyFood({5, 5}, 2, 1, DOWN, this->state->getMapPtr());
     this->state->addSnake(snake);
 }
 

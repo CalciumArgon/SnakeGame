@@ -3,6 +3,11 @@
 #include <set>
 
 using namespace std;
+AISnake::~AISnake()
+{
+    delete this->item_map_ptr;
+}
+
 Direction AISnake::go_to(Loc target) {
 
     if (this->direction == UP || this->direction == DOWN){
@@ -94,7 +99,7 @@ void WalkingSnake::setPath(std::queue<Loc> path) {
 }
 
 Direction WalkingSnake::act(Field *state) {
-    if (next_target == make_pair(-1, -1)) {
+    if (next_target.first == -1 && next_target.second == -1) {
         if (path.empty()) {
             return this->direction;
         }

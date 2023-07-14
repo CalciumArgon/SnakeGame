@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-typedef std::pair<int, int> Loc;
+typedef std::pair<size_t, size_t> Loc;
 
 enum ItemType {BASIC=0, FOOD, WALL, AEROLITE, MARSH, MAGNET, SHIELD, FIRSTAID, OBSTACLE,};
 

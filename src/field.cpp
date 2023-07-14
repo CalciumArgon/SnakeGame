@@ -4,25 +4,34 @@
 
 using namespace std;
 
-Field::Field(int w, int h)
+Field::Field(size_t w, size_t h)
 {
     height = h;
     width = w;
     Grid tmpfld;
     vector<Item*> vec;
-    for(int i = 0; i < h; i++)
+    for(size_t i = 0; i < h; i++)
         vec.push_back(nullptr);
-    for(int i = 0; i < w; i++)
+    for(size_t i = 0; i < w; i++)
         tmpfld.push_back(vec);
     item_map = tmpfld;
 }
 
 ItemType Field::getItemName(size_t w, size_t h)
 {
-    if(item_map[w][h] == nullptr)
+    if (!inBound(make_pair(w, h)) || item_map[w][h] == nullptr) {
         return BASIC;
-    else
+    } else {
         return item_map[w][h]->getName();
+    }
+}
+
+bool Field::inBound(Loc location)
+{
+    if (location.first >= this->width || location.second >= this->height) {
+        return false;
+    }
+    return true;
 }
 
 void Field::createItem(ItemType type, Loc location, int info)
@@ -63,18 +72,18 @@ void Field::createItem(ItemType type, Loc location, int info)
 
 Item *Field::getItem(size_t w, size_t h)
 {
-    if (w < 0 || w >= this->getWidth() || h < 0 || h >= this->getHeight()) {
+    if (w >= this->getWidth() || h >= this->getHeight()) {
         return nullptr;
     }
     return item_map[w][h];
 }
 
-int Field::getHeight()
+size_t Field::getHeight()
 {
     return height;
 }
 
-int Field::getWidth()
+size_t Field::getWidth()
 {
     return width;
 }
@@ -97,11 +106,11 @@ void Field::clearSnake()
 
 Loc Field::createRandomLoc()
 {
-    srand(time(NULL));
-    int x, y;
+    srand(static_cast<unsigned int>(time(nullptr)));
+    size_t x, y;
     do {
-        x = rand() % this->height;
-        y = rand() % this->width;
+        x = size_t(rand()) % this->height;
+        y = size_t(rand()) % this->width;
     } while (existFood(make_pair(x, y)));
     return make_pair(x, y);
 }

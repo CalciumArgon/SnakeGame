@@ -46,8 +46,8 @@ public:
     void showMagnetic();
 
     //物品与蛇的绘制
-    void paintItem(int, int, ItemType);
-    void paintSnake(int, int);
+    void paintItem(size_t, size_t, ItemType);
+    void paintSnake(size_t, int);
     void deleteFoodLabel();
     void deleteMagnetLabel();
     void deleteObstacleLabel();
@@ -83,7 +83,7 @@ private:
     std::vector<QString> guide_line;
     //蛇打印相关变量
     std::vector<std::vector<QLabel*>> snake_label;
-    std::vector<int> snake_length;
+    std::vector<size_t> snake_length;
     std::vector<std::vector<Direction>> snake_direction;
 
     //左侧属性栏的宽度
@@ -94,7 +94,7 @@ private:
     bool on_guide = false;
     bool open = false;
     bool game_start = false;
-    int page_num = 1;
+    size_t page_num = 1;
     int loop_counter = 0;
 signals:
     void gameEnd(int, int, int);

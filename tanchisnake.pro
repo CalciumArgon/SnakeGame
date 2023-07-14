@@ -25,16 +25,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        aisnake.cpp \
-        dialog.cpp \
-        field.cpp \
-        game.cpp \
-        gamewidget.cpp \
-        item.cpp \
-        main.cpp \
-        mainwindow.cpp \
-        qlevel.cpp \
-        snake.cpp \
         src/aisnake.cpp \
         src/dialog.cpp \
         src/field.cpp \
@@ -47,15 +37,6 @@ SOURCES += \
         src/snake.cpp
 
 HEADERS += \
-        aisnake.h \
-        dialog.h \
-        field.h \
-        game.h \
-        gamewidget.h \
-        item.h \
-        mainwindow.h \
-        qlevel.h \
-        snake.h \
         src/aisnake.h \
         src/dialog.h \
         src/field.h \
@@ -67,21 +48,6 @@ HEADERS += \
         src/snake.h
 
 FORMS += \
-        dialog.ui \
-        form/dialog.ui \
-        form/gamewidget.ui \
-        form/mainwindow.ui \
-        form/qlevel.ui \
-        forms/dialog.ui \
-        forms/gamewidget.ui \
-        forms/mainwindow.ui \
-        forms/qlevel.ui \
-        gamewidget.ui \
-        gamewidget.ui \
-        mainwindow.ui \
-        mainwindow.ui \
-        qlevel.ui \
-        qlevel.ui \
         ui/dialog.ui \
         ui/gamewidget.ui \
         ui/mainwindow.ui \

@@ -11,8 +11,9 @@ enum PlayMode {Normal=0};
 class Game
 {
 public:
-    Game(GameMode game_mode, int height, int width, std::vector<int> info);
+    Game(GameMode game_mode, size_t height, size_t width, std::vector<int> info);
     Game(Field* state, GameMode game_mode, std::vector<int> info);
+    virtual ~Game();
 
     void setBeginTime(clock_t);
 
@@ -41,12 +42,11 @@ public:
     int getTargetScore();
     GameMode getMode();
 protected:
-    int target_score = 0;
-
     //游戏难度
     int level = 1;
 
-    int target_time = 0;
+    int target_time = 1000;
+    int target_score = 10;
     GameMode game_mode;
 
     int aerolite_counting = 2;

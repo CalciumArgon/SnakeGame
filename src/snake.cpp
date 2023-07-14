@@ -10,26 +10,27 @@ inline int max(int x1, int x2) {
     return (x1 >= x2) ? x1 : x2;
 }
 
-Snake::Snake(vector<Loc> body, int length, int health, Direction direction, Grid* item_map_ptr) :
+Snake::Snake(vector<Loc> body, size_t length, int health, Direction direction, Grid* item_map_ptr) :
     body(body),
     length(length),
     direction(direction),
-    item_map_ptr(item_map_ptr),
-    health(health)
+    rebornLocation(body[0]),
+    rebornDirection(direction),
+    health(health),
+    item_map_ptr(item_map_ptr)
+
 {
     width = item_map_ptr->size();
     height = (*item_map_ptr)[0].size();
-    rebornLocation = body[0];
-    rebornDirection = direction;
 }
 
-Snake::Snake(Loc head, int length, int health, Direction direction, Grid* item_map_ptr) :
+Snake::Snake(Loc head, size_t length, int health, Direction direction, Grid* item_map_ptr) :
     length(length),
     direction(direction),
-    item_map_ptr(item_map_ptr),
-    health(health),
     rebornLocation(head),
-    rebornDirection(direction)
+    rebornDirection(direction),
+    health(health),
+    item_map_ptr(item_map_ptr)
 {
     body.clear();
     body.push_back(head);
@@ -64,14 +65,14 @@ Snake::Snake(Loc head, int length, int health, Direction direction, Grid* item_m
 
 Snake::~Snake()
 {
-    delete item_map_ptr;
+    delete this->item_map_ptr;
 }
 
 bool Snake::operator == (const Snake* other) {
     if (this->length != other->length) {
         return false;
     }
-    for (int i=0; i<length; ++i) {
+    for (size_t i=0; i<length; ++i) {
         if (this->body[i] != other->body[i]) {
             return false;
         }
@@ -79,7 +80,7 @@ bool Snake::operator == (const Snake* other) {
     return true;
 }
 
-int Snake::getLength() const
+size_t Snake::getLength() const
 {
     return body.size();
 }
@@ -99,7 +100,7 @@ Direction Snake::getDirection()
     return direction;
 }
 
-Direction Snake::getBodyDirection(int i)
+Direction Snake::getBodyDirection(size_t i)
 {
     if(i == 0) return getDirection();
     Loc loc2 = body[i];
@@ -402,6 +403,14 @@ void Snake::setRevival(int effective_time) {
 void Snake::recover()
 {
     speed = 3 * (level - 1);
+}
+
+Direction Snake::act(Field *state)
+{
+    if (!isAI() || !state) {
+        assert(false);
+    }
+    return this->direction;
 }
 
 bool isWithin(int target, int low, int high)
