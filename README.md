@@ -1,4 +1,8 @@
+<img src="https://s1.ax1x.com/2023/07/15/pC5U4T1.png" width=50%>
+
 # Snake Adventure v1.0
+
+[![协议](https://img.shields.io/badge/License-WTFPL-blue)](https://spdx.org/licenses/MIT)
 
 ## 简介
 
@@ -21,7 +25,7 @@
 目前在 Releases 中发布的是第 1 版可执行程序
 
 ```
-* 2023.7.14 第一次发布程序 Snake Adventure v1.0.0
+* 2023.7.15 第一次发布程序 Snake Adventure v1.0.0
 |
 ```
 
