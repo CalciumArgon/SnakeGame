@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = tanchisnake
+TARGET = SnakeAdventure
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -138,4 +138,5 @@ DISTFILES += \
     map/level7.txt \
     map/level8.txt \
     map/level9.txt \
-    map/testaisnake.txt
+    map/testaisnake.txt \
+    src/record.txt
