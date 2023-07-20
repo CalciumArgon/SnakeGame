@@ -10,7 +10,7 @@
 Item::Item(Loc location) : location(location) {}
 
 Loc Item::getLoc() {
-    return location;
+    return this->location;
 }
 
 Snake *Item::hitHeadSnake(vector<Snake *> snakes) {
@@ -40,7 +40,8 @@ Snake *Item::hitBodySnake(vector<Snake *> snakes) {
 */
 Food::Food(Loc location, int add_length):
     Item(location),
-    add_length(add_length) {}
+    add_length(add_length)
+    {}
 
 void Food::action(Snake *snake) {
     if (snake == nullptr) { return; }
@@ -50,7 +51,7 @@ void Food::action(Snake *snake) {
 
 
 void Food::changeAddLength(int new_len) {
-    add_length = new_len;
+    this->add_length = new_len;
 }
 
 void Food::initWarningArea(vector<Loc> areas, size_t range) {
@@ -74,7 +75,7 @@ Magnet::Magnet(Loc location, int effective_time):
 
 void Magnet::action(Snake* snake) {
     if (snake == nullptr) { return; }
-    snake->setMagnetic(effective_time);
+    snake->setMagnetic(this->effective_time);
 }
 
 
@@ -90,7 +91,7 @@ Shield::Shield(Loc location, int effective_time):
 
 void Shield::action(Snake* snake) {
     if (snake == nullptr) { return; }
-    snake->setRevival(effective_time);
+    snake->setRevival(this->effective_time);
 }
 
 
@@ -109,7 +110,7 @@ void Firstaid::changeAddHealth(int newHealth) {
 void Firstaid::action(Snake* snake) {
     if (snake == nullptr) { return; }
     // 最多加到满血
-    snake->addHealth(add_health);
+    snake->addHealth(this->add_health);
 }
 
 
@@ -134,7 +135,7 @@ void Obstacle::action(Snake* snake) {
 Wall::Wall(Loc location): Item(location) {}
 
 void Wall::action(Snake *snake) {
-    if (snake ==nullptr) { return; }
+    if (snake == nullptr) { return; }
     snake->death();
 }
 
@@ -159,7 +160,7 @@ void Aerolite::action(Snake* snake) {
     } else {
         for (size_t i=snake->getLength()-1; i>=0; --i) {
             snake->addLength(-1);
-            if (location == snake->getBody()[i]) {       // 砸中此段, 则从此处之后都截断
+            if (this->location == snake->getBody()[i]) {       // 砸中此段, 则从此处之后都截断
                 break;
             }
         }
@@ -177,6 +178,6 @@ Marsh::Marsh(Loc location):
 
 void Marsh::action(Snake* snake) {
     if (snake == nullptr) { return; }
-    snake->addSpeed(-decelerate);
+    snake->addSpeed(-this->decelerate);
 }
 

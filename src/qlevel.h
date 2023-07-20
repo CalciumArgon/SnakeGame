@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QPushButton>
+using std::vector;
 
 namespace Ui {
 class QLevel;
@@ -25,10 +26,10 @@ private:
     Ui::QLevel *ui;
     int difficulty = 1;
     //当前游戏进度
-    std::vector<int> status;
+    vector<int> status;
     //当前关卡下星星数量
-    std::vector<int> stars;
-    std::vector<QPushButton*> buttons;
+    vector<int> stars;
+    vector<QPushButton*> buttons;
 public slots:
     void on_btnReturn_clicked();
     void on_btnLev1_clicked();
