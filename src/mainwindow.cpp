@@ -13,14 +13,12 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle("贪吃蛇大冒险");
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
 
 #include "qlevel.h"
-void MainWindow::on_btnStart_clicked()
-{
+void MainWindow::on_btnStart_clicked() {
     QLevel *qlv = new QLevel();
     qlv->show();
 }

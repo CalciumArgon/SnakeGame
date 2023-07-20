@@ -3,6 +3,8 @@
 
 #include <utility>
 #include <vector>
+using std::vector ,
+      std::size_t ;
 
 typedef std::pair<size_t, size_t> Loc;
 
@@ -22,10 +24,10 @@ class Item
 public:
     Item(Loc location);
     Loc getLoc();
-    Snake* hitHeadSnake(std::vector<Snake*>);
-    Snake* hitBodySnake(std::vector<Snake*>);
+    Snake* hitHeadSnake(vector<Snake*>);
+    Snake* hitBodySnake(vector<Snake*>);
     virtual void action(Snake*) = 0;
-    virtual ItemType getName();
+    inline virtual ItemType getName() { return ItemType::BASIC; }
     bool is_print = false;
 protected:
     Loc location;
@@ -40,10 +42,15 @@ class Food: public Item
 public:
     Food(Loc location, int add_length);
     virtual void action(Snake*);
-    virtual ItemType getName();
+    inline virtual ItemType getName() { return ItemType::FOOD; }
     void changeAddLength(int new_len);
+
+    void initWarningArea(vector<Loc>, size_t range);
+    vector<Loc> getWarningArea();
 protected:
     int add_length = 1;
+    size_t range;
+    vector<Loc> warning_area = {};
 };
 
 /*
@@ -57,7 +64,7 @@ public:
     // 以指定有效时长来初始化
     Magnet(Loc, int);
     virtual void action(Snake*);
-    virtual ItemType getName();
+    inline virtual ItemType getName() { return ItemType::MAGNET; }
 
 protected:
     int effective_time;
@@ -73,7 +80,7 @@ class Shield: public Item
 public:
     Shield(Loc, int);
     virtual void action(Snake*);
-    virtual ItemType getName();
+    inline virtual ItemType getName() { return ItemType::SHIELD; }
 
 protected:
     int effective_time;
@@ -90,7 +97,7 @@ public:
     Firstaid(Loc, int);
 
     virtual void action(Snake*);
-    virtual ItemType getName();
+    inline virtual ItemType getName() { return ItemType::FIRSTAID; }
     void changeAddHealth(int);
 
 protected:
@@ -107,7 +114,7 @@ public:
     // 以伤害量初始化
     Obstacle(Loc, int);
     virtual void action(Snake*);
-    virtual ItemType getName();
+    inline virtual ItemType getName() { return ItemType::OBSTACLE; }
 
 protected:
     int injury;
@@ -122,7 +129,7 @@ class Wall: public Item
 public:
     Wall(Loc location);
     virtual void action(Snake*);
-    virtual ItemType getName();
+    inline virtual ItemType getName() { return ItemType::WALL; }
 protected:
     ItemType name = WALL;
 };
@@ -137,7 +144,7 @@ class Aerolite: public Item
 public:
     Aerolite(Loc);
     virtual void action(Snake*);
-    virtual ItemType getName();
+    inline virtual ItemType getName() { return ItemType::AEROLITE; }
 };
 
 
@@ -152,7 +159,7 @@ public:
     Marsh(Loc);
 
     virtual void action(Snake*);
-    virtual ItemType getName();
+    inline virtual ItemType getName() { return ItemType::MARSH; }
 protected:
     int decelerate = 5;
 };

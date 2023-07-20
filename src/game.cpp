@@ -23,20 +23,17 @@ Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
     target_time = info[1];
 }
 
-Game::~Game()
-{
+Game::~Game() {
     delete this->state;
 }
 
 
-void Game::setBeginTime(clock_t begin)
-{
+void Game::setBeginTime(clock_t begin) {
     this->begin = begin;
 }
 
 
-bool Game::snakeAction(Snake *snake)
-{
+bool Game::snakeAction(Snake *snake) {
     //if (snake->getHealth() <= 0) assert(false);
     if (snake->isAI()) {
         snake->changeDireciton(snake->act(this->getState()));
@@ -67,13 +64,12 @@ bool Game::snakeAction(Snake *snake)
     return true;
 }
 
-short Game::runGame()
-{
+short Game::runGame() {
     // 删除血量为 0 的蛇
     getState()->clearSnake();
     Loc location;
     if (this->createSnake()) {
-        if (state->getSnakes().size() == 1){
+        if (state->getSnakes().size() == 1) {
             do {
                 location = state->createRandomLoc();
             } while (state->getSnakes()[0]->isPartOfSnake(location) || state->getMapPtr()->at(location.first)[location.second] != 0);
@@ -108,17 +104,15 @@ short Game::runGame()
         snake->recover();
         Item* hit_item = snake->hitItem();
         Loc item_location = snake->getBody()[0];
-        if(snake->speed_buff){
-            if(snake->getMp() > 0){
+        if (snake->speed_buff) {
+            if (snake->getMp() > 0) {
                 snake->addSpeed(5);
                 snake->decMp();
             }
-        }
-        else {
+        } else {
             snake->incMp();
         }
-        if(hit_item != nullptr)
-        {
+        if (hit_item != nullptr) {
             switch (hit_item->getName()) {
                 case FOOD:
                 {
@@ -149,7 +143,7 @@ short Game::runGame()
                     break;
             }
         }
-        if(snake->getMagnetic() > 0)
+        if (snake->getMagnetic() > 0)
             snake->decMagnectic();
 
         // 检查陨石
@@ -201,12 +195,11 @@ short Game::runGame()
                 }
             }
         }
-        if(snake->getMagnetic() > 0)
+        if (snake->getMagnetic() > 0)
             snake->decMagnectic();
 
         //检查沼泽减速
-        if(snake->touchMarsh() != nullptr)
-        {
+        if (snake->touchMarsh() != nullptr) {
             Marsh* msh = snake->touchMarsh();
             msh->action(snake);
         }
@@ -217,8 +210,7 @@ short Game::runGame()
     return game_status;
 }
 
-void Game::initializeGame(int level)
-{
+void Game::initializeGame(int level) {
     Loc head = std::make_pair(20, 20);
     Snake* snk = new Snake(head, 5, 1, LEFT, this->state->getMapPtr());
     this->state->addSnake(snk);
@@ -231,23 +223,19 @@ void Game::initializeGame(int level)
     state->createItem(type, location, info);
 }
 
-void Game::countDown()
-{
+void Game::countDown() {
     aerolite_counting = (aerolite_counting + 16) % 45 - 15;
 }
 
-bool Game::isFall()
-{
+bool Game::isFall() {
     return this->aerolite_counting < 0;
 }
 
-bool Game::isWarning()
-{
+bool Game::isWarning() {
     return (aerolite_counting > 0);
 }
 
-bool Game::loadMap(string map_name)
-{
+bool Game::loadMap(string map_name) {
     /*
      * Map 格式：第一行输入地图所包含的物体数量（包括任何Item）|是否确定蛇的初始化位置（0：否，1：只确定蛇头位置, 先输入方向，再输入长度，再输入蛇头位置 2：先输入方向，长度，再输入完整的蛇身坐标)
      * 11: 在 1 的基础上，输入蛇的max_health
@@ -314,14 +302,12 @@ bool Game::loadMap(string map_name)
         }
         default:
             throw "Error: unknown snake_init type";
-
     }
     map_file.close();
     return true;
 }
 
-short Game::reachTarget()
-{
+short Game::reachTarget() {
     Snake* player = state->getSnakes()[0];
     clock_t end = std::clock();
     if (player->score() >= this->target_score) {
@@ -333,28 +319,24 @@ short Game::reachTarget()
     }
 }
 
-Field *Game::getState()
-{
+Field *Game::getState() {
     return state;
 }
 
-int Game::getTargetTime()
-{
+int Game::getTargetTime() {
     return target_time;
 }
 
-int Game::getTargetScore()
-{
+int Game::getTargetScore() {
     return target_score;
 }
 
-GameMode Game::getMode()
-{
+GameMode Game::getMode() {
     return game_mode;
 }
 
-Level1::Level1(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
-Level1::Level1(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level1::Level1(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
+Level1::Level1(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
 void Level1::initializeGame(int level) {
     Loc head = std::make_pair(20, 20);
     Snake* snk = new Snake(head, 5, 1, LEFT, this->state->getMapPtr());
@@ -369,34 +351,30 @@ void Level1::initializeGame(int level) {
     this->state->getSnakes()[0]->level = level;
 }
 
-Level2::Level2(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level2::Level2(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
 
-Level2::Level2(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Level2::Level2(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
 
 
 void Level2::initializeGame(int level) {
-
     if (!this->loadMap(".\\map\\addwallgame.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
-
 }
 
-Level3::Level3(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level3::Level3(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
 
-Level3::Level3(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Level3::Level3(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
 
 void Level3::initializeGame(int level) {
-
     if (!this->loadMap(".\\map\\level3.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
 
-Level4::Level4(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
-Level4::Level4(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Level4::Level4(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
+Level4::Level4(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
 void Level4::initializeGame(int level) {
-
     if (!this->loadMap(".\\map\\level4.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
@@ -410,35 +388,34 @@ void Level4::initializeGame(int level) {
     this->state->addSnake(snake);
 }
 
-Level5::Level5(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level5::Level5(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
 
-Level5::Level5(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Level5::Level5(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
 
 void Level5::initializeGame(int level) {
-
     if (!this->loadMap(".\\map\\level5.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
 
-Level6::Level6(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
-Level6::Level6(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Level6::Level6(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
+Level6::Level6(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
 void Level6::initializeGame(int level) {
     if (!this->loadMap(".\\map\\level6.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
 
-Level7::Level7(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
-Level7::Level7(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Level7::Level7(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
+Level7::Level7(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
 void Level7::initializeGame(int level) {
     if (!this->loadMap(".\\map\\level7.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
 
-Level8::Level8(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
-Level8::Level8(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Level8::Level8(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
+Level8::Level8(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
 void Level8::initializeGame(int level) {
     if (!this->loadMap(".\\map\\level8.txt"))
         assert(false);
@@ -448,7 +425,7 @@ void Level8::initializeGame(int level) {
     path.push(make_pair(30, 28));
     path.push(make_pair(7, 28));
     path.push(make_pair(7, 13));
-//    this->state->getSnakes()[0]->addSpeed(-100000);
+    // this->state->getSnakes()[0]->addSpeed(-100000);
     Snake* snake1 = new WalkingSnake(path, {11, 13}, 5, 1, RIGHT, this->state->getMapPtr());
     Snake* snake2 = new WalkingSnake(path, {22, 13},8, 1, RIGHT, this->state->getMapPtr());
     Snake* snake3 = new WalkingSnake(path,{29, 13}, 4, 1, RIGHT, this->state->getMapPtr());
@@ -476,25 +453,25 @@ void Level8::initializeGame(int level) {
     this->state->addSnake(snake8);
 }
 
-Level9::Level9(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
-Level9::Level9(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Level9::Level9(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
+Level9::Level9(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
 void Level9::initializeGame(int level) {
     if (!this->loadMap(".\\map\\level9.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
 
-Level10::Level10(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
-Level10::Level10(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Level10::Level10(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
+Level10::Level10(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
 void Level10::initializeGame(int level) {
     if (!this->loadMap(".\\map\\level10.txt"))
         assert(false);
     this->state->getSnakes()[0]->level = level;
 }
 
-Level11::Level11(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Level11::Level11(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
 
-Level11::Level11(Field* state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+Level11::Level11(Field* state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
 
 void Level11::initializeGame(int level) {
     if (!this->loadMap(".\\map\\level11.txt"))
@@ -526,8 +503,8 @@ void Level11::initializeGame(int level) {
     this->state->addSnake(snake2);
 }
 
-Greedy::Greedy(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
-Greedy::Greedy(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+Greedy::Greedy(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info) {}
+Greedy::Greedy(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info) {}
 void Greedy::initializeGame(int level) {
     if (!this->loadMap(".\\map\\greedy.txt"))
         assert(false);

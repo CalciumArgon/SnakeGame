@@ -1,7 +1,6 @@
 #include "item.h"
 #include "snake.h"
 
-
 /****************************************************
     物品类:
     检查击中了哪条蛇
@@ -10,13 +9,11 @@
 */
 Item::Item(Loc location) : location(location) {}
 
-Loc Item::getLoc()
-{
+Loc Item::getLoc() {
     return location;
 }
 
-Snake *Item::hitHeadSnake(std::vector<Snake *> snakes)
-{
+Snake *Item::hitHeadSnake(vector<Snake *> snakes) {
     for (Snake* snake: snakes) {
         if (this->location == snake->getBody()[0]) {
             return snake;
@@ -25,8 +22,7 @@ Snake *Item::hitHeadSnake(std::vector<Snake *> snakes)
     return nullptr;
 }
 
-Snake *Item::hitBodySnake(std::vector<Snake *> snakes)
-{
+Snake *Item::hitBodySnake(vector<Snake *> snakes) {
     for (Snake* snake: snakes) {
         for (int i=1; i<snake->getLength(); ++i) {
             if (snake->getBody()[i] == this->location) {
@@ -38,12 +34,6 @@ Snake *Item::hitBodySnake(std::vector<Snake *> snakes)
 }
 
 
-ItemType Item::getName()
-{
-    return BASIC;
-}
-
-
 /****************************************************
     普通食物
     增加的长度默认为 1, 可通过 changeAddLength() 修改
@@ -52,23 +42,25 @@ Food::Food(Loc location, int add_length):
     Item(location),
     add_length(add_length) {}
 
-void Food::action(Snake *snake)
-{
+void Food::action(Snake *snake) {
     if (snake == nullptr) { return; }
     snake->addLength(add_length);
     snake->incEaten();
 }
 
-ItemType Food::getName()
-{
-    return FOOD;
-}
 
-void Food::changeAddLength(int new_len)
-{
+void Food::changeAddLength(int new_len) {
     add_length = new_len;
 }
 
+void Food::initWarningArea(vector<Loc> areas, size_t range) {
+    this->warning_area = areas;
+    this->range = range;
+}
+
+vector<Loc> Food::getWarningArea() {
+    return this->warning_area;
+} 
 
 /****************************************************
     吸铁石
@@ -85,10 +77,6 @@ void Magnet::action(Snake* snake) {
     snake->setMagnetic(effective_time);
 }
 
-ItemType Magnet::getName() {
-    return MAGNET;
-}
-
 
 /****************************************************
     护盾
@@ -103,10 +91,6 @@ Shield::Shield(Loc location, int effective_time):
 void Shield::action(Snake* snake) {
     if (snake == nullptr) { return; }
     snake->setRevival(effective_time);
-}
-
-ItemType Shield::getName() {
-    return SHIELD;
 }
 
 
@@ -128,9 +112,6 @@ void Firstaid::action(Snake* snake) {
     snake->addHealth(add_health);
 }
 
-ItemType Firstaid::getName() {
-    return FIRSTAID;
-}
 
 /****************************************************
     障碍
@@ -145,9 +126,6 @@ void Obstacle::action(Snake* snake) {
     snake->addHealth(-injury);
 }
 
-ItemType Obstacle::getName() {
-    return OBSTACLE;
-}
 
 /****************************************************
     墙壁
@@ -160,10 +138,6 @@ void Wall::action(Snake *snake) {
     snake->death();
 }
 
-ItemType Wall::getName()
-{
-    return WALL;
-}
 
 /****************************************************
     陨石
@@ -183,19 +157,13 @@ void Aerolite::action(Snake* snake) {
     if (location == snake->getBody()[0]) {
         snake->death();
     } else {
-        for (int i=snake->getLength()-1; i>=0; --i) {
+        for (size_t i=snake->getLength()-1; i>=0; --i) {
+            snake->addLength(-1);
             if (location == snake->getBody()[i]) {       // 砸中此段, 则从此处之后都截断
-                snake->getBody().pop_back();
-                snake->addLength(-1);
                 break;
             }
-            snake->getBody().pop_back();
         }
     }
-}
-
-ItemType Aerolite::getName() {
-    return AEROLITE;
 }
 
 
@@ -212,6 +180,3 @@ void Marsh::action(Snake* snake) {
     snake->addSpeed(-decelerate);
 }
 
-ItemType Marsh::getName() {
-    return MARSH;
-}

@@ -11,7 +11,8 @@
 
 using namespace std;
 
-GameWidget::GameWidget(Game* game, int level, QWidget *parent) : ui(new Ui::GameWidget)
+GameWidget::GameWidget(Game* game, int level, QWidget *parent) :
+    ui(new Ui::GameWidget)
 {
     Q_UNUSED(parent);
     ui->setupUi(this);
@@ -20,8 +21,7 @@ GameWidget::GameWidget(Game* game, int level, QWidget *parent) : ui(new Ui::Game
     this->level = level;
 }
 
-void GameWidget::initialize()
-{
+void GameWidget::initialize() {
     //设置宽度与焦点策略
     this->setFocusPolicy(Qt::StrongFocus);
     this->resize(1250+border, 1250);
@@ -36,13 +36,13 @@ void GameWidget::initialize()
     Field* mstate = game->getState();
     for (size_t i = 0; i < mstate->getWidth(); i++) {
         for (size_t j = 0; j < mstate->getHeight(); j++){
-            if(mstate->getItemName(i, j) == MARSH){
+            if (mstate->getItemName(i, j) == MARSH) {
                 paintItem(i, j, MARSH);
             }
-            if(mstate->getItemName(i, j) == WALL){
+            if (mstate->getItemName(i, j) == WALL) {
                 paintItem(i, j, WALL);
             }
-            if(mstate->getItemName(i, j) == AEROLITE){
+            if (mstate->getItemName(i, j) == AEROLITE) {
                 QLabel *ql1 = new QLabel();
                 ql1->setParent(this);
                 ql1->setStyleSheet("border-image:url(:/asteroid.png)");
@@ -64,8 +64,7 @@ void GameWidget::initialize()
     //初始化蛇打印相关变量
     vector<Snake*> msnakes = game->getState()->getSnakes();
     int num = msnakes.size();
-    for(int i = 0; i < num; i++)
-    {
+    for(int i = 0; i < num; i++) {
         vector<QLabel*> vec;
         snake_label.push_back(vec);
         vector<Direction> vec2;
@@ -74,8 +73,7 @@ void GameWidget::initialize()
     }
 }
 
-QRect GameWidget::getRect(int x, int y)
-{
+QRect GameWidget::getRect(int x, int y) {
     int x1 = (x + 1) * unitlen + border;
     int y1 = (y + 1) * unitlen;
     int x2 = (x + 2) * unitlen + border;
@@ -83,8 +81,7 @@ QRect GameWidget::getRect(int x, int y)
     return QRect(QPoint(x2,y2), QPoint(x1, y1));
 }
 
-void GameWidget::paintEvent(QPaintEvent *ev)
-{
+void GameWidget::paintEvent(QPaintEvent *ev) {
     loop_counter++;
     Q_UNUSED(ev)
 
@@ -95,12 +92,10 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     //打印时间
     end = clock();
     if(countdown < 0 && game_start){
-        if(!game_end)
-        {
+        if(!game_end) {
             showTime(int((end - begin) / CLK_TCK));
         }
-    }
-    else {
+    } else {
         showTime(0);
     }
 
@@ -139,32 +134,30 @@ void GameWidget::paintEvent(QPaintEvent *ev)
 
     //绘制交互物品
     for (size_t i = 0; i < mstate->getWidth(); i++) {
-        for (size_t j = 0; j < mstate->getHeight(); j++){
-            if(mstate->getItemName(i, j) == FOOD && mstate->getItem(i, j)->is_print == false){
+        for (size_t j = 0; j < mstate->getHeight(); j++) {
+            if (mstate->getItemName(i, j) == FOOD && mstate->getItem(i, j)->is_print == false) {
                 paintItem(i, j, FOOD);
             }
-            if(mstate->getItemName(i, j) == MAGNET && mstate->getItem(i, j)->is_print == false){
+            if (mstate->getItemName(i, j) == MAGNET && mstate->getItem(i, j)->is_print == false) {
                 paintItem(i, j, MAGNET);
             }
-            if(mstate->getItemName(i, j) == OBSTACLE && mstate->getItem(i, j)->is_print == false){
+            if (mstate->getItemName(i, j) == OBSTACLE && mstate->getItem(i, j)->is_print == false) {
                 paintItem(i, j, OBSTACLE);
             }
-            if(mstate->getItemName(i, j) == FIRSTAID && mstate->getItem(i, j)->is_print == false){
+            if (mstate->getItemName(i, j) == FIRSTAID && mstate->getItem(i, j)->is_print == false) {
                 paintItem(i, j, FIRSTAID);
             }
-            if(mstate->getItemName(i, j) == SHIELD && mstate->getItem(i, j)->is_print == false){
+            if (mstate->getItemName(i, j) == SHIELD && mstate->getItem(i, j)->is_print == false) {
                 paintItem(i, j, SHIELD);
             }
         }
     }
 
     //绘制陨石前的警告
-    if(game->isWarning())
-    {
+    if (game->isWarning()) {
         for(auto ql : warning_label)
             ql->show();
-    }
-    else {
+    } else {
         for(auto ql : warning_label)
             ql->hide();
     }
@@ -177,38 +170,34 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         paintSnake(i, int(msnakes[i]->getLength() - snake_length[i]));
     }
 
-    for(size_t i = 0; i < msnakes.size(); i++){
+    for (size_t i = 0; i < msnakes.size(); i++) {
         snake_length[i] = msnakes[i]->getLength();
         vector<Direction> mlength_vec;
-        for(size_t j = 0; j < msnakes[i]->getLength(); j++)
-        {
+        for (size_t j = 0; j < msnakes[i]->getLength(); j++) {
             mlength_vec.push_back(msnakes[i]->getBodyDirection(j));
         }
         snake_direction[i] = mlength_vec;
     }
 
     //绘制陨石
-    if(game->isFall())
-    {
+    if (game->isFall()) {
         for(auto ql : aerolite_label)
             ql->show();
-    }
-    else {
+    } else {
         for(auto ql : aerolite_label)
             ql->hide();
     }
 
 
     //进入导引环节
-    if(countdown == 4 && !on_guide){
+    if (countdown == 4 && !on_guide) {
         enterGuide();
         update();
         return QWidget::paintEvent(ev);
     }
 
     //打印倒计时
-    if(countdown >= -1 && countdown <= 3)
-    {
+    if (countdown >= -1 && countdown <= 3) {
         ui->labelCntDn->setGeometry(400, 200, 800, 800);
         ui->labelCntDn->show();
         ui->labelCntDn->raise();
@@ -236,7 +225,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
             break;
         }
         countdown--;
-        if(countdown != 2){
+        if (countdown != 2) {
             QThread::msleep(1000);
             update();
 
@@ -247,8 +236,8 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
 
     //运行游戏
-    if(game_end  == 0 && !on_guide && countdown < 0) {
-        if(!game_start){
+    if (game_end  == 0 && !on_guide && countdown < 0) {
+        if (!game_start) {
             begin = clock();
             this->game->setBeginTime(begin);
             game_start = true;
@@ -256,8 +245,8 @@ void GameWidget::paintEvent(QPaintEvent *ev)
         game_end = game->runGame();
     }
     //判断游戏是否结束并发送信号
-    if(game_end != 0 && !is_emit) {
-        if(game_end == 1){
+    if (game_end != 0 && !is_emit) {
+        if (game_end == 1) {
             emit(gameEnd(1, this->level, game->getState()->getSnakes()[0]->level));
             is_emit = true;
         }
@@ -275,8 +264,7 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     return QWidget::paintEvent(ev);
 }
 
-void GameWidget::keyPressEvent(QKeyEvent *event)
-{
+void GameWidget::keyPressEvent(QKeyEvent *event) {
     event->accept();
     switch (event->key())
     {
@@ -301,21 +289,18 @@ void GameWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void GameWidget::keyReleaseEvent(QKeyEvent *event)
-{
+void GameWidget::keyReleaseEvent(QKeyEvent *event) {
     event->accept();
     if(event->key() == Qt::Key_Control)
         game->getState()->getSnakes()[0]->speed_buff = false;
 }
 
-void GameWidget::enterGuide()
-{
+void GameWidget::enterGuide() {
     readFile(level);
     startGuide();
 }
 
-void GameWidget::readFile(int level)
-{
+void GameWidget::readFile(int level) {
     string dir = ".\\guide\\" + to_string(level) + ".txt";
     ifstream guide_file;
     guide_file.open(dir.c_str());
@@ -325,8 +310,7 @@ void GameWidget::readFile(int level)
     page_num = 1;
 }
 
-void GameWidget::startGuide()
-{
+void GameWidget::startGuide() {
     ui->labelGuide->setStyleSheet("background-color:rgb(191, 255, 155, 200)");
     ui->labelGuide->setWordWrap(true);
     ui->labelGuide->setGeometry(590, 0, 950, 400);
@@ -344,18 +328,16 @@ void GameWidget::startGuide()
     on_guide = true;
 }
 
-void GameWidget::turnPage()
-{
-    if(page_num == guide_line.size())
+void GameWidget::turnPage() {
+    if (page_num == guide_line.size()) {
         endGuide();
-    else {
+    } else {
         page_num++;
     }
     ui->labelGuide->setText(guide_line[page_num-1]);
 }
 
-void GameWidget::endGuide()
-{
+void GameWidget::endGuide() {
     ui->labelGuide->close();
     ui->btnNext->close();
     ui->btnSkip->close();
@@ -363,15 +345,13 @@ void GameWidget::endGuide()
     countdown = 3;
 }
 
-void GameWidget::showTime(int time)
-{
+void GameWidget::showTime(int time) {
     GameMode gm = game->getMode();
     ui->labelTextTime->setGeometry(20, -30, 600, 200);
-    if(gm == TIMELIMIT) {
+    if (gm == TIMELIMIT) {
         ui->labelTextTime->setText("Time Remained");
         time = game->getTargetTime() - time;
-    }
-    else {
+    } else {
         ui->labelTextTime->setText("Time Used");
     }
     ui->lcdNum4->setGeometry(0, 120, 81, 101);
@@ -392,8 +372,7 @@ void GameWidget::showTime(int time)
 
 }
 
-void GameWidget::showHp()
-{
+void GameWidget::showHp() {
     int hp = game->getState()->getSnakes()[0]->getHp();
     ui->labelHp1->setGeometry(10, 300, 70, 70);
     ui->labelHp2->setGeometry(90, 300, 70, 70);
@@ -417,16 +396,14 @@ void GameWidget::showHp()
     ui->labelHp4->show();
 }
 
-void GameWidget::showMp()
-{
+void GameWidget::showMp() {
     ui->progressBarMp->setValue(int(game->getState()->getSnakes()[0]->getMp()*100.0/240.0));
     ui->progressBarMp->setGeometry(10, 400, 300, 40);
     ui->progressBarMp->setStyleSheet("QProgressBar::chunk{background-color: rgb(0, 59, 255)}");
     ui->progressBarMp->show();
 }
 
-void GameWidget::showScore()
-{
+void GameWidget::showScore() {
     ui->labelTextScore->setGeometry(30, 500, 400, 100);
 
     QFont font("华文新魏", 30);
@@ -452,37 +429,30 @@ void GameWidget::showScore()
     ui->labelExplain->setGeometry(50, 680, 220, 60);
 }
 
-void GameWidget::showShield()
-{
-    if(game->getState()->getSnakes()[0]->getRevival())
-    {
+void GameWidget::showShield() {
+    if(game->getState()->getSnakes()[0]->getRevival()) {
         ui->labelShield->setGeometry(200, 470, 50, 50);
         ui->labelShield->show();
-    }
-    else {
+    } else {
         ui->labelShield->hide();
     }
 }
 
-void GameWidget::showMagnetic()
-{
-    if(game->getState()->getSnakes()[0]->getMagnetic() > 0)
-    {
+void GameWidget::showMagnetic() {
+    if(game->getState()->getSnakes()[0]->getMagnetic() > 0) {
         ui->labelMagnet->setGeometry(10, 470, 50, 50);
         ui->labelMagnet->show();
         ui->progressBarMag->setValue(int(game->getState()->getSnakes()[0]->getMagnetic() * 100.0 / 100.0));
         ui->progressBarMag->setGeometry(70, 485, 150, 20);
         ui->progressBarMag->setStyleSheet("QProgressBar::chunk{background-color: rgb(255, 205, 71)}");
         ui->progressBarMag->show();
-    }
-    else {
+    } else {
         ui->labelMagnet->hide();
         ui->progressBarMag->hide();
     }
 }
 
-void GameWidget::paintItem(size_t i, size_t j, ItemType type)
-{
+void GameWidget::paintItem(size_t i, size_t j, ItemType type) {
     QLabel *ql = new QLabel();
     ql->setParent(this);
     ql->setGeometry((i+1)*unitlen+border, (j+1)*unitlen, unitlen, unitlen);
@@ -525,22 +495,19 @@ void GameWidget::paintItem(size_t i, size_t j, ItemType type)
     default:
         break;
     }
-
 }
 
-void GameWidget::paintSnake(size_t id, int change)
-{
+void GameWidget::paintSnake(size_t id, int change) {
     //id表示第几条蛇，change表示蛇与前一次循环相比长度的变化量
     Snake* msnake = game->getState()->getSnakes()[id];
     size_t length = snake_label[id].size();
     //若初次打印，则先打印蛇头
-    if(snake_label[id].size() == 0 && msnake->getLength() != 0)
-    {
+    if(snake_label[id].size() == 0 && msnake->getLength() != 0) {
         Loc head = msnake->getBody()[0];
         QLabel* ql = new QLabel();
         ql->setParent(this);
         ql->setGeometry((head.first+1)*unitlen+border, (head.second+1)*unitlen, unitlen, unitlen);
-        switch(msnake->getDirection()){
+        switch(msnake->getDirection()) {
         case UP:
             if(id == 0)
                 ql->setStyleSheet("border-image: url(:/snakehead_up.png)");
@@ -572,8 +539,7 @@ void GameWidget::paintSnake(size_t id, int change)
         change--;
     }
     //若变化量小于0，则删去相应的QLabel实例
-    if(change < 0)
-    {
+    if (change < 0) {
         reverse(snake_label[id].begin(), snake_label[id].end());
         vector<QLabel*>::iterator vec_it = snake_label[id].begin();
         for(int i = 0; i < -change; i++)
@@ -590,10 +556,8 @@ void GameWidget::paintSnake(size_t id, int change)
         length += change;
     }
     //若变化量大于0，则新建相应的QLabel实例
-    if(change > 0)
-    {
-        for(int i = msnake->getLength() - change; i < msnake->getLength(); i++)
-        {
+    if(change > 0) {
+        for (int i = msnake->getLength() - change; i < msnake->getLength(); i++) {
             QLabel* ql = new QLabel();
             ql->setParent(this);
             ql->setGeometry((msnake->getBody()[i].first+1)*unitlen+border, (msnake->getBody()[i].second+1)*unitlen, unitlen, unitlen);
@@ -633,9 +597,8 @@ void GameWidget::paintSnake(size_t id, int change)
         snake_label[id][i]->setGeometry((msnake->getBody()[i].first+1)*unitlen+border, (msnake->getBody()[i].second+1)*unitlen, unitlen, unitlen);
         Direction old_direction = snake_direction[id][i];
         Direction new_direction = msnake->getBodyDirection(i);
-        if(old_direction != new_direction)
-        {
-            switch(msnake->getBodyDirection(i)){
+        if (old_direction != new_direction) {
+            switch (msnake->getBodyDirection(i)) {
             case UP:
                 if(id == 0){
                     if(i == 0)
@@ -651,13 +614,12 @@ void GameWidget::paintSnake(size_t id, int change)
                 }
                 break;
             case DOWN:
-                if(id == 0){
+                if (id == 0) {
                     if(i == 0)
                         snake_label[id][i]->setStyleSheet("border-image: url(:/snakehead_down.png)");
                     else
                         snake_label[id][i]->setStyleSheet("border-image: url(:/snakebody_down.png)");
-                }
-                else {
+                } else {
                     if(i == 0)
                         snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakehead_down.png)");
                     else
@@ -665,13 +627,12 @@ void GameWidget::paintSnake(size_t id, int change)
                 }
                 break;
             case LEFT:
-                if(id == 0){
+                if (id == 0) {
                     if(i == 0)
                         snake_label[id][i]->setStyleSheet("border-image: url(:/snakehead_left.png)");
                     else
                         snake_label[id][i]->setStyleSheet("border-image: url(:/snakebody_left.png)");
-                }
-                else {
+                } else {
                     if(i == 0)
                         snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakehead_left.png)");
                     else
@@ -679,13 +640,12 @@ void GameWidget::paintSnake(size_t id, int change)
                 }
                 break;
             case RIGHT:
-                if(id == 0){
+                if (id == 0) {
                     if(i == 0)
                         snake_label[id][i]->setStyleSheet("border-image: url(:/snakehead_right.png)");
                     else
                         snake_label[id][i]->setStyleSheet("border-image: url(:/snakebody_right.png)");
-                }
-                else {
+                } else {
                     if(i == 0)
                         snake_label[id][i]->setStyleSheet("border-image: url(:/aisnakehead_right.png)");
                     else
@@ -697,11 +657,9 @@ void GameWidget::paintSnake(size_t id, int change)
     }
 }
 
-void GameWidget::deleteFoodLabel()
-{
+void GameWidget::deleteFoodLabel() {
     vector<QLabel*>::iterator vec_it = food_label.begin();
-    for(; vec_it != food_label.end(); vec_it++)
-    {
+    for(; vec_it != food_label.end(); vec_it++) {
         if(*vec_it == nullptr) continue;
         size_t i = ((*vec_it)->x()-border)/unitlen - 1;
         size_t j = (*vec_it)->y()/unitlen - 1;
@@ -716,40 +674,38 @@ void GameWidget::deleteFoodLabel()
         labeltmp.push_back(*vec_it);
     food_label.clear();
     vec_it = labeltmp.begin();
-    for(; vec_it != labeltmp.end(); vec_it++)
+    for(; vec_it != labeltmp.end(); vec_it++) {
         if(*vec_it != nullptr)
             food_label.push_back(*vec_it);
+    }
 }
 
-void GameWidget::deleteMagnetLabel()
-{
+void GameWidget::deleteMagnetLabel() {
     vector<QLabel*>::iterator vec_it = magnet_label.begin();
-    for(; vec_it != magnet_label.end(); vec_it++)
-    {
+    for (; vec_it != magnet_label.end(); vec_it++) {
         if(*vec_it == nullptr) continue;
         int i = ((*vec_it)->x()-border)/unitlen - 1;
         int j = (*vec_it)->y()/unitlen - 1;
-        if(game->getState()->getItemName(i, j) != MAGNET){
+        if (game->getState()->getItemName(i, j) != MAGNET) {
             delete *vec_it;
             *vec_it = nullptr;
         }
     }
     vec_it = magnet_label.begin();
     vector<QLabel*> labeltmp;
-    for(; vec_it != magnet_label.end(); vec_it++)
+    for (; vec_it != magnet_label.end(); vec_it++)
         labeltmp.push_back(*vec_it);
     magnet_label.clear();
     vec_it = labeltmp.begin();
-    for(; vec_it != labeltmp.end(); vec_it++)
+    for (; vec_it != labeltmp.end(); vec_it++) {
         if(*vec_it != nullptr)
             magnet_label.push_back(*vec_it);
+    }
 }
 
-void GameWidget::deleteObstacleLabel()
-{
+void GameWidget::deleteObstacleLabel() {
     vector<QLabel*>::iterator vec_it = obstacle_label.begin();
-    for(; vec_it != obstacle_label.end(); vec_it++)
-    {
+    for(; vec_it != obstacle_label.end(); vec_it++) {
         if(*vec_it == nullptr) continue;
         int i = ((*vec_it)->x()-border)/unitlen - 1;
         int j = (*vec_it)->y()/unitlen - 1;
@@ -760,20 +716,19 @@ void GameWidget::deleteObstacleLabel()
     }
     vec_it = obstacle_label.begin();
     vector<QLabel*> labeltmp;
-    for(; vec_it != obstacle_label.end(); vec_it++)
+    for (; vec_it != obstacle_label.end(); vec_it++)
         labeltmp.push_back(*vec_it);
     obstacle_label.clear();
     vec_it = labeltmp.begin();
-    for(; vec_it != labeltmp.end(); vec_it++)
+    for (; vec_it != labeltmp.end(); vec_it++) {
         if(*vec_it != nullptr)
             obstacle_label.push_back(*vec_it);
+    }
 }
 
-void GameWidget::deleteFirstaidLabel()
-{
+void GameWidget::deleteFirstaidLabel() {
     vector<QLabel*>::iterator vec_it = firstaid_label.begin();
-    for(; vec_it != firstaid_label.end(); vec_it++)
-    {
+    for(; vec_it != firstaid_label.end(); vec_it++) {
         if(*vec_it == nullptr) continue;
         int i = ((*vec_it)->x()-border)/unitlen - 1;
         int j = (*vec_it)->y()/unitlen - 1;
@@ -784,20 +739,19 @@ void GameWidget::deleteFirstaidLabel()
     }
     vec_it = firstaid_label.begin();
     vector<QLabel*> labeltmp;
-    for(; vec_it != firstaid_label.end(); vec_it++)
+    for (; vec_it != firstaid_label.end(); vec_it++)
         labeltmp.push_back(*vec_it);
     firstaid_label.clear();
     vec_it = labeltmp.begin();
-    for(; vec_it != labeltmp.end(); vec_it++)
+    for (; vec_it != labeltmp.end(); vec_it++) {
         if(*vec_it != nullptr)
             firstaid_label.push_back(*vec_it);
+    }
 }
 
-void GameWidget::deleteShieldLabel()
-{
+void GameWidget::deleteShieldLabel(){
     vector<QLabel*>::iterator vec_it = shield_label.begin();
-    for(; vec_it != shield_label.end(); vec_it++)
-    {
+    for (; vec_it != shield_label.end(); vec_it++) {
         if(*vec_it == nullptr) continue;
         int i = ((*vec_it)->x()-border)/unitlen - 1;
         int j = (*vec_it)->y()/unitlen - 1;
@@ -808,28 +762,26 @@ void GameWidget::deleteShieldLabel()
     }
     vec_it = shield_label.begin();
     vector<QLabel*> labeltmp;
-    for(; vec_it != shield_label.end(); vec_it++)
+    for (; vec_it != shield_label.end(); vec_it++)
         labeltmp.push_back(*vec_it);
     shield_label.clear();
     vec_it = labeltmp.begin();
-    for(; vec_it != labeltmp.end(); vec_it++)
+    for (; vec_it != labeltmp.end(); vec_it++) {
         if(*vec_it != nullptr)
             shield_label.push_back(*vec_it);
+    }
 }
 
-GameWidget::~GameWidget()
-{
+GameWidget::~GameWidget() {
     delete ui;
 }
 
-void GameWidget::on_btnNext_clicked()
-{
+void GameWidget::on_btnNext_clicked() {
     if(on_guide)
         turnPage();
 }
 
-void GameWidget::on_btnSkip_clicked()
-{
+void GameWidget::on_btnSkip_clicked() {
     if(on_guide)
         endGuide();
 }

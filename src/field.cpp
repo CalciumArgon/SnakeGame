@@ -4,8 +4,7 @@
 
 using namespace std;
 
-Field::Field(size_t w, size_t h)
-{
+Field::Field(size_t w, size_t h) {
     height = h;
     width = w;
     Grid tmpfld;
@@ -17,8 +16,7 @@ Field::Field(size_t w, size_t h)
     item_map = tmpfld;
 }
 
-ItemType Field::getItemName(size_t w, size_t h)
-{
+ItemType Field::getItemName(size_t w, size_t h) {
     if (!inBound(make_pair(w, h)) || item_map[w][h] == nullptr) {
         return BASIC;
     } else {
@@ -26,18 +24,16 @@ ItemType Field::getItemName(size_t w, size_t h)
     }
 }
 
-bool Field::inBound(Loc location)
-{
+bool Field::inBound(Loc location) {
     if (location.first >= this->width || location.second >= this->height) {
         return false;
     }
     return true;
 }
 
-void Field::createItem(ItemType type, Loc location, int info)
-{
+void Field::createItem(ItemType type, Loc location, int info) {
     Item* item = nullptr;
-    switch(type){
+    switch (type) {
     case BASIC:
         item = nullptr;
         break;
@@ -70,31 +66,26 @@ void Field::createItem(ItemType type, Loc location, int info)
 
 
 
-Item *Field::getItem(size_t w, size_t h)
-{
+Item *Field::getItem(size_t w, size_t h) {
     if (w >= this->getWidth() || h >= this->getHeight()) {
         return nullptr;
     }
     return item_map[w][h];
 }
 
-size_t Field::getHeight()
-{
+size_t Field::getHeight() {
     return height;
 }
 
-size_t Field::getWidth()
-{
+size_t Field::getWidth() {
     return width;
 }
 
-Grid* Field::getMapPtr()
-{
+Grid* Field::getMapPtr() {
     return &item_map;
 }
 
-void Field::clearSnake()
-{
+void Field::clearSnake() {
     for (auto snake_ptr=snakes.begin(); snake_ptr!=snakes.end(); ) {
         if ((*snake_ptr)->getHealth() <= 0) {
             snakes.erase(snake_ptr);
@@ -104,8 +95,7 @@ void Field::clearSnake()
     }
 }
 
-Loc Field::createRandomLoc()
-{
+Loc Field::createRandomLoc() {
     srand(static_cast<unsigned int>(time(nullptr)));
     size_t x, y;
     do {
@@ -115,23 +105,19 @@ Loc Field::createRandomLoc()
     return make_pair(x, y);
 }
 
-void Field::deleteItem(Loc location)
-{
+void Field::deleteItem(Loc location) {
     this->item_map[location.first][location.second] = nullptr;
 }
 
-bool Field::existFood(Loc location)
-{
+bool Field::existFood(Loc location) {
     return (this->item_map[location.first][location.second] != nullptr);
 }
 
-std::vector<Snake *> Field::getSnakes()
-{
+std::vector<Snake*> Field::getSnakes() {
     return snakes;
 }
 
-void Field::addSnake(Snake *snake_ptr)
-{
+void Field::addSnake(Snake *snake_ptr) {
     snakes.push_back(snake_ptr);
 }
 

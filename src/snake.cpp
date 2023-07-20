@@ -63,8 +63,7 @@ Snake::Snake(Loc head, size_t length, int health, Direction direction, Grid* ite
     height = (*item_map_ptr)[0].size();
 }
 
-Snake::~Snake()
-{
+Snake::~Snake() {
     delete this->item_map_ptr;
 }
 
@@ -80,28 +79,23 @@ bool Snake::operator == (const Snake* other) {
     return true;
 }
 
-size_t Snake::getLength() const
-{
+size_t Snake::getLength() const {
     return body.size();
 }
 
-int Snake::getHealth() const
-{
+int Snake::getHealth() const {
     return health;
 }
 
-vector<Loc> &Snake::getBody()
-{
+vector<Loc> &Snake::getBody() {
     return body;
 }
 
-Direction Snake::getDirection()
-{
+Direction Snake::getDirection() {
     return direction;
 }
 
-Direction Snake::getBodyDirection(size_t i)
-{
+Direction Snake::getBodyDirection(size_t i) {
     if(i == 0) return getDirection();
     Loc loc2 = body[i];
     Loc loc1 = body[i-1];
@@ -115,8 +109,7 @@ Direction Snake::getBodyDirection(size_t i)
         return RIGHT;
 }
 
-void Snake::changeDireciton(Direction new_direction)
-{
+void Snake::changeDireciton(Direction new_direction) {
     if(!finishmove) return;
     switch (direction)
     {
@@ -140,8 +133,7 @@ void Snake::changeDireciton(Direction new_direction)
     finishmove = false;
 }
 
-Loc Snake::nextLoc()
-{
+Loc Snake::nextLoc() {
     int x = body[0].first, y = body[0].second;
     switch(direction){
     case UP:
@@ -155,8 +147,7 @@ Loc Snake::nextLoc()
     }
 }
 
-bool Snake::move()
-{
+bool Snake::move() {
     Loc new_head = nextLoc();
     body.insert(body.begin(), new_head);
     body.pop_back();
@@ -164,16 +155,14 @@ bool Snake::move()
     return true;
 }
 
-Item *Snake::hitItem()
-{
+Item *Snake::hitItem() {
     Loc head = body[0];
     if(!isWithin(head.first, 0, item_map_ptr->size()-1) || !isWithin(head.second, 0, (*item_map_ptr)[0].size()-1))
         return nullptr;
     return (*item_map_ptr)[body[0].first][body[0].second];
 }
 
-bool Snake::hitSelf()
-{
+bool Snake::hitSelf() {
     Loc head = body[0];
     for (int i=1; i<length; ++i) {
         if (head == body[i]) {
@@ -198,8 +187,7 @@ bool Snake::hitOtherSnake(vector<Snake*> snakes) {
     return false;
 }
 
-Marsh* Snake::touchMarsh()
-{
+Marsh* Snake::touchMarsh() {
     for(int i=0; i<getLength(); ++i) {
         Item* it = (*item_map_ptr)[body[i].first][body[i].second];
         if(it != nullptr && it->getName() == MARSH) {
@@ -210,8 +198,7 @@ Marsh* Snake::touchMarsh()
     return nullptr;
 }
 
-Aerolite *Snake::touchAerolite()
-{
+Aerolite *Snake::touchAerolite() {
     for (int i=0; i<getLength(); ++i) {
         Item* it = (*item_map_ptr)[body[i].first][body[i].second];
         if (it != nullptr && it->getName() == AEROLITE) {
@@ -222,14 +209,12 @@ Aerolite *Snake::touchAerolite()
     return nullptr;
 }
 
-bool Snake::hitEdge()
-{
+bool Snake::hitEdge() {
     Loc head = body[0];
     return (!isWithin(head.first, 0, width-1) || !isWithin(head.second, 0, height-1));
 }
 
-bool Snake::isPartOfSnake(Loc loc)
-{
+bool Snake::isPartOfSnake(Loc loc) {
     for(int i = 0; i < getLength(); i++)
     {
         Loc mloc = body[i];
@@ -239,30 +224,37 @@ bool Snake::isPartOfSnake(Loc loc)
     return false;
 }
 
-void Snake::addLength(int adding)
-{
-    // second last X/Y 倒数第二段身体
-    int sl_x = body[getLength()-2].first, sl_y = body[getLength()-2].second;
-    // last X/Y 最后一段身体
-    int l_x = body[getLength()-1].first, l_y = body[getLength()-1].second;
+void Snake::addLength(int adding) {
+    if (adding == 0) {
+        return;
+    } else if (adding > 0) {
+        // second last X/Y 倒数第二段身体
+        int sl_x = body[getLength()-2].first, sl_y = body[getLength()-2].second;
+        // last X/Y 最后一段身体
+        int l_x = body[getLength()-1].first, l_y = body[getLength()-1].second;
 
-    // new - last = last - slast
-    // new = last + delta
-    int delta_x = l_x - sl_x, delta_y = l_y - sl_y;
-    for (int i=1; i<=adding; ++i) {
-        int newX = l_x + i*delta_x, newY = l_y + i*delta_y;
-        if (!isWithin(newX, 0, item_map_ptr->size()-1) || !isWithin(newY, 0, (*item_map_ptr)[0].size()-1)) {
-            // 新坐标不在地图边界里
-            break;
+        // new - last = last - slast
+        // new = last + delta
+        int delta_x = l_x - sl_x, delta_y = l_y - sl_y;
+        for (int i=1; i<=adding; ++i) {
+            int newX = l_x + i*delta_x, newY = l_y + i*delta_y;
+            if (!isWithin(newX, 0, item_map_ptr->size()-1) || !isWithin(newY, 0, (*item_map_ptr)[0].size()-1)) {
+                // 新坐标不在地图边界里
+                break;
+            }
+            if ((*item_map_ptr)[newX][newY] != nullptr) {
+                // 新坐标上有物体
+                break;
+            }
+            if (isPartOfSnake(make_pair(newX, newY))) {
+                break;
+            }
+            body.push_back(make_pair(newX, newY));
         }
-        if ((*item_map_ptr)[newX][newY] != nullptr) {
-            // 新坐标上有物体
-            break;
+    } else if (adding < 0) {
+        while (adding--) {
+            this->body.pop_back();
         }
-        if (isPartOfSnake(make_pair(newX, newY))) {
-            break;
-        }
-        body.push_back(make_pair(newX, newY));
     }
     length += adding;
 }
@@ -274,8 +266,7 @@ void Snake::addHealth(int adding) {
     }
 }
 
-void Snake::initialize()
-{
+void Snake::initialize() {
     health = 3;
     speed = -30;
     cycle_recorder = 1;
@@ -289,8 +280,7 @@ void Snake::initialize()
                   item_map_ptr ).body;   // 用指定位置初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
 }
 
-bool Snake::death()
-{
+bool Snake::death() {
     if (revival > 0) {
         initialize();
         return false;
@@ -306,39 +296,32 @@ bool Snake::death()
     }
 }
 
-void Snake::incEaten()
-{
+void Snake::incEaten() {
     eaten++;
 }
 
-void Snake::incKilled()
-{
+void Snake::incKilled() {
     killed++;
 }
 
-int Snake::getEaten()
-{
+int Snake::getEaten() {
     return eaten;
 }
 
-int Snake::getKilled()
-{
+int Snake::getKilled() {
     return killed;
 }
 
-int Snake::score()
-{
+int Snake::score() {
     // 加权分数, 杀一条蛇等于吃五个食物
     return eaten + 5 * killed;
 }
 
-int Snake::getHp()
-{
+int Snake::getHp() {
     return health;
 }
 
-void Snake::addSpeed(int adding)
-{
+void Snake::addSpeed(int adding) {
     this->speed += adding;
 }
 
@@ -382,8 +365,7 @@ int Snake::getRevival()
     return revival;
 }
 
-void Snake::decMagnectic()
-{
+void Snake::decMagnectic() {
     magnetic--;
 }
 
@@ -391,8 +373,7 @@ void Snake::setMagnetic(int effective_time) {
     this->magnetic = effective_time;
 }
 
-bool Snake::ableMagnetic()
-{
+bool Snake::ableMagnetic() {
     return (this->magnetic > 0);
 }
 
@@ -400,20 +381,17 @@ void Snake::setRevival(int effective_time) {
     this->revival = effective_time;
 }
 
-void Snake::recover()
-{
+void Snake::recover() {
     speed = 3 * (level - 1);
 }
 
-Direction Snake::act(Field *state)
-{
+Direction Snake::act(Field *state) {
     if (!isAI() || !state) {
         assert(false);
     }
     return this->direction;
 }
 
-bool isWithin(int target, int low, int high)
-{
+bool isWithin(int target, int low, int high) {
     return (target >= low && target <= high);
 }

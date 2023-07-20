@@ -3,21 +3,19 @@
 #include <set>
 
 using namespace std;
-AISnake::~AISnake()
-{
+AISnake::~AISnake() {
     delete this->item_map_ptr;
 }
 
 Direction AISnake::go_to(Loc target) {
-
     if (this->direction == UP || this->direction == DOWN){
-        if (target.first < this->body[0].first){
+        if (target.first < this->body[0].first) {
             return LEFT;
         }
-        if (target.first > this->body[0].first){
+        if (target.first > this->body[0].first) {
             return RIGHT;
         }
-        if (target.first == this->body[0].first){
+        if (target.first == this->body[0].first) {
 
             if (target.second > this->body[0].second && this->direction == UP) {
                 return (this->body[0].first < 30) ? RIGHT : LEFT;
@@ -61,22 +59,22 @@ pair<int, int> GreedyFood::getNearestFood() {
     while(!toSearch.empty()){
         pair<int,int> target = toSearch.front();
         toSearch.pop();
-        if (item_map_ptr->at(target.first)[target.second] && item_map_ptr->at(target.first)[target.second]->getName() == FOOD){
+        if (item_map_ptr->at(target.first)[target.second] && item_map_ptr->at(target.first)[target.second]->getName() == FOOD) {
             return target;
-        } else{
-            if (target.first > 0 && searched.find(make_pair(target.first-1, target.second)) == searched.end()){
+        } else {
+            if (target.first > 0 && searched.find(make_pair(target.first-1, target.second)) == searched.end()) {
                 toSearch.push(make_pair(target.first-1, target.second));
                 searched.insert(make_pair(target.first-1, target.second));
             }
-            if (target.first < width-1 && searched.find(make_pair(target.first+1, target.second)) == searched.end()){
+            if (target.first < width-1 && searched.find(make_pair(target.first+1, target.second)) == searched.end()) {
                 toSearch.push(make_pair(target.first+1, target.second));
                 searched.insert(make_pair(target.first+1, target.second));
             }
-            if (target.second > 0 && searched.find(make_pair(target.first, target.second-1)) == searched.end()){
+            if (target.second > 0 && searched.find(make_pair(target.first, target.second-1)) == searched.end()) {
                 toSearch.push(make_pair(target.first, target.second-1));
                 searched.insert(make_pair(target.first, target.second-1));
             }
-            if (target.second < height-1 && searched.find(make_pair(target.first, target.second+1)) == searched.end()){
+            if (target.second < height-1 && searched.find(make_pair(target.first, target.second+1)) == searched.end()) {
                 toSearch.push(make_pair(target.first, target.second+1));
                 searched.insert(make_pair(target.first, target.second+1));
             }
@@ -109,8 +107,7 @@ Direction WalkingSnake::act(Field *state) {
     }
     if (!this->reachtarget(next_target)) {
         return this->go_to(next_target);
-    }
-    else{
+    } else {
         next_target = path.front();
         path.pop();
         path.push(next_target);

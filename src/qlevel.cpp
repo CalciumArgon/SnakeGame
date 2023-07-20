@@ -34,14 +34,12 @@ QLevel::QLevel(QWidget *parent) :
     }
 }
 
-void QLevel::setBackground(QString color)
-{
+void QLevel::setBackground(QString color) {
     for(auto btn : buttons)
         btn->setStyleSheet("background-color: "+color);
 }
 
-void QLevel::paintStars(int level)
-{
+void QLevel::paintStars(int level) {
     int id = level - 1;
     int x = buttons[id]->x();
     int y = buttons[id]->y();
@@ -52,7 +50,7 @@ void QLevel::paintStars(int level)
         star_pre++;
         QLabel* ql = new QLabel();
         ql->setParent(this);
-        switch(star_pre)
+        switch (star_pre)
         {
         case 1:
             ql->setGeometry(x+5, y+125, 30, 30);
@@ -70,29 +68,25 @@ void QLevel::paintStars(int level)
     stars[id] = status[id];
 }
 
-void QLevel::saveData()
-{
+void QLevel::saveData() {
     string dir_save = ".\\record.txt";
     ofstream f;
     f.open(dir_save.c_str());
-    for(int i = 0; i < 12; i++)
-    {
+    for(int i = 0; i < 12; i++) {
         f << status[i] << " ";
     }
 }
 
-QLevel::~QLevel()
-{
+QLevel::~QLevel() {
     delete ui;
 }
 
-void QLevel::on_btnReturn_clicked()
-{
+void QLevel::on_btnReturn_clicked() {
     MainWindow *mw = new MainWindow();
     mw->show();
 }
 
-void QLevel::on_btnLev1_clicked(){
+void QLevel::on_btnLev1_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level1(fld, TIMELIMIT, {5, 45});
     game->initializeGame(difficulty);
@@ -104,8 +98,7 @@ void QLevel::on_btnLev1_clicked(){
     connect(gw, &GameWidget::gameEnd, this, &QLevel::repaintStars);
     gw->show();
 }
-void QLevel::on_btnLev2_clicked()
-{
+void QLevel::on_btnLev2_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level2(fld, TIMELIMIT, {5, 60});
     game->initializeGame(difficulty);
@@ -118,8 +111,7 @@ void QLevel::on_btnLev2_clicked()
     gw->show();
 }
 
-void QLevel::on_btnLev3_clicked()
-{
+void QLevel::on_btnLev3_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level3(fld, TIMELIMIT, {15, 120});
     game->initializeGame(difficulty);
@@ -132,8 +124,7 @@ void QLevel::on_btnLev3_clicked()
     gw->show();
 }
 
-void QLevel::on_btnLev4_clicked()
-{
+void QLevel::on_btnLev4_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level4(fld, TIMELIMIT, {5, 30});
     game->initializeGame(difficulty);
@@ -146,8 +137,7 @@ void QLevel::on_btnLev4_clicked()
     gw->show();
 }
 
-void QLevel::on_btnLev5_clicked()
-{
+void QLevel::on_btnLev5_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level5(fld, TIMELIMIT, {34, 30});
     game->initializeGame(difficulty);
@@ -160,8 +150,7 @@ void QLevel::on_btnLev5_clicked()
     gw->show();
 }
 
-void QLevel::on_btnLev6_clicked()
-{
+void QLevel::on_btnLev6_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level6(fld, TIMELIMIT, {10, 100});
     game->initializeGame(difficulty);
@@ -174,8 +163,7 @@ void QLevel::on_btnLev6_clicked()
     gw->show();
 }
 
-void QLevel::on_btnLev7_clicked()
-{
+void QLevel::on_btnLev7_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level7(fld, TIMELIMIT, {10, 100});
     game->initializeGame(difficulty);
@@ -188,8 +176,7 @@ void QLevel::on_btnLev7_clicked()
     gw->show();
 }
 
-void QLevel::on_btnLev8_clicked()
-{
+void QLevel::on_btnLev8_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level8(fld, TIMELIMIT, {20, 100});
     game->initializeGame(difficulty);
@@ -202,8 +189,7 @@ void QLevel::on_btnLev8_clicked()
     gw->show();
 }
 
-void QLevel::on_btnLev9_clicked()
-{
+void QLevel::on_btnLev9_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level9(fld, TIMELIMIT, {7, 120});
     game->initializeGame(difficulty);
@@ -216,8 +202,7 @@ void QLevel::on_btnLev9_clicked()
     gw->show();
 }
 
-void QLevel::on_btnLev10_clicked()
-{
+void QLevel::on_btnLev10_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level10(fld, TIMEFREE, {4, 100000});
     game->initializeGame(difficulty);
@@ -230,8 +215,7 @@ void QLevel::on_btnLev10_clicked()
     gw->show();
 }
 
-void QLevel::on_btnLev11_clicked()
-{
+void QLevel::on_btnLev11_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Level11(fld, TIMEFREE, {5, 100000});
     game->initializeGame(difficulty);
@@ -245,8 +229,7 @@ void QLevel::on_btnLev11_clicked()
     gw->show();
 }
 
-void QLevel::on_btnLev12_clicked()
-{
+void QLevel::on_btnLev12_clicked() {
     Field* fld = new Field(40, 40);
     Game* game = new Greedy(fld, TIMELIMIT, {100, 400});
     game->initializeGame(difficulty);
@@ -260,26 +243,22 @@ void QLevel::on_btnLev12_clicked()
     gw->show();
 }
 
-void QLevel::on_btnEasy_clicked()
-{
+void QLevel::on_btnEasy_clicked() {
     setBackground("rgba(220, 246, 255, 220)");
     difficulty = 1;
 }
 
-void QLevel::on_btnHard_clicked()
-{
+void QLevel::on_btnHard_clicked() {
     setBackground("rgba(255, 138, 117, 220)");
     difficulty = 2;
 }
 
-void QLevel::on_btnNightmare_clicked()
-{
+void QLevel::on_btnNightmare_clicked() {
     setBackground("rgba(192, 114, 255, 220)");
     difficulty = 3;
 }
 
-void QLevel::repaintStars(int result, int level, int difficulty)
-{
+void QLevel::repaintStars(int result, int level, int difficulty) {
     if(!result) return;
     status[level-1] = difficulty;
     paintStars(level);

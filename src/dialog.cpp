@@ -9,14 +9,12 @@ Dialog::Dialog(QWidget *parent) :
     this->setWindowTitle("贪吃蛇大冒险");
 }
 
-Dialog::~Dialog()
-{
+Dialog::~Dialog() {
     delete ui;
 }
 
-void Dialog::endGame(int result, int, int)
-{
-    switch(result){
+void Dialog::endGame(int result, int, int) {
+    switch (result) {
     case 0:
         this->setStyleSheet("#Dialog {border-image:url(:/defeat.png);} #Dialog * {border-image:url();}");
         break;
@@ -27,7 +25,6 @@ void Dialog::endGame(int result, int, int)
     this->show();
 }
 
-void Dialog::on_btnOK_clicked()
-{
+void Dialog::on_btnOK_clicked() {
     emit(gameClose());
 }
