@@ -2,7 +2,8 @@
 
 # Snake Adventure v1.0
 
-[![协议](https://img.shields.io/badge/License-WTFPL-blue)](https://spdx.org/licenses/MIT)
+<!-- [![协议](https://img.shields.io/badge/License-MIT-blue)](https://spdx.org/licenses/MIT) -->
+[![协议](https://img.shields.io/badge/License-WTFPL-blue)](http://www.wtfpl.net/)
 
 ## 简介
 
@@ -36,14 +37,14 @@ SnakeAdventure
 ├─ guide/
     ├─ 1.txt
     ├─ ...
-    ├─ 12.txt
+    └─ 12.txt
 ├─ image/
 ├─ map/
     ├─ addwallgame.txt
     ├─ 3.txt
     ├─ ...
     ├─ 11.txt
-    ├─ greedy.txt
+    └─ greedy.txt
 ├─ src/
 ├─ ui/
 ├─ record.txt
