@@ -153,6 +153,10 @@ bool Snake::move() {
     return true;
 }
 
+void Snake::setLevel(int l) {
+    this->level = l;
+}
+
 Item *Snake::hitItem() {
     Loc head = this->body[0];
     if ( !isWithin(head.first, 0, this->item_map_ptr->size()-1) ||

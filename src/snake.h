@@ -30,6 +30,7 @@ public:
     // 蛇向 direction 方向移动
     Loc nextLoc();
     bool move();
+    void setLevel(int);
 
     // 检查碰撞
     Item* hitItem();    // 返回蛇碰到的物体种类
