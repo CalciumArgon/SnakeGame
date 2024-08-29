@@ -7,6 +7,8 @@
 
 ## 简介
 
+<img src="./image/startgame.png" width=70%>
+
 **游戏背景**
 
 一个王子受人迫害，被施法变成了一条蛇并流放到了边远之地，它在回程的旅途中，从由士兵变成的巡逻蛇那里发现了叔叔毒害父亲，意欲篡位的真相。王子历经千难万苦，终于回到了王国，完成了复仇。
@@ -18,6 +20,9 @@
 - 关卡设计，按照剧情发展，每关会显示剧情和道具用途说明
 - 难度设计，分为 easy，hard，nightmare，分别对应三种初始蛇的速度，通关后会根据完成的难度不同在关卡页面标记星级
 - 增加了与人对战的电脑蛇元素，可以用身体撞击电脑蛇头击杀电脑蛇，完成相应的任务
+
+<img src="./image/level1_display.png" width=49%>
+<img src="./image/level11_display.png" width=49%>
 
 **历史版本**
 
@@ -58,7 +63,7 @@ SnakeAdventure
 * `record.txt` 是本地记录玩家通关情况的文件
 * `snakeadventure.pro` 是 Qt 构建完成的项目
 
-## 如何运行
+## 如何运行 <img src="./image/snakehead_left.png" width=5%><img src="./image/snakebody_left.png" width=5%><img src="./image/snakebody_left.png" width=5%><img src="./image/snakebody_left.png" width=5%><img src="./image/snakebody_left.png" width=5%><img src="./image/snakebody_left.png" width=5%><img src="./image/snakebody_left.png" width=5%><img src="./image/snakebody_left.png" width=5%><img src="./image/snakebody_left.png" width=5%><img src="./image/snakebody_left.png" width=5%>
 
 - **运行环境要求**
     * Windows 10 及以后的版本
@@ -89,11 +94,10 @@ SnakeAdventure
 
 所有物品子类继承 `Item` ，重写 `action(Snake*)` 实现各自的功能，`getName()` 函数用于返回各自类别，用于外部 `Item*` 指针对物品类型的获取
 
-#### 食物 `Food` （树莓）
-
+#### 食物 `Food` （树莓）<img src="./image/food1.png" width=7%>
 - 普通食物，增加的长度默认为 1, 可通过 `Food::changeAddLength()` 修改
 
-#### 吸铁石 `Magnet` （磁力菇）
+#### 吸铁石 `Magnet` （磁力菇）<img src="./image/magnet.png" width=12%>
 
 - 让传入的 `Snake` 实例在 `effective_time` 时间里能吸收头部四周九宫格的 `Food`
 
@@ -101,36 +105,35 @@ SnakeAdventure
 
 - 运行逻辑：在全局每轮 `runGame()` 中对每条蛇的行动中，检查是否 `snake.ableMagnetic()` ，如果 `magnetic > 0` 则对四周不属于蛇的身体的格子进行遍历检查，并吸收其中的 `Food` 类
 
-#### 护盾 `Shield` （还魂草）
+#### 护盾 `Shield` （还魂草）<img src="./image/shield.png" width=7%>
 
 - 让传入的 `Snake` 实例具有护盾, 当血量降为 0 或撞击任何触发死亡的物品时，在出生点复活并保留原来一定的长度；已吃过的食物和已击杀的蛇数据不会丢失
 
 - 运行逻辑：在 `snake.death()` 中增加了对护盾的判断，如果存在护盾则调用 `initialize()` 在复活点新建一条蛇，并将 `this` 的全部信息迁移过去；若不存在护盾，则直接将血量设为 0 并以 `true` 将死亡信息传递出去
 
-#### 血包 `Firstaid` （续命果）
+#### 血包 `Firstaid` （续命果）<img src="./image/firstaid.png" width=8%>
 
 - 血包，增加的血量默认为 1, 最多达到最大血量
 - 调用传入的 `Snake` 实例 `snake.addhealth(add_health)`
 
-#### 障碍 `Obstacle` （毒荆棘）
+#### 障碍 `Obstacle` （毒荆棘）<img src="./image/obstacle.png" width=10%>
 
 - 不同障碍物有不同伤害量，默认为 1
 - 调用传入的 `Snake` 实例 `snake.addhealth(-injury)`
 
-#### 墙 `Wall` （石墙）
+#### 墙 `Wall` （石墙）<img src="./image/wall.png" width=8%>
 
 - 和地图边界相同，撞击即触发死亡
 
 - 运行逻辑：在 `snakeAction()` 中每次执行完前进 `snake.move()` 后，都检查蛇头位置，是否撞墙，或超出边界，或撞击自己身体，或撞击其他蛇身体
 
-#### 陨石 `Aerolite` （天降巨石）
+#### 陨石 `Aerolite` （天降巨石）<img src="./image/asteroid.png" width=11%>
 
 - 砸中头部死亡，砸中身体则从砸中处截断以后部分；在掉落之前有警告符号
 
 - 运行逻辑：所有陨石的掉落都依赖于全局时钟的计算，因此在 `runGame()` 中进行检查 `isFall()` ；如果掉下，对蛇进行检查判断哪颗陨石砸到了身体，并调用 `touchAerolite()->action()`
 
-#### 沼泽 `Marsh` （泥潭）
-
+#### 沼泽 `Marsh` （泥潭）<img src="./image/marsh1.png" width=13%>
 - 只要蛇任何一部分在沼泽上，都将被减速
 
 - 运行逻辑：为了减少运算量，对触碰沼泽的检查在 `snake.touchMarsh()`中，每轮 `runGame()` 对每条蛇调用该函数，是则调慢该蛇 `speed` ，并在每轮开始前 `snake.recover()` ，即在下一次判断沼泽前将速度恢复，最终减速时间应为一个时钟周期的暂停时间
@@ -160,7 +163,8 @@ SnakeAdventure
 
 
 
-## 电脑 Snake
+## 电脑 Snake <img src="./image/aisnakehead_left.png" width=5%><img src="./image/aisnakebody_left.png" width=5%><img src="./image/aisnakebody_left.png" width=5%><img src="./image/aisnakebody_left.png" width=5%><img src="./image/aisnakebody_left.png" width=5%><img src="./image/aisnakebody_left.png" width=5%><img src="./image/aisnakebody_left.png" width=5%><img src="./image/aisnakebody_left.png" width=5%><img src="./image/aisnakebody_left.png" width=5%><img src="./image/aisnakebody_left.png" width=5%>
+
 
 继承 `Snake` 类，构建 `AIsnake` 类作为接口，后实现基于不同算法的 AIsnake（受限于时间原因，只实现了两个基本的 AIsnake）
 
