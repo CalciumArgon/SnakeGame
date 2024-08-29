@@ -21,8 +21,7 @@
 - 难度设计，分为 easy，hard，nightmare，分别对应三种初始蛇的速度，通关后会根据完成的难度不同在关卡页面标记星级
 - 增加了与人对战的电脑蛇元素，可以用身体撞击电脑蛇头击杀电脑蛇，完成相应的任务
 
-<img src="./image/level1_display.png" width=45%>
-<img src="./image/level11_display.png" width=45%>
+<img src="./image/level1_display.png" width=45%> <img src="./image/level11_display.png" width=45%>
 
 **历史版本**
 
